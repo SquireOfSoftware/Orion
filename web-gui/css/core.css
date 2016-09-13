@@ -1,0 +1,16 @@
+html {
+	background: url(../images/StarrySky.png) no-repeat center center fixed;
+}
+
+body {
+	
+}
+
+div {
+	color: #fff;
+}
+
+button {
+	color: #000;
+	height: 100px;
+}
