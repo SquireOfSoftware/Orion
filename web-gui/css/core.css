@@ -1,9 +1,12 @@
 html {
-	background: url(../images/StarrySky.png) no-repeat center center fixed;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url(../images/StarrySky.png);
+    background-attachment: fixed;
 }
 
 body {
-	
+    background-color: transparent;
 }
 
 div {
