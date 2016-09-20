@@ -6,6 +6,7 @@
 	<title>The Sputnik Project</title>
 	<link rel="stylesheet" type="text/css" href="../css/bootstrap/bootstrap-theme.css"/>
 	<link rel="stylesheet" type="text/css" href="../css/bootstrap/bootstrap.css"/>
+
     <script type="text/javascript" src="../js/jquery.min.js"></script>
 	<script type="text/javascript" src="../js/bootstrap.min.js"></script>
 
@@ -17,18 +18,26 @@
 	<h1>Home</h1>
 </div>
 <div id="menu-bar" class="col-sm-12">
-	<button class="button col-xs-12 col-md-3">
-		Create a mission
-	</button>
-	<button class="button col-xs-12 col-md-3">
-		View media
-	</button>
-	<button class="button col-xs-12 col-md-3">
-		Add new drone
-	</button>
-	<button class="button col-xs-12 col-md-3">
-		Drone configurations
-	</button>
+    <form action="missions/select-a-drone.html">
+        <button class="button col-xs-12 col-md-3">
+            Create a mission
+        </button>
+    </form>
+    <form action="view-media/gallery.html">
+        <button class="button col-xs-12 col-md-3">
+            View media
+        </button>
+    </form>
+    <form action="drone-configurations/add-a-drone.html">
+        <button class="button col-xs-12 col-md-3">
+            Add new drone
+        </button>
+    </form>
+    <form action="drone-configurations/edit-drones.html">
+        <button class="button col-xs-12 col-md-3">
+            Drone configurations
+        </button>
+    </form>
 </div>
 </body>
 </html>

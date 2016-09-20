@@ -1,0 +1,14 @@
+button {
+    height: auto;
+}
+
+.drone {
+    height: 320px;
+}
+
+#drone-selection-bar {
+    overflow-y: hidden;
+    height: 330px;
+    white-space: nowrap;
+
+}
