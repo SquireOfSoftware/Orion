@@ -1,9 +1,23 @@
+/* Tags */
+
 button {
     height: auto;
 }
 
+/* Classes */
+
 .drone {
-    height: 320px;
+    height: auto;
+}
+
+.drone-name {
+    color: #000000;
+}
+
+/* IDs */
+
+#configure-mission-page {
+    display: none;
 }
 
 #drone-selection-bar {
@@ -12,3 +26,4 @@ button {
     white-space: nowrap;
 
 }
+
