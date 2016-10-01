@@ -1,0 +1,15 @@
+#!/user/bin/env python
+import roslib; roslib.load_manifest('ardrone_tutorials')
+import rospy;
+
+from ardrone_autonomy.msg import Navdata;
+
+
+class DroneMetadata(object):
+    def __init__(self):
+        self.status = -1
+        self.subNavdata = rospy.subscribe('/ardrone/navdata', Navdata, self.ReceiveNavdata)
+
+    def ReceiveNavdata(self):
+    
+
