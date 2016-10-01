@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="webServer">
 <head>
     <meta charset="UTF-8">
 
@@ -14,7 +14,7 @@
     <link rel="stylesheet" type="text/css" href="../../css/core.css"/>
     <link rel="stylesheet" type="text/css" href="../../css/specific-pages/mission-composer.css"/>
 </head>
-<body ng-app="webserver" ng-controller="missionController">
+<body ng-controller="missionCtrl">
     <div class="title col-md-12">
         <h1><a href="../index.html">Home</a> / Select a Drone</h1>
     </div>
@@ -32,11 +32,11 @@
             <img class="drone" src="../../images/Drone1.png"/>
         </button>
     </div>
-    <div id="mission-bar" class="col-sm-12">
+    <div id="mission-bar" class="col-sm-12" ng-click="sayHiForMe()">
         <button class="button col-sm-2">
             Configure the mission >
         </button>
     </div>
 </body>
-<script src="../../js/specific-pages/create-a-mission.js"></script>
+<script src="../../js/specific-pages/missionController.js"></script>
 </html>
