@@ -15,8 +15,10 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+import mission_services
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url
+    url(r'^testREST/', mission_services.test),
+    url(r'^page/', mission_services.page),
 ]
