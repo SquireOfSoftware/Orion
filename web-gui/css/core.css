@@ -1,0 +1,20 @@
+html {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url(../images/StarrySky.png);
+    background-size: auto 100%;
+    background-attachment: fixed;
+}
+
+body {
+    background-color: transparent;
+}
+
+div {
+	color: #fff;
+}
+
+button {
+	color: #000;
+	height: 100px;
+}

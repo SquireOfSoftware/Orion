@@ -1,0 +1,29 @@
+/* Tags */
+
+button {
+    height: auto;
+}
+
+/* Classes */
+
+.drone {
+    height: auto;
+}
+
+.drone-name {
+    color: #000000;
+}
+
+/* IDs */
+
+#configure-mission-page {
+    display: none;
+}
+
+#drone-selection-bar {
+    overflow-y: hidden;
+    height: 330px;
+    white-space: nowrap;
+
+}
+
