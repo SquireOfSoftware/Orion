@@ -1,0 +1,8 @@
+
+IN_PROGRESS = 0
+ABORTED = 1
+CALIBRATING = 2
+IDLE = 3
+
+SUCCESS = "Success"
+FAILED = "Failed"
