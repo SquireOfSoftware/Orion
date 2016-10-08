@@ -4,7 +4,7 @@ from . import views
 
 urlpatterns = [
     url(r'^index', views.index, name='index'),
-    url(r'^missions/$', views.get_all_missions, name='missions'),
+    url(r'^missions$', views.get_all_missions, name='missions'),
     url(r'^missions/(?P<mission_id>[0-9]{1,5})/$', views.get_mission, name='missions'),
     url(r'^missions/(?P<id>[0-9]{1,5})/images/$', views.get_mission_images, name='missions'),
     url(r'^drones/$', views.get_drones, name='drones'),

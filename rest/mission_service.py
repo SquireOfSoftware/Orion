@@ -108,17 +108,18 @@ def get_missions_error(message):
 
 # adding a missions
 def add_a_mission(data):
+    # parses string to dictionary
+    data = json.loads(data)
 
-    data.id = missions.__sizeof__() + 1
-    data.start_time = datetime.now()
-    missions.append(data)
+    data['mission']['id'] = len(missions) + 1
+    data['mission']['start_time'] = datetime.now().__str__()
 
-    return HttpResponse(json.dumps({"status": mission_status.SUCCESS,
-                                    "data": {"id": id,
-                                             "status": mission_status.IN_PROGRESS
-                                             }
-                                    })
-                        );
+    # parses dictionary to json
+    missions.append(json.dumps(data))
+
+    return HttpResponse(json.dumps(
+        data
+    ));
 
 
 def add_a_mission_error():

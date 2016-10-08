@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.http import HttpRequest
 import mission_service
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
@@ -11,14 +12,15 @@ def index(request):
 
 def get_all_missions(request):
     # https://docs.djangoproject.com/en/1.10/topics/http/urls/#how-django-processes-a-request
-    print(request.method);
+    print(request.body)
     if request.method == "GET":
         return mission_service.get_all_missions();
-    elif request.method == "POST":
-        return mission_service.add_a_mission(request)
+    elif (request.method == "POST") & (request.body != ""):
+        return mission_service.add_a_mission(request.body)
     return mission_service.get_missions_error("Invalid METHOD " + request.method)
 
 
+@csrf_exempt
 def get_mission(request, mission_id):
     if request.method == "GET":
         return mission_service.get_mission(mission_id)
