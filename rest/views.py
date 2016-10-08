@@ -23,7 +23,7 @@ def get_all_missions(request):
 @csrf_exempt
 def get_mission(request, mission_id):
     if request.method == "GET":
-        return mission_service.get_mission(mission_id)
+        return mission_service.get_mission(int(mission_id))
     return mission_service.add_a_mission_error()
 
 

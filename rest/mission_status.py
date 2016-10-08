@@ -1,10 +1,11 @@
 
-IN_PROGRESS = 0
-ABORTED = 1
-CALIBRATING = 2
-IDLE = 3
-QUEUED = 4
-
-SUCCESS = 5
-FAILED = 6
+MISSION_STATUS = {
+    "IN_PROGRESS": 1,
+    "ABORTED": 2,
+    "CALIBRATING": 3,
+    "IDLE": 4,
+    "QUEUED": 5,
+    "SUCCESS": 6,
+    "FAILED": 7
+}
 
