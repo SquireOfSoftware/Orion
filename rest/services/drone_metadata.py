@@ -1,24 +1,22 @@
 #!/user/bin/env python
-import roslib; roslib.load_manifest('ardrone_tutorials')
+import roslib; 
 import rospy;
 import json;
+import data_access_layer;
 
 from ardrone_autonomy.msg import Navdata;
-import PDO;
 
 class DroneMetadata(object):
     def __init__(self):
         self.jstring = None
         #Extract from ardrone/navdata
         self.subNavdata = rospy.subscribe('/ardrone/navdata', Navdata, self.ReceiveNavdata)
-        
-        #Establish PDO Connection
-
+        self.current = None;
 
     #Call back for Navdata Extraction
     def ReceiveNavdata(navdata):
-        self.jstring = json.dumps({ 'type': 'navdata', 'data' : navdata})
+        self.current = {'type' : 'navdata', 'data' : navdata })
+        self.jstring = json.dumps(self.current)
         
         #Write to database
-    
-
+        
