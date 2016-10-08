@@ -2,7 +2,7 @@
 import roslib
 import rospy
 import json
-import data_access_layer
+import database_access_layer
 
 from ardrone_autonomy.msg import Navdata
 
@@ -14,7 +14,7 @@ class drone_metadata(object):
         self.current = None
 
     #Call back for Navdata Extraction
-    def ReceiveNavdata(navdata):
+    def ReceiveNavdata(self, navdata):
         self.current = {'type' : 'navdata', 'data' : navdata })
         self.jstring = json.dumps(self.current)
         

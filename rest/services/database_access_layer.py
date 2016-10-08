@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
-import mysql
+import mysql.connector
 from abc import ABCMeta, abstractmethod
 import logging
 import singleton
 
 logging.basicConfig(filename='dal.log', filemode='w', level=logging.DEBUG)
 
-@Singleton
+@singleton.Singleton
 class database_layer(object):
     def __init__(self):
         #Collection of connections
@@ -17,15 +17,15 @@ class database_layer(object):
     #expect { 'type' : { 'connecting_object': [Connection] } }
     def add(self, **connect):
         try:
-            if key in connect.type not in self.connections:
+            if self.key in connect.type not in self.connections:
                 if not isinstance(connect.type.value, Connection):
-                    raise TypeError("Not a connection object!") 
+                    raise TypeError("Not a connection object!")
                 self.connections[connect.type.key] = connect.type.value
             else:
-                raise ExistingConnectionError("Already Existing Connection!") 
+                raise self.ExistingConnectionError("Already Existing Connection!")
         except TypeError as e:
             logging.debug("DatabaseLayer.add returned TypeError: " + e.args)
-        except ExistingConnectionError as e:
+        except self.ExistingConnectionError as e:
             logging.debug("DatabaseLayer.add returned ExistingConnectionError:" + e.value)
 
     #expect { { 'type' 'connecting_object': [Connection] } }
