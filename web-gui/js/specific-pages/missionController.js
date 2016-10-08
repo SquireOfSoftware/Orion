@@ -12,7 +12,7 @@ var webServer = angular.module("webServer", [])
 {
     $scope.drones = [];
     $scope.selectedDrone = {};
-    $scope.baseurl = "http://localhost:80";
+    $scope.baseurl = "http://localhost:5000";
     $scope.warningMsg = "";
 
     $scope.currentMission = {};
@@ -84,11 +84,33 @@ var webServer = angular.module("webServer", [])
                 pointOfInterest: {"x": 1, "y": 1}
             };
 
-            var url = $scope.baseurl + "/create/mission";
+            var url = $scope.baseurl + "/testREST";
             $log.log(currentMission);
 
-            $http.post(url, {
-                "message": currentMission
+            var request = {
+                url: url,
+                method: 'GET',
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE',
+                    'Access-Control-Max-Age': '3600',
+                    'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+                    'Content-Type': 'application/text',
+                    'Access-Control-Allow-Credentials': false
+                }
+                //data: currentMission
+            };
+            $log.log(request);
+
+            /*$http.post(
+                url,
+                currentMission, function(data) {
+                $log.log(data);
+                $log.log(typeof(data));
+            });*/
+            $http(request).then(function(data) {
+                $log.log(data);
+                $log.log(typeof(data));
             });
         }
 

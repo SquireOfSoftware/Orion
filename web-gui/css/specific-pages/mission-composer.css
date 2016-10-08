@@ -17,7 +17,7 @@ button {
 /* IDs */
 
 #configure-mission-page {
-    display: none;
+    /*display: none;*/
 }
 
 #drone-selection-bar {
