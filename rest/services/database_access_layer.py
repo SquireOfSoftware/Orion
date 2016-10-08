@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from mysql import connector
+import mysql
 from abc import ABCMeta, abstractmethod
 import logging
 import singleton
@@ -8,11 +8,10 @@ import singleton
 logging.basicConfig(filename='dal.log', filemode='w', level=logging.DEBUG)
 
 @Singleton
-class DatabaseLayer(object):
+class database_layer(object):
     def __init__(self):
         #Collection of connections
         self.connections = {}
-        
         logging.info('Database Layer Initialised')
 
     #expect { 'type' : { 'connecting_object': [Connection] } }
@@ -28,6 +27,7 @@ class DatabaseLayer(object):
             logging.debug("DatabaseLayer.add returned TypeError: " + e.args)
         except ExistingConnectionError as e:
             logging.debug("DatabaseLayer.add returned ExistingConnectionError:" + e.value)
+
     #expect { { 'type' 'connecting_object': [Connection] } }
     #if 'killall' : 'true', close everything
     def remove(self, **connect):
@@ -35,9 +35,6 @@ class DatabaseLayer(object):
         if connect.killall.value is 'true':
             for connections in self.connections:
                  connections.close()
-    @staticmethod
-    def getInstance():
-        return inst
 
     class ExistingConnectionError(Exception):
         def __init__(self, value):
@@ -46,7 +43,6 @@ class DatabaseLayer(object):
             return repr(self.value)
 
 class Connection(object):
-
     def __init__(self):
         self.config = { 'user' : 'mothership', 'passwd' : 'homeone', 'db' : 'drone' }
 
@@ -54,7 +50,15 @@ class Connection(object):
         try:
             self.connection = connector;
             self.connection.connect(**self.config)
-        except:
+        except mysql.connector.Error as err:
+            if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+                print("Something is wrong with your user name or password")
+            elif err.errno == errorcode.ER_BAD_DB_ERROR:
+                print("Database does not exist")
+            else:
+                print(err)
+        else:
+            cnx.close()
     @classmethod
     def close(self):
     #Close the database connection
