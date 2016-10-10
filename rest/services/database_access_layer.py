@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
 import mysql.connector
+from mysql.connector import connection
+from mysql.connector import pooling
+from mysql.connector import errorcode
 from abc import ABCMeta, abstractmethod
 import logging
 import singleton
@@ -28,7 +31,7 @@ class database_layer(object):
         except self.ExistingConnectionError as e:
             logging.debug("DatabaseLayer.add returned ExistingConnectionError:" + e.value)
 
-    #expect { { 'type' 'connecting_object': [Connection] } }
+    #expect { { 'type' : {'connecting_object': [Connection] }, 'killall' : bool }
     #if 'killall' : 'true', close everything
     def remove(self, **connect):
         #find then close the connection
@@ -36,6 +39,8 @@ class database_layer(object):
             for connections in self.connections:
                  connections.close()
 
+    def find(self, **connect):
+        return
     class ExistingConnectionError(Exception):
         def __init__(self, value):
             self.value = value
@@ -48,7 +53,7 @@ class Connection(object):
 
     def connect(self):
         try:
-            self.connection = connector;
+            self.connection = connection
             self.connection.connect(**self.config)
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
@@ -58,7 +63,7 @@ class Connection(object):
             else:
                 print(err)
         else:
-            cnx.close()
+            self.connection.close()
     @classmethod
     def close(self):
     #Close the database connection
