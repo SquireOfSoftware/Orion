@@ -68,3 +68,21 @@ class Connection(object):
     def close(self):
     #Close the database connection
         pass
+
+
+#Base Class
+#All DAL users inherit this class
+class Connector(object):
+    def __init__(self):
+        self.connection = None;
+        pass
+
+    #add to connection pool
+    def connect(self, cnxpool):
+        self.connection = cnxpool.get_connection()
+        return
+
+    #close the connection
+    def disconnect(self):
+        self.connection.close()
+        return
