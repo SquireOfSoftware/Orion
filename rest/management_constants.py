@@ -9,3 +9,11 @@ MISSION_STATUS = {
     "FAILED": 7
 }
 
+DRONE_STATUS = {
+    "OPERATIONAL": 1,
+    "LANDING": 2,
+    "TAKING OFF": 3,
+    "IDLE": 4,
+    "ERROR": 5,
+    "EMERGENCY": 6
+}

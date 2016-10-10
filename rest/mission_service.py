@@ -14,9 +14,12 @@ def get_all_missions():
 # get a single missions
 def get_mission(mission_id):
     # TODO write the search function for a mission
-    return HttpResponse(json.dumps(
-        missions_queued.get_mission(mission_id=mission_id)
-    ))
+    mission = missions_queued.get_mission(mission_id=mission_id)
+
+    if mission is None:
+        return get_missions_error("Could not find mission with id: " + str(mission_id))
+
+    return HttpResponse(json.dumps(mission))
 
 
 # mission error
@@ -40,9 +43,7 @@ def add_a_mission(data):
     # parses dictionary to json
     missions_queued.add_to_queue(mission=data)
 
-    return HttpResponse(json.dumps(
-        data
-    ));
+    return HttpResponse(json.dumps(data));
 
 
 def add_a_mission_error():

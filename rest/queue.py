@@ -1,11 +1,11 @@
-from mission_status import MISSION_STATUS
+from management_constants import MISSION_STATUS
 
 
 class Queue(object):
     current_mission = None
 
     queued_missions = [{"mission": {
-            "id": "00001",
+            "id": 1,
             "status": MISSION_STATUS['IN_PROGRESS'],
             "url": "missions/1",
             "waypoints": [
@@ -99,7 +99,10 @@ class Queue(object):
                (self.current_mission['mission']['status'] != MISSION_STATUS['IN_PROGRESS'])
 
     def get_mission(self, mission_id):
-        return self.queued_missions[mission_id];
+        for mission in self.queued_missions:
+            if mission["mission"]["id"] == mission_id:
+                return mission
+        return None
 
     def get_total_no_of_missions(self):
         return len(self.queued_missions)
@@ -107,3 +110,4 @@ class Queue(object):
     def run_current_mission(self):
         if self.current_mission is not None:
             pass
+        pass
