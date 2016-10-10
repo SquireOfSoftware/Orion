@@ -33,7 +33,7 @@ class Queue(object):
             "obstacles": []
         }},
         {"mission": {
-            "id": "00002",
+            "id": 2,
             "status": MISSION_STATUS['SUCCESS'],
             "url": "missions/2",
             "waypoints": [
@@ -59,7 +59,7 @@ class Queue(object):
             ]
         }},
         {"mission": {
-            "id": "00003",
+            "id": 3,
             "status": MISSION_STATUS['ABORTED'],
             "url": "missions/3",
             "waypoints": [
@@ -88,7 +88,6 @@ class Queue(object):
 
     def add_to_queue(self, mission):
         # add mission to the end of the queue
-        print(type(mission))
         self.queued_missions.append(mission)
         if not self.current_mission_is_running():
             self.current_mission = mission

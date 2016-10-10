@@ -2,6 +2,7 @@ from django.http import HttpResponse
 import json
 from queue import Queue
 from datetime import datetime
+from drone_service import drones
 
 missions_queued = Queue()
 
@@ -39,11 +40,17 @@ def add_a_mission(data):
     data['mission']['id'] = missions_queued.get_total_no_of_missions() + 1
     data['mission']['start_time'] = datetime.now().__str__()
     data['mission']['status'] = int(data['mission']['status'])
+    data['mission']['url'] = "drones/" + str(data['mission']['id'])
 
-    # parses dictionary to json
-    missions_queued.add_to_queue(mission=data)
+    drone_id = data['mission']['drone']['id']
 
-    return HttpResponse(json.dumps(data));
+    if drones.verify_drone(int(drone_id)):
+        # parses dictionary to json
+        missions_queued.add_to_queue(mission=data)
+
+        return HttpResponse(json.dumps(data));
+
+    return get_missions_error("Drone with id " + str(drone_id) + " is not available")
 
 
 def add_a_mission_error():

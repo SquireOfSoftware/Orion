@@ -27,7 +27,7 @@ def handle_drones(request):
     if request.method == "GET":
         return drone_service.get_all_drones();
     elif (request.method == "POST") and (request.body != ""):
-        return drone_service.add_a_drone()
+        return drone_service.add_a_drone(request.body)
     return respond_with_error("Invalid METHOD " + request.method)
 
 
