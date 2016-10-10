@@ -10,14 +10,15 @@ import singleton
 
 logging.basicConfig(filename='dal.log', filemode='w', level=logging.DEBUG)
 
+
 @singleton.Singleton
 class database_layer(object):
     def __init__(self):
-        #Collection of connections
+        # Collection of connections
         self.connections = {}
         logging.info('Database Layer Initialised')
 
-    #expect { 'type' : { 'connecting_object': [Connection] } }
+    # expect { 'type' : { 'connecting_object': [Connection] } }
     def add(self, **connect):
         try:
             if self.key in connect.type not in self.connections:
@@ -31,25 +32,28 @@ class database_layer(object):
         except self.ExistingConnectionError as e:
             logging.debug("DatabaseLayer.add returned ExistingConnectionError:" + e.value)
 
-    #expect { { 'type' : {'connecting_object': [Connection] }, 'killall' : bool }
-    #if 'killall' : 'true', close everything
+    # expect { { 'type' : {'connecting_object': [Connection] }, 'killall' : bool }
+    # if 'killall' : 'true', close everything
     def remove(self, **connect):
-        #find then close the connection
+        # find then close the connection
         if connect.killall.value is 'true':
             for connections in self.connections:
-                 connections.close()
+                connections.close()
 
     def find(self, **connect):
         return
+
     class ExistingConnectionError(Exception):
         def __init__(self, value):
             self.value = value
+
         def __str__(self):
             return repr(self.value)
 
+
 class Connection(object):
     def __init__(self):
-        self.config = { 'user' : 'mothership', 'passwd' : 'homeone', 'db' : 'drone' }
+        self.config = {'user': 'mothership', 'passwd': 'homeone', 'db': 'drone'}
 
     def connect(self):
         try:
@@ -64,25 +68,31 @@ class Connection(object):
                 print(err)
         else:
             self.connection.close()
+
     @classmethod
     def close(self):
-    #Close the database connection
+        # Close the database connection
         pass
 
 
-#Base Class
-#All DAL users inherit this class
+# Base Class
+# All DAL users inherit this class
 class Connector(object):
     def __init__(self):
-        self.connection = None;
+        Connector.pool = mysql.connector.pooling.MySQLConnectionPool
+        Connector.dbconfig = {"database": "drone",
+                              "user"    : "mothership",
+                              "passwd"  : "homeone"     }
         pass
 
-    #add to connection pool
-    def connect(self, cnxpool):
-        self.connection = cnxpool.get_connection()
+    # add to connection pool
+    def connect(self):
+        self.connection = Connector.pool.get_connection(    pool_name="dronepool",
+                                                            pool_size=4,
+                                                            **Connector.dbconfig)
         return
 
-    #close the connection
+    # close the connection
     def disconnect(self):
         self.connection.close()
         return
