@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-import drone_service
+from drone_service import drones
 import mission_service
 
 def index(request):
@@ -25,15 +25,15 @@ def get_mission(request, mission_id):
 # pass through anything relating to drones
 def handle_drones(request):
     if request.method == "GET":
-        return drone_service.get_all_drones();
+        return drones.get_all_drones();
     elif (request.method == "POST") and (request.body != ""):
-        return drone_service.add_a_drone(request.body)
+        return drones.add_a_drone(request.body)
     return respond_with_error("Invalid METHOD " + request.method)
 
 
 def get_drone(request, drone_id):
     if request.method == "GET":
-        return drone_service.get_drone(int(drone_id))
+        return drones.get_drone(int(drone_id))
     return respond_with_error("Invalid METHOD " + request.method)
 
 

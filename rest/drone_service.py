@@ -15,10 +15,8 @@ class Drones:
         }
     ]
 
-
     def get_all_drones(self):
         return HttpResponse(json.dumps(self.registered_drones))
-
 
     def get_drone(self, drone_id):
 
@@ -29,13 +27,11 @@ class Drones:
 
         return HttpResponse(json.dumps(requested_drone))
 
-
     def find_drone(self, drone_id):
         for drone in self.registered_drones:
             if drone["drone"]["id"] == drone_id:
                 return drone
         return None
-
 
     def add_a_drone(self, drone_object):
         drone = json.loads(drone_object)
@@ -53,8 +49,15 @@ class Drones:
         # drone id is IDLE
         for available_drone in self.registered_drones:
             if available_drone["drone"]["id"] == drone_id:
-                return available_drone["drone"]["status"] == 4
+                return available_drone["drone"]["status"] == DRONE_STATUS["IDLE"]
 
+        return False
+
+    # make sure that the drone with the drone id exists
+    def validate_drone(self, drone_id):
+        for available_drone in self.registered_drones:
+            if available_drone["drone"]["id"] == drone_id:
+                return True
         return False
 
     def update_drone(self, drone_object):
@@ -63,6 +66,7 @@ class Drones:
             if drone["drone"]["id"] == requested_drone["drone"]["id"]:
                 self.registered_drones['count'] = change_details(drone, drone_object)
 
+
 # mission error
 def get_drone_error(message):
     return HttpResponse(json.dumps(
@@ -70,6 +74,5 @@ def get_drone_error(message):
                          "data": message
                         }),
                         status=403)
-
 
 drones = Drones()

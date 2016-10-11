@@ -44,7 +44,7 @@ def add_a_mission(data):
 
     drone_id = data['mission']['drone']['id']
 
-    if drones.verify_drone(int(drone_id)):
+    if drones.validate_drone(int(drone_id)):
         # parses dictionary to json
         missions_queued.add_to_queue(mission=data)
 

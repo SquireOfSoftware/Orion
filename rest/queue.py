@@ -1,4 +1,5 @@
 from management_constants import MISSION_STATUS
+from drone_service import drones
 
 
 class Queue(object):
@@ -20,9 +21,8 @@ class Queue(object):
                 {"x": 0, "y": 0}
             ],
             "drone": {
-                "id": "01",
-                "name": "sputnik",
-                "url": "drones/01"
+                "url": "drones/01",
+                "id": "01"
             },
             "altitude": 1,
             "point_of_interest": [
@@ -44,9 +44,8 @@ class Queue(object):
                 {"x": 0, "y": 0},
             ],
             "drone": {
-                "id": "02",
-                "name": "pioneer",
-                "url": "drones/02"
+                "url": "drones/02",
+                "id": "02"
             },
             "altitude": 1,
             "point_of_interest": [
@@ -71,7 +70,6 @@ class Queue(object):
             ],
             "drone": {
                 "id": "04",
-                "name": "dennis",
                 "url": "drones/04"
             },
             "altitude": 1,
