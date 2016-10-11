@@ -6,8 +6,6 @@ from database_access_layer import Connector
 from datetime import date, datetime, timedelta
 
 from ardrone_autonomy.msg import Navdata
-
-
 # Define insert statements here
 
 class drone_metadata(Connector):
@@ -25,5 +23,7 @@ class drone_metadata(Connector):
         
         #Write jstring to database
         self.timenow = datetime.date()
+
+
 
 
