@@ -83,17 +83,20 @@ dbconfig = {"database": "drone",
             "user"    : "mothership",
             "passwd"  : "homeone"   }
 
+pool = mysql.connector.pooling.MySQLConnectionPool
 
 class Connector(object):
     def __init__(self):
-        Connector.pool = mysql.connector.pooling.MySQLConnectionPool
+        self.connection = None;
+
         return
 
     # add to connection pool
     def connect(self):
-        self.connection = Connector.pool.get_connection(    pool_name="dronepool",
+        self.connection = pool.get_connection(    pool_name="dronepool",
                                                             pool_size=4,
                                                             **dbconfig)
+        self.cursor = connection.cursor()
         return
 
     # close the connection
