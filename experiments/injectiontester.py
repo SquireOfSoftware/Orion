@@ -1,5 +1,7 @@
 import types
+from rest.services.singleton import Singleton
 # The resource locator
+@Singleton
 class A:
     def __init__(self):
         A.resources = {}
@@ -14,21 +16,25 @@ class A:
         print(A.resources)
         for key in A.resources:
             A.resources[key].hello()
-			
-	def register(resource):
-		def find (resource, name):
-			return A.resources[name]
-		resource.method = types.MethodType(find, resource)
+
+    def allwave(self):
+        print "B finding "
+        A.resources['B'].wave('C')
+        print "C finding "
+        A.resources['C'].wave('B')
 			
 
 # Base class for proof
 class B(object):
     def __init__(self, A):
         A.add('B', self);
+        #A.register(self);
 
     def hello(self):
-        print ("Hi I am B")
-	
+        print ("B")
+
+    def wave(self, name):
+        print A.resources[name].hello()
 	#Create a find function
 
 #Can inject child/friend classes
@@ -37,7 +43,6 @@ class C(B):
         A.add('C', self)
 
     def hello(self):
-        print ("Hi I am C")
+        print ("C")
 
-a = A()
-a.talk()
+A.Instance().allwave()
