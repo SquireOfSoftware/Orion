@@ -15,8 +15,16 @@ def handle_missions(request):
         return mission_service.get_all_missions()
     elif (request.method == "POST") and (request.body != ""):
         return mission_service.add_a_mission(request.body)
-    elif (request.method == "PUT") and (request.body != ""):
-        return mission_service.update_mission(request.body)
+    return respond_with_error("Invalid METHOD " + request.method)
+
+
+def start_mission(request, mission_id):
+    # check if mission with id exists
+    # check if mission status is not in progress
+    # change the mission status
+    # spawn process
+    if (request.method == "PUT") and (request.body != ""):
+        return mission_service.start_mission(request.body, mission_id)
     return respond_with_error("Invalid METHOD " + request.method)
 
 

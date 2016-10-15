@@ -78,10 +78,10 @@ def add_a_mission_error():
 
 
 # this includes aborting a mission
-def update_mission(data):
+def start_mission(data, mission_id):
     data = json.loads(data)
-    mission = missions_queued.get_mission(int(data["mission"]["id"]))
-    if mission is not None:
+    mission = missions_queued.get_mission(int(mission_id))
+    if (mission is not None) and (verify_no_missions_are_active()):
         return send_response(missions_queued.update_mission(data))
     return send_missions_error("Could not locate mission with id: " + str(data["mission"]["id"]))
 
@@ -117,6 +117,10 @@ def validate_battery():
     # assume there is enough battery charge
     # TODO implement this feature to work with the drone metedata
     return True
+
+
+def verify_no_missions_are_active():
+    return missions_queued.is_any_mission_active()
 
 
 def send_response(message):

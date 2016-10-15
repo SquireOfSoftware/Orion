@@ -34,7 +34,7 @@ class Queue(object):
         }},
         {"mission": {
             "id": 2,
-            "status": MISSION_STATUS['SUCCESS'],
+            "status": MISSION_STATUS['COMPLETED'],
             "url": "missions/2",
             "waypoints": [
                 {"x": 0, "y": 0},
@@ -115,3 +115,9 @@ class Queue(object):
         if self.current_mission is not None:
             pass
         pass
+
+    def is_any_mission_active(self):
+        for mission in self.queued_missions:
+            if mission["mission"]["status"] == MISSION_STATUS["ABORTED"]:
+                return True
+        return False
