@@ -4,27 +4,28 @@ import rospy;
 
 from std_msgs.msg import Empty
 from geometry_msgs.msg import Twist
-from std_msgs.msg import Vector3
+from geometry_msgs.msg import Vector3
 class drone_control (object):
     def __init__(self):
         self.move = rospy.Publisher('/cmd_vel', Twist, queue_size = 20)
-        self.land = rospy.Publisher('/ardrone/Land', Empty, queue_size = 5)
-        self.emergency = rospy.Publisher('/ardrone/Emergency', Empty, queue_size = 5)
-        self.takeoff = rospy.Publisher('/ardrone/TakeOff', Empty, queue_size = 5)
+        self.land = rospy.Publisher('/ardrone/land', Empty, queue_size = 5)
+        self.emergency = rospy.Publisher('/ardrone/emergency', Empty, queue_size = 5)
+        self.takeoff = rospy.Publisher('/ardrone/takeoff', Empty, queue_size = 5)
+        rospy.init_node('orion_controller', anonymous=True)
+        rate = rospy.Rate(100)
 
-        return
 
     def drone_land(self):
-        self.land.publish(std_msgs.msg.Empty())
-        pass
+        self.land.publish(Empty())
+        return
 
     def drone_emergency(self):
-        self.emergency.publish(std_msgs.msg.Empty())
-        pass
+        self.emergency.publish(Empty())
+        return
 
     def drone_takeoff(self):
-        self.emergency.publish(std_msgs.msg.Empty())
-        pass
+        self.takeoff.publish(Empty())
+        return
 
     def drone_move(self, data):
         self.linear = data.linear
