@@ -2,11 +2,13 @@
 import roslib
 import rospy
 import json
-import database_access_layer
+from database_access_layer import Connector
+from datetime import date, datetime, timedelta
 
 from ardrone_autonomy.msg import Navdata
+# Define insert statements here
 
-class drone_metadata(object):
+class drone_metadata(Connector):
     def __init__(self, database_access_layer):
         self.jstring = None
         #Extract from ardrone/navdata
@@ -15,8 +17,13 @@ class drone_metadata(object):
 
     #Call back for Navdata Extraction
     def ReceiveNavdata(self, navdata):
-        self.current = {'type' : 'navdata', 'data' : navdata })
+
+        self.current = {'data' : navdata }
         self.jstring = json.dumps(self.current)
         
-        #Write to database
-        
+        #Write jstring to database
+        self.timenow = datetime.date()
+
+
+
+
