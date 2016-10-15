@@ -4,13 +4,14 @@ import json
 
 
 class Drones:
-
+    # this needs to connect to the database
     registered_drones = [
         {
             "drone": {
                 "id": 1,
                 "url": "/drones/1",
-                "status": DRONE_STATUS["IDLE"]
+                "status": DRONE_STATUS["IDLE"],
+                "data": "blob"
             }
         }
     ]

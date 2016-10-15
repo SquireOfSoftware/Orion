@@ -9,7 +9,7 @@ class Queue(object):
             "id": 1,
             "status": MISSION_STATUS['IN_PROGRESS'],
             "url": "missions/1",
-            "waypoints": [
+            "waypoints": [ #floats 1 dec
                 {"x": 0, "y": 0},
                 {"x": 1, "y": 0},
                 {"x": 2, "y": 0},
