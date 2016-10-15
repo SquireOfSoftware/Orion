@@ -101,6 +101,13 @@ class Queue(object):
                 return mission
         return None
 
+    def update_mission(self, mission):
+        for i in range(len(self.queued_missions)):
+            if self.queued_missions[i]["mission"]["id"] is mission["mission"]["id"]:
+                self.queued_missions[i] = mission
+                return True
+        return False
+
     def get_total_no_of_missions(self):
         return len(self.queued_missions)
 

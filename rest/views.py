@@ -11,11 +11,12 @@ def index(request):
 
 def handle_missions(request):
     # https://docs.djangoproject.com/en/1.10/topics/http/urls/#how-django-processes-a-request
-    print(request.body)
     if request.method == "GET":
         return mission_service.get_all_missions()
     elif (request.method == "POST") and (request.body != ""):
         return mission_service.add_a_mission(request.body)
+    elif (request.method == "PUT") and (request.body != ""):
+        return mission_service.update_mission(request.body)
     return respond_with_error("Invalid METHOD " + request.method)
 
 
