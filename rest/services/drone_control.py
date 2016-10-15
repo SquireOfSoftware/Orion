@@ -1,4 +1,5 @@
 #!usr/bin/env python
 
-class DroneControl(object):
-
+class drone_control (object):
+    def __init__(self):
+        return

@@ -1,20 +1,20 @@
 #!/user/bin/env python
-import roslib; 
-import rospy;
-import json;
-import data_access_layer;
+import roslib
+import rospy
+import json
+import database_access_layer
 
-from ardrone_autonomy.msg import Navdata;
+from ardrone_autonomy.msg import Navdata
 
-class DroneMetadata(object):
-    def __init__(self):
+class drone_metadata(object):
+    def __init__(self, database_access_layer):
         self.jstring = None
         #Extract from ardrone/navdata
         self.subNavdata = rospy.subscribe('/ardrone/navdata', Navdata, self.ReceiveNavdata)
-        self.current = None;
+        self.current = None
 
     #Call back for Navdata Extraction
-    def ReceiveNavdata(navdata):
+    def ReceiveNavdata(self, navdata):
         self.current = {'type' : 'navdata', 'data' : navdata })
         self.jstring = json.dumps(self.current)
         

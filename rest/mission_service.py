@@ -1,100 +1,26 @@
 from django.http import HttpResponse
 import json
-import mission_status
+from queue import Queue
 from datetime import datetime
+from drone_service import drones
 
-missions = [{"mission": {
-        "id": "00001",
-        "status": mission_status.IN_PROGRESS,
-        "url": "missions/1",
-        "waypoints": [
-            {"x": 0, "y": 0},
-            {"x": 1, "y": 0},
-            {"x": 2, "y": 0},
-            {"x": 2, "y": 1},
-            {"x": 2, "y": 2},
-            {"x": 1, "y": 2},
-            {"x": 0, "y": 2},
-            {"x": 0, "y": 1},
-            {"x": 0, "y": 0}
-        ],
-        "drone": {
-            "id": "01",
-            "name": "sputnik",
-            "url": "drones/01"
-        },
-        "altitude": 1,
-        "point_of_interest": [
-            {"x": 1, "y": 1}
-        ],
-        "start_time": 1,
-        "finish_time": -1,
-        "obstacles": []
-    }},
-    {"mission": {
-        "id": "00002",
-        "status": mission_status.SUCCESS,
-        "url": "missions/2",
-        "waypoints": [
-            {"x": 0, "y": 0},
-            {"x": 1, "y": 0},
-            {"x": 2, "y": 0},
-            {"x": 1, "y": 0},
-            {"x": 0, "y": 0},
-        ],
-        "drone": {
-            "id": "02",
-            "name": "pioneer",
-            "url": "drones/02"
-        },
-        "altitude": 1,
-        "point_of_interest": [
-            {"x": 1, "y": 1}
-        ],
-        "start_time": 1,
-        "finish_time": 5,
-        "obstacles": [
-            {"x": 1, "y": 1}
-        ]
-    }},
-    {"mission": {
-        "id": "00003",
-        "status": mission_status.ABORTED,
-        "url": "missions/3",
-        "waypoints": [
-            {"x": 0, "y": 0},
-            {"x": 0, "y": 1},
-            {"x": 0, "y": 2},
-            {"x": 0, "y": 1},
-            {"x": 0, "y": 0},
-        ],
-        "drone": {
-            "id": "04",
-            "name": "dennis",
-            "url": "drones/04"
-        },
-        "altitude": 1,
-        "point_of_interest": [
-            {"x": 1, "y": 1}
-        ],
-        "start_time": 1,
-        "finish_time": 5,
-        "obstacles": [
-            {"x": 1, "y": 1}
-        ]
-    }}
-]
+missions_queued = Queue()
 
 # get all the missions
 def get_all_missions():
     # TODO write the get function for missions
-    return HttpResponse(json.dumps(missions))
+    return HttpResponse(json.dumps(missions_queued.queued_missions))
 
 
 # get a single missions
 def get_mission(mission_id):
     # TODO write the search function for a mission
-    return HttpResponse(json.dumps(missions[int(mission_id)]))
+    mission = missions_queued.get_mission(mission_id=mission_id)
+
+    if mission is None:
+        return get_missions_error("Could not find mission with id: " + str(mission_id))
+
+    return HttpResponse(json.dumps(mission))
 
 
 # mission error
@@ -108,17 +34,23 @@ def get_missions_error(message):
 
 # adding a missions
 def add_a_mission(data):
+    # parses string to dictionary
+    data = json.loads(data)
 
-    data.id = missions.__sizeof__() + 1
-    data.start_time = datetime.now()
-    missions.append(data)
+    data['mission']['id'] = missions_queued.get_total_no_of_missions() + 1
+    data['mission']['start_time'] = datetime.now().__str__()
+    data['mission']['status'] = int(data['mission']['status'])
+    data['mission']['url'] = "drones/" + str(data['mission']['id'])
 
-    return HttpResponse(json.dumps({"status": mission_status.SUCCESS,
-                                    "data": {"id": id,
-                                             "status": mission_status.IN_PROGRESS
-                                             }
-                                    })
-                        );
+    drone_id = data['mission']['drone']['id']
+
+    if drones.validate_drone(int(drone_id)):
+        # parses dictionary to json
+        missions_queued.add_to_queue(mission=data)
+
+        return HttpResponse(json.dumps(data));
+
+    return get_missions_error("Drone with id " + str(drone_id) + " is not available")
 
 
 def add_a_mission_error():
