@@ -3,6 +3,7 @@ import json
 from queue import Queue
 from datetime import datetime
 from drone_service import drones
+from subprocess import Popen
 
 missions_queued = Queue()
 
@@ -18,6 +19,7 @@ MAX_Y = 3.0
 # get all the missions
 def get_all_missions():
     # TODO write the get function for missions
+    Popen("python experiments/process_spawnee.py", shell=True)
     return HttpResponse(json.dumps(missions_queued.queued_missions))
 
 
