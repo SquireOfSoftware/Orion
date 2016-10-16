@@ -79,9 +79,9 @@ logging.basicConfig(filename='dal.log', filemode='w', level=logging.DEBUG)
 # All DAL users inherit this class
 
 """All services using connection should inherit this code."""
-dbconfig = {"database": "drone",
-            "user"    : "mothership",
-            "passwd"  : "homeone"   }
+dbconfig = {"database": "Drone_Management_System",
+            "user"    : "root",
+            "passwd"  : "admin"}
 
 pool = mysql.connector.pooling.MySQLConnectionPool
 

@@ -19,7 +19,6 @@ MAX_Y = 3.0
 # get all the missions
 def get_all_missions():
     # TODO write the get function for missions
-    Popen("python experiments/process_spawnee.py", shell=True)
     return HttpResponse(json.dumps(missions_queued.queued_missions))
 
 
@@ -84,6 +83,7 @@ def start_mission(data, mission_id):
     data = json.loads(data)
     mission = missions_queued.get_mission(int(mission_id))
     if (mission is not None) and (verify_no_missions_are_active()):
+        Popen("python experiments/process_spawnee.py", shell=True)
         return send_response(missions_queued.update_mission(data))
     return send_missions_error("Could not locate mission with id: " + str(data["mission"]["id"]))
 
