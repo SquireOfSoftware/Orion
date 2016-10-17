@@ -1,9 +1,12 @@
-from django.http import HttpResponse
 import json
-from queue import Queue
 from datetime import datetime
-from drone_service import drones
 from subprocess import Popen
+
+from django.http import HttpResponse
+
+from drone_service import drones
+from queue import Queue
+from rest import models
 
 missions_queued = Queue()
 
@@ -15,10 +18,14 @@ MAX_X = 3.0
 MIN_Y = 0
 MAX_Y = 3.0
 
+missions_test = []
+
 
 # get all the missions
 def get_all_missions():
     # TODO write the get function for missions
+    drone_status = models.Dronestatus
+    print(drone_status)
     return HttpResponse(json.dumps(missions_queued.queued_missions))
 
 
