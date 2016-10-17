@@ -3,6 +3,7 @@ import json
 from queue import Queue
 from datetime import datetime
 from drone_service import drones
+from subprocess import Popen
 
 missions_queued = Queue()
 
@@ -27,13 +28,13 @@ def get_mission(mission_id):
     mission = missions_queued.get_mission(mission_id=mission_id)
 
     if mission is None:
-        return get_missions_error("Could not find mission with id: " + str(mission_id))
+        return send_missions_error("Could not find mission with id: " + str(mission_id))
 
     return HttpResponse(json.dumps(mission))
 
 
 # mission error
-def get_missions_error(message):
+def send_missions_error(message):
     return HttpResponse(json.dumps({"status": "error",
                                     "data": message
                                     }),
@@ -54,32 +55,37 @@ def add_a_mission(data):
 
     if drones.validate_drone(int(drone_id)):
         if not validate_altitude(data["mission"]["altitude"]):
-            return get_missions_error("Please verify that the altitude is between " +
-                                      str(MIN_ALTITUDE) +
-                                      " and " +
-                                      str(MAX_ALTITUDE))
+            return send_missions_error("Please verify that the altitude is between " +
+                                       str(MIN_ALTITUDE) +
+                                       " and " +
+                                       str(MAX_ALTITUDE))
         elif not validate_point_of_interest(data["mission"]["point_of_interest"]):
-            return get_missions_error("Could not locate a point of interest")
+            return send_missions_error("Could not locate a point of interest")
         elif not validate_flight_path(data["mission"]["waypoints"], data["mission"]["obstacles"]):
-            return get_missions_error("Obstacles were found to be intersecting the flight path")
+            return send_missions_error("Obstacles were found to be intersecting the flight path")
         elif not validate_battery():
-            return get_missions_error("There is not enough battery to complete this flight path")
+            return send_missions_error("There is not enough battery to complete this flight path")
         else:
             # parses dictionary to json
             missions_queued.add_to_queue(mission=data)
 
             return HttpResponse(json.dumps(data))
 
-    return get_missions_error("Drone with id " + str(drone_id) + " is not available")
+    return send_missions_error("Drone with id " + str(drone_id) + " is not available")
 
 
 def add_a_mission_error():
-    return get_missions_error("Invalid request only POST allowed on this end point")
+    return send_missions_error("Invalid request only POST allowed on this end point")
 
 
 # this includes aborting a mission
-def update_mission(data):
-    pass
+def start_mission(data, mission_id):
+    data = json.loads(data)
+    mission = missions_queued.get_mission(int(mission_id))
+    if (mission is not None) and (verify_no_missions_are_active()):
+        Popen("python experiments/process_spawnee.py", shell=True)
+        return send_response(missions_queued.update_mission(data))
+    return send_missions_error("Could not locate mission with id: " + str(data["mission"]["id"]))
 
 
 def validate_mission(mission):
@@ -97,10 +103,10 @@ def validate_altitude(altitude):
 def validate_point_of_interest(point_of_interest):
     # verify that it exists
     # verify that it is within the boundaries of 3m by 3m
-    return (point_of_interest["x"] > MIN_X) and \
-           (point_of_interest["x"] < MAX_X) and \
-           (point_of_interest["y"] > MIN_Y) and \
-           (point_of_interest["y"] < MAX_Y)
+    return (point_of_interest[0]["x"] > MIN_X) and \
+           (point_of_interest[0]["x"] < MAX_X) and \
+           (point_of_interest[0]["y"] > MIN_Y) and \
+           (point_of_interest[0]["y"] < MAX_Y)
 
 
 def validate_flight_path(waypoints, obstacles):
@@ -113,3 +119,11 @@ def validate_battery():
     # assume there is enough battery charge
     # TODO implement this feature to work with the drone metedata
     return True
+
+
+def verify_no_missions_are_active():
+    return missions_queued.is_any_mission_active()
+
+
+def send_response(message):
+    return HttpResponse(json.dumps(message))

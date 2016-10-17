@@ -34,7 +34,7 @@ class Queue(object):
         }},
         {"mission": {
             "id": 2,
-            "status": MISSION_STATUS['SUCCESS'],
+            "status": MISSION_STATUS['COMPLETED'],
             "url": "missions/2",
             "waypoints": [
                 {"x": 0, "y": 0},
@@ -101,6 +101,13 @@ class Queue(object):
                 return mission
         return None
 
+    def update_mission(self, mission):
+        for i in range(len(self.queued_missions)):
+            if self.queued_missions[i]["mission"]["id"] is mission["mission"]["id"]:
+                self.queued_missions[i] = mission
+                return True
+        return False
+
     def get_total_no_of_missions(self):
         return len(self.queued_missions)
 
@@ -108,3 +115,9 @@ class Queue(object):
         if self.current_mission is not None:
             pass
         pass
+
+    def is_any_mission_active(self):
+        for mission in self.queued_missions:
+            if mission["mission"]["status"] == MISSION_STATUS["ABORTED"]:
+                return True
+        return False
