@@ -12,3 +12,4 @@ class resource(object):
     def __init__(self, resource_locator):
         #Add class instance to name
         resource_locator.add(self.__class__.__name__, self);
+
