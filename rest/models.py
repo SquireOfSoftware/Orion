@@ -32,6 +32,12 @@ class Dronestatus(models.Model):
         db_table = 'DroneStatus'
         app_label = 'DroneStatus'
 
+    def as_dict(self):
+        return {
+            "id": self.dronestatusid,
+            "status": self.dronestatusname
+        }
+
 
 class Image(models.Model):
     imageid = models.IntegerField(db_column='ImageID')  # Field name made lowercase.
