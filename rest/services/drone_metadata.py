@@ -14,6 +14,7 @@ class drone_metadata(Connector):
         #Extract from ardrone/navdata
         self.subNavdata = rospy.subscribe('/ardrone/navdata', Navdata, self.ReceiveNavdata)
         self.current = None
+        self.connect()
 
     #Call back for Navdata Extraction
     def ReceiveNavdata(self, navdata):
