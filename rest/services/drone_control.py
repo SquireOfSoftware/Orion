@@ -30,16 +30,18 @@ class drone_control (object):
         return
 
     def move(self, data):
-        self.linear = data.linear
-        self.angular = data.angular
-        self.move.publish(Twist(Vector3(data.linear.x,
-                                        data.linear.y,
-                                        data.linear.z),
-                                Vector3(data.angular.x,
-                                        data.angular.y,
-                                        data.angular.z)))
+        self.linear = data['linear']
+        self.angular = data['angular']
+        self._move.publish(Twist(Vector3(data['linear']['x'],
+                                        data['linear']['y'],
+                                        data['linear']['z']),
+                                Vector3(data['angular']['x'],
+                                        data['angular']['y'],
+                                        data['angular']['z'])))
     def test(self):
         self.takeoff()
         #Takes more time
-        time.sleep(10)
+        time.sleep(5)
+        self.move({'linear':{'x':0, 'y':0, 'z':0}, 'angular':{'x':0, 'y':0, 'z':0}})
+        time.sleep(12)
         self.land()
