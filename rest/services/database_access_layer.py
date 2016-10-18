@@ -85,7 +85,7 @@ dbconfig = {"database": "Drone_Management_System",
 
 pool = mysql.connector.pooling.MySQLConnectionPool
 
-class Connector(object):
+class connector(object):
     def __init__(self):
         self.connection = None;
 

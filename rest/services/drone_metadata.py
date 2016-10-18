@@ -2,15 +2,15 @@
 import roslib
 import rospy
 import json
-from database_access_layer import Connector
+from database_access_layer import connector
 from datetime import date, datetime, timedelta
-from resource_locator import resource
+from resource_locator import resource, resource_locator
 
 from ardrone_autonomy.msg import Navdata
 # Define insert statements here
 
-class drone_metadata(Connector, resource):
-    def __init__(self, database_access_layer):
+class drone_metadata(connector, resource):
+    def __init__(self, resource_locator):
         self.jstring = None
         #Extract from ardrone/navdata
         self.subNavdata = rospy.subscribe('/ardrone/navdata', Navdata, self.ReceiveNavdata)
