@@ -1,5 +1,5 @@
 #!usr/bin/env python
-
+#This is not a class to be used
 from abc import ABCMeta
 
 class ROSClient(object):

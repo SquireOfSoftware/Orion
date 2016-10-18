@@ -4,11 +4,12 @@ import rospy
 import json
 from database_access_layer import Connector
 from datetime import date, datetime, timedelta
+from resource_locator import resource
 
 from ardrone_autonomy.msg import Navdata
 # Define insert statements here
 
-class drone_metadata(Connector):
+class drone_metadata(Connector, resource):
     def __init__(self, database_access_layer):
         self.jstring = None
         #Extract from ardrone/navdata
