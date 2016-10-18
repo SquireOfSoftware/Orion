@@ -62,7 +62,7 @@ class Drone(models.Model):
 
 
 class Missionstatus(models.Model):
-    missionstatustid = models.AutoField(db_column='MissionStatustID',
+    missionstatusid = models.AutoField(db_column='MissionStatustID',
                                         primary_key=True)  # Field name made lowercase.
     missionstatusname = models.CharField(db_column='MissionStatusName',
                                          max_length=45,
@@ -116,7 +116,7 @@ class Mission(models.Model):
         if self.missionstatus_missionstatustid is None:
             mission_status_id = MISSION_STATUS["QUEUED"]
         else:
-            mission_status_id = self.missionstatus_missionstatustid.missionstatustid
+            mission_status_id = self.missionstatus_missionstatustid.missionstatusid
 
         if self.drone_droneid is None:
             drone_id = -1

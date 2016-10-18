@@ -7,6 +7,11 @@ from django.http import HttpResponse
 from drone_service import drones
 from queue import Queue
 from rest.models import Mission
+from rest.models import Missionstatus
+from rest.models import Drone
+
+from management_constants import MISSION_STATUS
+from management_constants import DRONE_STATUS
 
 missions_queued = Queue()
 
@@ -34,7 +39,6 @@ def get_all_missions():
 # get a single missions
 def get_mission(mission_id):
     # TODO write the search function for a mission
-    # mission = missions_queued.get_mission(mission_id=mission_id)
     mission = Mission.objects.get(missionid=mission_id)
     if mission is None:
         return send_missions_error("Could not find mission with id: " + str(mission.missionid))
@@ -76,9 +80,14 @@ def add_a_mission(data):
             return send_missions_error("There is not enough battery to complete this flight path")
         else:
             # parses dictionary to json
-            missions_queued.add_to_queue(mission=data)
-
-            return HttpResponse(json.dumps(data))
+            # missions_queued.add_to_queue(mission=data)
+            mission = Mission.objects.create(
+                missioncreationdate=datetime.now().__str__(),
+                missionaltitude=float(data["mission"]["altitude"]),
+                missionstatus_missionstatustid=Missionstatus.objects.get(missionstatusid=MISSION_STATUS["QUEUED"]),
+                drone_droneid=Drone.objects.get(droneid=drone_id)
+            )
+            return HttpResponse(json.dumps(mission.as_dict()))
 
     return send_missions_error("Drone with id " + str(drone_id) + " is not available")
 
