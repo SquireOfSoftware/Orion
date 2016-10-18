@@ -6,7 +6,7 @@ from django.http import HttpResponse
 
 from drone_service import drones
 from queue import Queue
-from rest.models import Dronestatus
+from rest.models import Drone
 
 missions_queued = Queue()
 
@@ -24,13 +24,19 @@ missions_test = []
 # get all the missions
 def get_all_missions():
     # TODO write the get function for missions
-    drone_status = Dronestatus.objects.all()
-    print(type(drone_status))
-    drone_status_dictionary = [obj.as_dict() for obj in drone_status]
-    return HttpResponse(json.dumps(
-        #missions_queued.queued_missions
-        drone_status_dictionary
-    ))
+    missions_query = Drone.objects.all()
+
+    print(type(missions_query))
+    missions_query_dictionary = [mission.as_dict() for mission in missions_query]
+
+    for query in missions_query:
+        print(query)
+
+
+    print(missions_query_dictionary)
+    return HttpResponse(
+        json.dumps(missions_query_dictionary)
+    )
 
 
 # get a single missions

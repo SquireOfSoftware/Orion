@@ -9,21 +9,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 
-app_label = "MySQL"
-
-class Drone(models.Model):
-    droneid = models.IntegerField(db_column='DroneID', primary_key=True)  # Field name made lowercase.
-    dronename = models.CharField(db_column='DroneName', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    droneip = models.CharField(db_column='DroneIP', max_length=16, blank=True, null=True)  # Field name made lowercase.
-    dronestatus_dronestatusid = models.ForeignKey('Dronestatus', models.DO_NOTHING, db_column='DroneStatus_DroneStatusID')  # Field name made lowercase.
-
-    class Meta:
-        managed = False
-        db_table = 'Drone'
-        app_label = "Drone"
-
-
-class Dronestatus(models.Model):
+class DroneStatus(models.Model):
     dronestatusid = models.AutoField(db_column='DroneStatusID', primary_key=True)  # Field name made lowercase.
     dronestatusname = models.CharField(db_column='DroneStatusName', max_length=45, blank=True, null=True)  # Field name made lowercase.
 
@@ -37,6 +23,35 @@ class Dronestatus(models.Model):
             "id": self.dronestatusid,
             "status": self.dronestatusname
         }
+
+    # def __str__(self):
+    #     return "{}"
+
+class Drone(models.Model):
+    droneid = models.IntegerField(db_column='DroneID', primary_key=True)  # Field name made lowercase.
+    dronename = models.CharField(db_column='DroneName', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    droneip = models.CharField(db_column='DroneIP', max_length=16, blank=True, null=True)  # Field name made lowercase.
+    dronestatus_dronestatusid = models.ForeignKey(DroneStatus, models.DO_NOTHING, db_column='DroneStatus_DroneStatusID', null=False)  # Field name made lowercase.
+
+
+    class Meta:
+        managed = False
+        db_table = 'Drone'
+        app_label = "Drone"
+
+    def as_dict(self):
+        return {
+            "id": self.droneid,
+            "ip": self.droneip,
+            "name": self.dronename,
+            "status": self.dronestatus_dronestatusid.dronestatusid
+        }
+
+    # def __str__(self):
+    #     return str(self.droneid)
+
+
+
 
 
 class Image(models.Model):
@@ -71,8 +86,8 @@ class Mission(models.Model):
     missionendtime = models.DateTimeField(db_column='MissionEndTime', blank=True, null=True)  # Field name made lowercase.
     missioncreationdate = models.DateTimeField(db_column='MissionCreationDate')  # Field name made lowercase.
     missionaltitude = models.FloatField(db_column='MissionAltitude', blank=True, null=True)  # Field name made lowercase.
-    missionstatus_missionstatustid = models.ForeignKey('Missionstatus', models.DO_NOTHING, db_column='MissionStatus_MissionStatustID')  # Field name made lowercase.
-    drone_droneid = models.ForeignKey(Drone, models.DO_NOTHING, db_column='Drone_DroneID')  # Field name made lowercase.
+    missionstatus_missionstatustid = models.ForeignKey('Missionstatus', models.DO_NOTHING, db_column='MissionStatus_MissionStatustID', blank=True, null=True)  # Field name made lowercase.
+    drone_droneid = models.ForeignKey(Drone, models.DO_NOTHING, db_column='Drone_DroneID', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
