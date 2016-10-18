@@ -8,10 +8,16 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from management_constants import MISSION_STATUS
+from management_constants import DRONE_STATUS
 
 class DroneStatus(models.Model):
-    dronestatusid = models.AutoField(db_column='DroneStatusID', primary_key=True)  # Field name made lowercase.
-    dronestatusname = models.CharField(db_column='DroneStatusName', max_length=45, blank=True, null=True)  # Field name made lowercase.
+    dronestatusid = models.AutoField(db_column='DroneStatusID',
+                                     primary_key=True)  # Field name made lowercase.
+    dronestatusname = models.CharField(db_column='DroneStatusName',
+                                       max_length=45,
+                                       blank=True,
+                                       null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -24,15 +30,22 @@ class DroneStatus(models.Model):
             "status": self.dronestatusname
         }
 
-    # def __str__(self):
-    #     return "{}"
 
 class Drone(models.Model):
-    droneid = models.IntegerField(db_column='DroneID', primary_key=True)  # Field name made lowercase.
-    dronename = models.CharField(db_column='DroneName', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    droneip = models.CharField(db_column='DroneIP', max_length=16, blank=True, null=True)  # Field name made lowercase.
-    dronestatus_dronestatusid = models.ForeignKey(DroneStatus, models.DO_NOTHING, db_column='DroneStatus_DroneStatusID', null=False)  # Field name made lowercase.
-
+    droneid = models.IntegerField(db_column='DroneID',
+                                  primary_key=True)  # Field name made lowercase.
+    dronename = models.CharField(db_column='DroneName',
+                                 max_length=10,
+                                 blank=True,
+                                 null=True)  # Field name made lowercase.
+    droneip = models.CharField(db_column='DroneIP',
+                               max_length=16,
+                               blank=True,
+                               null=True)  # Field name made lowercase.
+    dronestatus_dronestatusid = models.ForeignKey(DroneStatus,
+                                                  models.DO_NOTHING,
+                                                  db_column='DroneStatus_DroneStatusID',
+                                                  null=False) # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -47,31 +60,91 @@ class Drone(models.Model):
             "status": self.dronestatus_dronestatusid.dronestatusid
         }
 
-    # def __str__(self):
-    #     return str(self.droneid)
 
-
-
-
-
-class Image(models.Model):
-    imageid = models.IntegerField(db_column='ImageID')  # Field name made lowercase.
-    imagetimestamp = models.DateTimeField(db_column='ImageTimestamp', blank=True, null=True)  # Field name made lowercase.
-    imagefilepath = models.CharField(db_column='ImageFilepath', max_length=100, blank=True, null=True)  # Field name made lowercase.
-    mission_missionid = models.ForeignKey('Mission', models.DO_NOTHING, db_column='Mission_MissionID')  # Field name made lowercase.
+class Missionstatus(models.Model):
+    missionstatustid = models.AutoField(db_column='MissionStatustID',
+                                        primary_key=True)  # Field name made lowercase.
+    missionstatusname = models.CharField(db_column='MissionStatusName',
+                                         max_length=45,
+                                         blank=True,
+                                         null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
-        db_table = 'Image'
-        unique_together = (('imageid', 'mission_missionid'),)
-        app_label = "Image"
+        db_table = 'MissionStatus'
+        app_label = "MissionStatus"
+
+    def as_dict(self):
+        return {
+            "id": self.missionstatustid,
+            "status": self.missionstatusname
+        }
+
+
+class Mission(models.Model):
+    missionid = models.IntegerField(db_column='MissionID',
+                                    primary_key=True)  # Field name made lowercase.
+    missionstarttime = models.DateTimeField(db_column='MissionStartTime',
+                                            blank=True,
+                                            null=True)  # Field name made lowercase.
+    missionendtime = models.DateTimeField(db_column='MissionEndTime',
+                                          blank=True,
+                                          null=True)  # Field name made lowercase.
+    missioncreationdate = models.DateTimeField(db_column='MissionCreationDate')  # Field name made lowercase.
+    missionaltitude = models.FloatField(db_column='MissionAltitude',
+                                        blank=True,
+                                        null=True)  # Field name made lowercase.
+    missionstatus_missionstatustid = models.ForeignKey(Missionstatus,
+                                                       models.DO_NOTHING,
+                                                       db_column='MissionStatus_MissionStatustID',
+                                                       blank=True,
+                                                       null=True)  # Field name made lowercase.
+    drone_droneid = models.ForeignKey(Drone,
+                                      models.DO_NOTHING,
+                                      db_column='Drone_DroneID',
+                                      blank=True,
+                                      null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Mission'
+        app_label = "Mission"
+
+    def as_dict(self):
+        mission_status_id = ""
+        drone_id = ""
+        if self.missionstatus_missionstatustid is None:
+            mission_status_id = MISSION_STATUS["QUEUED"]
+        else:
+            mission_status_id = self.missionstatus_missionstatustid.missionstatustid
+
+        if self.drone_droneid is None:
+            drone_id = -1
+        else:
+            drone_id = self.drone_droneid.droneid
+
+        return {
+            "id": self.missionid,
+            "start_time": self.missionstarttime,
+            "end_time": self.missionendtime,
+            "creation_date": self.missioncreationdate,
+            "altitude": self.missionaltitude,
+            "status": mission_status_id,
+            "drone_id": drone_id
+        }
 
 
 class Metadata(models.Model):
     metadataid = models.IntegerField(db_column='MetadataID')  # Field name made lowercase.
-    metadatablob = models.TextField(db_column='MetadataBlob', blank=True, null=True)  # Field name made lowercase.
-    metadatatimestamp = models.DateTimeField(db_column='MetadataTimestamp', blank=True, null=True)  # Field name made lowercase.
-    drone_droneid = models.ForeignKey(Drone, models.DO_NOTHING, db_column='Drone_DroneID')  # Field name made lowercase.
+    metadatablob = models.TextField(db_column='MetadataBlob',
+                                    blank=True,
+                                    null=True)  # Field name made lowercase.
+    metadatatimestamp = models.DateTimeField(db_column='MetadataTimestamp',
+                                             blank=True,
+                                             null=True)  # Field name made lowercase.
+    drone_droneid = models.ForeignKey(Drone,
+                                      models.DO_NOTHING,
+                                      db_column='Drone_DroneID')  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -79,37 +152,54 @@ class Metadata(models.Model):
         unique_together = (('metadataid', 'drone_droneid'),)
         app_label = "Metadata"
 
+    def as_dict(self):
+        return {
+            "id": self.metadataid,
+            "data": self.metadatablob,
+            "timestamp": self.metadatatimestamp,
+            "drone_id": self.drone_droneid.droneid
+        }
 
-class Mission(models.Model):
-    missionid = models.IntegerField(db_column='MissionID', primary_key=True)  # Field name made lowercase.
-    missionstarttime = models.DateTimeField(db_column='MissionStartTime', blank=True, null=True)  # Field name made lowercase.
-    missionendtime = models.DateTimeField(db_column='MissionEndTime', blank=True, null=True)  # Field name made lowercase.
-    missioncreationdate = models.DateTimeField(db_column='MissionCreationDate')  # Field name made lowercase.
-    missionaltitude = models.FloatField(db_column='MissionAltitude', blank=True, null=True)  # Field name made lowercase.
-    missionstatus_missionstatustid = models.ForeignKey('Missionstatus', models.DO_NOTHING, db_column='MissionStatus_MissionStatustID', blank=True, null=True)  # Field name made lowercase.
-    drone_droneid = models.ForeignKey(Drone, models.DO_NOTHING, db_column='Drone_DroneID', blank=True, null=True)  # Field name made lowercase.
+
+class Image(models.Model):
+    imageid = models.IntegerField(db_column='ImageID')  # Field name made lowercase.
+    imagetimestamp = models.DateTimeField(db_column='ImageTimestamp',
+                                          blank=True,
+                                          null=True)  # Field name made lowercase.
+    imagefilepath = models.CharField(db_column='ImageFilepath',
+                                     max_length=100,
+                                     blank=True,
+                                     null=True)  # Field name made lowercase.
+    mission_missionid = models.ForeignKey('Mission',
+                                          models.DO_NOTHING,
+                                          db_column='Mission_MissionID')  # Field name made lowercase.
 
     class Meta:
         managed = False
-        db_table = 'Mission'
-        app_label = "Mission"
+        db_table = 'Image'
+        unique_together = (('imageid', 'mission_missionid'),)
+        app_label = "Image"
 
-
-class Missionstatus(models.Model):
-    missionstatustid = models.AutoField(db_column='MissionStatustID', primary_key=True)  # Field name made lowercase.
-    missionstatusname = models.CharField(db_column='MissionStatusName', max_length=45, blank=True, null=True)  # Field name made lowercase.
-
-    class Meta:
-        managed = False
-        db_table = 'MissionStatus'
-        app_label = "MissionStatus"
+    def as_dict(self):
+        return {
+            "id": self.imageid,
+            "timestamp": self.imagetimestamp,
+            "filepath": self.imagefilepath,
+            "status": self.mission_missionid.missionid
+        }
 
 
 class Obstacle(models.Model):
     obstacleid = models.IntegerField(db_column='ObstacleID')  # Field name made lowercase.
-    obstaclecoordinatex = models.FloatField(db_column='ObstacleCoordinateX', blank=True, null=True)  # Field name made lowercase.
-    obstaclecoordinatey = models.FloatField(db_column='ObstacleCoordinateY', blank=True, null=True)  # Field name made lowercase.
-    mission_missionid = models.ForeignKey(Mission, models.DO_NOTHING, db_column='Mission_MissionID')  # Field name made lowercase.
+    obstaclecoordinatex = models.FloatField(db_column='ObstacleCoordinateX',
+                                            blank=True,
+                                            null=True)  # Field name made lowercase.
+    obstaclecoordinatey = models.FloatField(db_column='ObstacleCoordinateY',
+                                            blank=True,
+                                            null=True)  # Field name made lowercase.
+    mission_missionid = models.ForeignKey(Mission,
+                                          models.DO_NOTHING,
+                                          db_column='Mission_MissionID')  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -117,32 +207,74 @@ class Obstacle(models.Model):
         unique_together = (('obstacleid', 'mission_missionid'),)
         app_label = "Obstacle"
 
+    def as_dict(self):
+        return {
+            "id": self.obstacleid,
+            "x": self.obstaclecoordinatex,
+            "y": self.obstaclecoordinatey,
+            "mission_id": self.mission_missionid.missionid
+        }
+
 
 class Pointofinterest(models.Model):
-    pointofinterestidpointofinterestid = models.IntegerField(db_column='PointOfInterestIDPointOfInterestID')  # Field name made lowercase.
-    pointofinterestx = models.FloatField(db_column='PointOfInterestX', blank=True, null=True)  # Field name made lowercase.
-    pointofinteresty = models.FloatField(db_column='PointOfInterestY', blank=True, null=True)  # Field name made lowercase.
-    mission_missionid = models.ForeignKey(Mission, models.DO_NOTHING, db_column='Mission_MissionID')  # Field name made lowercase.
+    pointofinterestid = models.IntegerField(db_column='PointOfInterestIDPointOfInterestID')  # Field name made lowercase.
+    pointofinterestx = models.FloatField(db_column='PointOfInterestX',
+                                         blank=True,
+                                         null=True)  # Field name made lowercase.
+    pointofinteresty = models.FloatField(db_column='PointOfInterestY',
+                                         blank=True,
+                                         null=True)  # Field name made lowercase.
+    mission_missionid = models.ForeignKey(Mission,
+                                          models.DO_NOTHING,
+                                          db_column='Mission_MissionID')  # Field name made lowercase.
 
     class Meta:
         managed = False
         db_table = 'PointOfInterest'
-        unique_together = (('pointofinterestidpointofinterestid', 'mission_missionid'),)
+        unique_together = (('pointofinterestid', 'mission_missionid'),)
         app_label = "PointOfInterest"
+
+    def as_dict(self):
+        return {
+            "id": self.pointofinterestid,
+            "x": self.pointofinterestx,
+            "y": self.pointofinteresty,
+            "mission_id": self.mission_missionid.missionid
+        }
 
 
 class Waypoint(models.Model):
     waypointid = models.IntegerField(db_column='WaypointID')  # Field name made lowercase.
-    waypointy = models.FloatField(db_column='WaypointY', blank=True, null=True)  # Field name made lowercase.
-    waypointx = models.FloatField(db_column='WaypointX', blank=True, null=True)  # Field name made lowercase.
-    waypointtimearrived = models.DateTimeField(db_column='WaypointTimeArrived', blank=True, null=True)  # Field name made lowercase.
-    mission_missionid = models.ForeignKey(Mission, models.DO_NOTHING, db_column='Mission_MissionID')  # Field name made lowercase.
+    waypointy = models.FloatField(db_column='WaypointY',
+                                  blank=True,
+                                  null=True)  # Field name made lowercase.
+    waypointx = models.FloatField(db_column='WaypointX',
+                                  blank=True,
+                                  null=True)  # Field name made lowercase.
+    waypointtimearrived = models.DateTimeField(db_column='WaypointTimeArrived',
+                                               blank=True,
+                                               null=True)  # Field name made lowercase.
+    mission_missionid = models.ForeignKey(Mission,
+                                          models.DO_NOTHING,
+                                          db_column='Mission_MissionID')  # Field name made lowercase.
 
     class Meta:
         managed = False
         db_table = 'Waypoint'
         unique_together = (('waypointid', 'mission_missionid'),)
         app_label = "Waypoint"
+
+    def as_dict(self):
+        return {
+            "id": self.waypointid,
+            "x": self.waypointx,
+            "y": self.waypointy,
+            "time_arrived": self.waypointtimearrived,
+            "mission_id": self.mission_missionid.missionid
+        }
+
+
+# Useless things that were brought into Django when migrating the db in
 
 
 class AuthGroup(models.Model):

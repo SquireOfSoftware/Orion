@@ -6,7 +6,7 @@ from django.http import HttpResponse
 
 from drone_service import drones
 from queue import Queue
-from rest.models import Drone
+from rest.models import Mission
 
 missions_queued = Queue()
 
@@ -24,16 +24,8 @@ missions_test = []
 # get all the missions
 def get_all_missions():
     # TODO write the get function for missions
-    missions_query = Drone.objects.all()
-
-    print(type(missions_query))
+    missions_query = Mission.objects.all()
     missions_query_dictionary = [mission.as_dict() for mission in missions_query]
-
-    for query in missions_query:
-        print(query)
-
-
-    print(missions_query_dictionary)
     return HttpResponse(
         json.dumps(missions_query_dictionary)
     )
@@ -42,12 +34,12 @@ def get_all_missions():
 # get a single missions
 def get_mission(mission_id):
     # TODO write the search function for a mission
-    mission = missions_queued.get_mission(mission_id=mission_id)
-
+    # mission = missions_queued.get_mission(mission_id=mission_id)
+    mission = Mission.objects.get(missionid=mission_id)
     if mission is None:
-        return send_missions_error("Could not find mission with id: " + str(mission_id))
+        return send_missions_error("Could not find mission with id: " + str(mission.missionid))
 
-    return HttpResponse(json.dumps(mission))
+    return HttpResponse(json.dumps(mission.as_dict()))
 
 
 # mission error
