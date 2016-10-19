@@ -59,37 +59,56 @@ def add_a_mission(data):
     # parses string to dictionary
     data = json.loads(data)
 
-    data['mission']['id'] = missions_queued.get_total_no_of_missions() + 1
-    data['mission']['start_time'] = datetime.now().__str__()
-    data['mission']['status'] = int(data['mission']['status'])
-    data['mission']['url'] = "missions/" + str(data['mission']['id'])
-
+    altitude = data["mission"]["altitude"]
     drone_id = data['mission']['drone']['id']
+    point_of_interest = data["mission"]["point_of_interest"]
+    waypoints = data["mission"]["waypoints"]
+    obstacles = data["mission"]["obstacles"]
 
     if drones.validate_drone(int(drone_id)):
-        if not validate_altitude(data["mission"]["altitude"]):
+        if not validate_altitude(altitude):
             return send_missions_error("Please verify that the altitude is between " +
                                        str(MIN_ALTITUDE) +
                                        " and " +
                                        str(MAX_ALTITUDE))
-        elif not validate_point_of_interest(data["mission"]["point_of_interest"]):
+        elif not validate_point_of_interest(point_of_interest):
             return send_missions_error("Could not locate a point of interest")
-        elif not validate_flight_path(data["mission"]["waypoints"], data["mission"]["obstacles"]):
+        elif not validate_flight_path(waypoints, obstacles):
             return send_missions_error("Obstacles were found to be intersecting the flight path")
         elif not validate_battery():
             return send_missions_error("There is not enough battery to complete this flight path")
         else:
             # parses dictionary to json
             # missions_queued.add_to_queue(mission=data)
-            mission = Mission.objects.create(
-                missioncreationdate=datetime.now().__str__(),
-                missionaltitude=float(data["mission"]["altitude"]),
-                missionstatus_missionstatustid=Missionstatus.objects.get(missionstatusid=MISSION_STATUS["QUEUED"]),
-                drone_droneid=Drone.objects.get(droneid=drone_id)
-            )
+            mission = create_mission(altitude, drone_id)
+            # add all waypoints
+            create_waypoints(mission.missionid, waypoints)
+            # add all obstacles
+            create_obstacles(mission.missionid, obstacles)
+            # add point of interest
+            create_point_of_interest(mission.missionid, point_of_interest)
             return HttpResponse(json.dumps(mission.as_dict()))
 
     return send_missions_error("Drone with id " + str(drone_id) + " is not available")
+
+
+def create_mission(altitude, drone_id):
+    mission = Mission.objects.create(
+        missioncreationdate=datetime.now().__str__(),
+        missionaltitude=float(altitude),
+        missionstatus_missionstatustid=Missionstatus.objects.get(missionstatusid=MISSION_STATUS["QUEUED"]),
+        drone_droneid=Drone.objects.get(droneid=drone_id)
+    )
+    return mission
+
+def create_waypoints(mission_id, waypoint_array):
+
+
+def create_obstacles(mission_id, obstacle_array):
+
+
+def create_point_of_interest(mission_id, point_of_interest):
+
 
 
 def add_a_mission_error():
