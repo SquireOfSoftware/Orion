@@ -32,8 +32,7 @@ class DroneStatus(models.Model):
 
 
 class Drone(models.Model):
-    droneid = models.IntegerField(db_column='DroneID',
-                                  primary_key=True)  # Field name made lowercase.
+    droneid = models.AutoField(db_column='DroneID', primary_key=True)  # Field name made lowercase.
     dronename = models.CharField(db_column='DroneName',
                                  max_length=10,
                                  blank=True,
@@ -82,7 +81,7 @@ class Missionstatus(models.Model):
 
 
 class Mission(models.Model):
-    missionid = models.IntegerField(db_column='MissionID',
+    missionid = models.AutoField(db_column='MissionID',
                                     primary_key=True)  # Field name made lowercase.
     missionstarttime = models.DateTimeField(db_column='MissionStartTime',
                                             blank=True,
