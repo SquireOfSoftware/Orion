@@ -1,5 +1,6 @@
 import json
-from datetime import datetime
+#from datetime import datetime
+from django.utils import timezone
 from subprocess import Popen
 
 from django.http import HttpResponse
@@ -95,7 +96,7 @@ def add_a_mission(data):
 
 def create_mission(altitude, drone_id):
     mission = Mission.objects.create(
-        missioncreationdate=datetime.now().__str__(),
+        missioncreationdate=get_current_time(),
         missionaltitude=float(altitude),
         missionstatus_missionstatustid=Missionstatus.objects.get(missionstatusid=MISSION_STATUS["QUEUED"]),
         drone_droneid=Drone.objects.get(droneid=drone_id)
@@ -206,3 +207,8 @@ def verify_no_missions_are_active():
 
 def send_response(message):
     return HttpResponse(json.dumps(message))
+
+
+def get_current_time():
+    time = timezone.now().__str__()
+    return time
