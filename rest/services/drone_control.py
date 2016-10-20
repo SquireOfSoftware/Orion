@@ -1,6 +1,7 @@
 #!usr/bin/env python
 import roslib;
 import rospy;
+from math import pi
 
 from std_msgs.msg import Empty
 from geometry_msgs.msg import Twist
@@ -43,5 +44,19 @@ class drone_control (object):
         #Takes more time
         time.sleep(5)
         self.move({'linear':{'x':0, 'y':0, 'z':0}, 'angular':{'x':0, 'y':0, 'z':0}})
-        time.sleep(12)
+        time.sleep(1)
+        self.move({'linear':{'x':0, 'y':0, 'z':0}, 'angular':{'x':0, 'y':0, 'z':0.1}})
+        #2 Second rotation = 180 at 100%
+        #Also very unpredictable
+        time.sleep(6)
+        self.move({'linear':{'x':0, 'y':0, 'z':0}, 'angular':{'x':0, 'y':0, 'z':0}})
+        time.sleep(5)
+        self.move({'linear':{'x':0.1, 'y':0, 'z':0}, 'angular':{'x':0, 'y':0, 'z':0}})
+        time.sleep(1)
+        self.move({'linear':{'x':0, 'y':0, 'z':0}, 'angular':{'x':0, 'y':0, 'z':0}})
+        time.sleep(1)
+        self.move({'linear':{'x':0, 'y':0, 'z':-0.5}, 'angular':{'x':0, 'y':0, 'z':0}})
+        time.sleep(3)
+        self.move({'linear':{'x':0, 'y':0, 'z':0}, 'angular':{'x':0, 'y':0, 'z':0}})
         self.land()
+
