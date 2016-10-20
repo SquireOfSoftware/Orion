@@ -63,7 +63,7 @@ class Drone(models.Model):
 
 class Missionstatus(models.Model):
     missionstatusid = models.AutoField(db_column='MissionStatustID',
-                                        primary_key=True)  # Field name made lowercase.
+                                       primary_key=True)  # Field name made lowercase.
     missionstatusname = models.CharField(db_column='MissionStatusName',
                                          max_length=45,
                                          blank=True,
@@ -136,7 +136,7 @@ class Mission(models.Model):
 
 class Metadata(models.Model):
     metadataid = models.IntegerField(db_column='MetadataID',
-                                    primary_key=True)  # Field name made lowercase.
+                                     primary_key=True)  # Field name made lowercase.
     metadatablob = models.TextField(db_column='MetadataBlob',
                                     blank=True,
                                     null=True)  # Field name made lowercase.
@@ -164,7 +164,7 @@ class Metadata(models.Model):
 
 class Image(models.Model):
     imageid = models.IntegerField(db_column='ImageID',
-                                    primary_key=True)  # Field name made lowercase.
+                                  primary_key=True)  # Field name made lowercase.
     imagetimestamp = models.DateTimeField(db_column='ImageTimestamp',
                                           blank=True,
                                           null=True)  # Field name made lowercase.
@@ -193,7 +193,7 @@ class Image(models.Model):
 
 class Obstacle(models.Model):
     obstacleid = models.IntegerField(db_column='ObstacleID',
-                                    primary_key=True)  # Field name made lowercase.
+                                     primary_key=True)  # Field name made lowercase.
     obstaclecoordinatex = models.FloatField(db_column='ObstacleCoordinateX',
                                             blank=True,
                                             null=True)  # Field name made lowercase.
@@ -221,7 +221,7 @@ class Obstacle(models.Model):
 
 class Pointofinterest(models.Model):
     pointofinterestid = models.IntegerField(db_column='PointOfInterestIDPointOfInterestID',
-                                    primary_key=True)  # Field name made lowercase.
+                                            primary_key=True)  # Field name made lowercase.
     pointofinterestx = models.FloatField(db_column='PointOfInterestX',
                                          blank=True,
                                          null=True)  # Field name made lowercase.
@@ -249,7 +249,7 @@ class Pointofinterest(models.Model):
 
 class Waypoint(models.Model):
     waypointid = models.IntegerField(db_column='WaypointID',
-                                    primary_key=True)  # Field name made lowercase.
+                                     primary_key=True)  # Field name made lowercase.
     waypointy = models.FloatField(db_column='WaypointY',
                                   blank=True,
                                   null=True)  # Field name made lowercase.

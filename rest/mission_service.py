@@ -89,11 +89,12 @@ def add_a_mission(data):
             # processed_waypoints = [wp.as_dict() for wp in create_waypoints(1, waypoints)]
             # add all obstacles
             # create_obstacles(mission.missionid, obstacles)
-
+            # processed_obstacles = [ob.as_dict() for ob in create_obstacles(1, obstacles)]
             # add point of interest
             # create_point_of_interest(mission.missionid, point_of_interest)
+            processed_point_of_interest = create_point_of_interest(1, point_of_interest).as_dict()
             #return HttpResponse(json.dumps(mission.as_dict()))
-            return HttpResponse(json.dumps(processed_waypoints))
+            return HttpResponse(json.dumps(processed_point_of_interest))
 
     return send_missions_error("Drone with id " + str(drone_id) + " is not available")
 
@@ -106,6 +107,7 @@ def create_mission(altitude, drone_id):
         drone_droneid=Drone.objects.get(droneid=drone_id)
     )
     return mission
+
 
 def create_waypoints(mission_id, waypoint_array):
     waypoints = []
@@ -122,11 +124,29 @@ def create_waypoints(mission_id, waypoint_array):
     print(waypoints)
     return waypoints
 
+
 def create_obstacles(mission_id, obstacle_array):
-    pass
+    obstacles = []
+    for obstacle in obstacle_array:
+        points_are_valid = validate_points(obstacle)
+        if points_are_valid:
+            print("point is valid")
+            obstacles.append(Obstacle.objects.create(
+                obstaclecoordinatex=float(obstacle["x"]),
+                obstaclecoordinatey=float(obstacle["y"]),
+                mission_missionid=Mission.objects.get(missionid=mission_id)
+            ))
+    return obstacles
+
 
 def create_point_of_interest(mission_id, point_of_interest):
-    pass
+    # assume there is only one point of interest
+    poi = Pointofinterest.objects.create(
+        pointofinterestx=float(point_of_interest[0]["x"]),
+        pointofinteresty=float(point_of_interest[0]["y"]),
+        mission_missionid=Mission.objects.get(missionid=mission_id)
+    )
+    return poi
 
 
 def add_a_mission_error():
