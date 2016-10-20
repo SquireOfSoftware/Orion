@@ -30,6 +30,10 @@ class drone_control (object):
         self._takeoff.publish(Empty())
         return
 
+    # Stops the drone from moving
+    def stop(self):
+        self.move({'linear':{'x':0,'y':0,'z':0}, 'angular':{'x':0,'y':0,'z':0}
+
     def move(self, data):
         self.linear = data['linear']
         self.angular = data['angular']
