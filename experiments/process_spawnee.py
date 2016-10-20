@@ -1,6 +1,1 @@
-
-i = 0
-while i < 1000:
-    print(i)
-    i += 1
-
+print("Hello I am a dummy script on a separate process")

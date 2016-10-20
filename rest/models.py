@@ -11,6 +11,21 @@ from django.db import models
 from management_constants import MISSION_STATUS
 from management_constants import DRONE_STATUS
 
+
+def convert_mission_status(id):
+    for key, value in MISSION_STATUS.iteritems():
+        if value == id:
+            return key
+    return None
+
+
+def convert_drone_status(id):
+    for key, value in DRONE_STATUS.iteritems():
+        if value == id:
+            return key
+    return None
+
+
 class DroneStatus(models.Model):
     dronestatusid = models.AutoField(db_column='DroneStatusID',
                                      primary_key=True)  # Field name made lowercase.
@@ -56,7 +71,7 @@ class Drone(models.Model):
             "id": self.droneid,
             "ip": self.droneip,
             "name": self.dronename,
-            "status": self.dronestatus_dronestatusid.dronestatusid
+            "status": convert_drone_status(int(self.dronestatus_dronestatusid.dronestatusid))
         }
 
 
@@ -128,7 +143,7 @@ class Mission(models.Model):
             "end_time": self.missionendtime,
             "creation_date": self.missioncreationdate,
             "altitude": self.missionaltitude,
-            "status": mission_status_id,
+            "status": convert_mission_status(int(mission_status_id)),
             "drone_id": drone_id
         }
 
