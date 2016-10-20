@@ -74,6 +74,9 @@ class Drone(models.Model):
             "status": convert_drone_status(int(self.dronestatus_dronestatusid.dronestatusid))
         }
 
+    def get_status(self):
+        return convert_drone_status(int(self.dronestatus_dronestatusid.dronestatusid))
+
 
 class Missionstatus(models.Model):
     missionstatusid = models.AutoField(db_column='MissionStatustID',
@@ -139,9 +142,9 @@ class Mission(models.Model):
 
         return {
             "id": self.missionid,
-            "start_time": self.missionstarttime,
-            "end_time": self.missionendtime,
-            "creation_date": self.missioncreationdate,
+            "start_time": self.missionstarttime.__str__(),
+            "end_time": self.missionendtime.__str__(),
+            "creation_date": self.missioncreationdate.__str__(),
             "altitude": self.missionaltitude,
             "status": convert_mission_status(int(mission_status_id)),
             "drone_id": drone_id
@@ -171,7 +174,7 @@ class Metadata(models.Model):
         return {
             "id": self.metadataid,
             "data": self.metadatablob,
-            "timestamp": self.metadatatimestamp,
+            "timestamp": self.metadatatimestamp.__str__(),
             "drone_id": self.drone_droneid.droneid
         }
 
@@ -199,7 +202,7 @@ class Image(models.Model):
     def as_dict(self):
         return {
             "id": self.imageid,
-            "timestamp": self.imagetimestamp,
+            "timestamp": self.imagetimestamp.__str__(),
             "filepath": self.imagefilepath,
             "status": self.mission_missionid.missionid
         }
@@ -288,7 +291,7 @@ class Waypoint(models.Model):
             "id": self.waypointid,
             "x": self.waypointx,
             "y": self.waypointy,
-            "time_arrived": self.waypointtimearrived,
+            "time_arrived": self.waypointtimearrived.__str__(),
             "mission_id": self.mission_missionid.missionid
         }
 

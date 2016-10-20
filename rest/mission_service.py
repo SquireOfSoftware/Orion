@@ -1,5 +1,4 @@
 import json
-#from datetime import datetime
 from django.utils import timezone
 from subprocess import Popen
 
@@ -9,6 +8,7 @@ from drone_service import drones
 from rest.models import Mission
 from rest.models import Missionstatus
 from rest.models import Drone
+from rest.models import DroneStatus
 from rest.models import Waypoint
 from rest.models import Obstacle
 from rest.models import Pointofinterest
@@ -46,14 +46,6 @@ def get_mission(mission_id):
         return send_missions_error("Could not find mission with id: " + str(mission.missionid))
 
     return HttpResponse(json.dumps(mission.as_dict()))
-
-
-# mission error
-def send_missions_error(message):
-    return HttpResponse(json.dumps({"status": "error",
-                                    "data": message
-                                    }),
-                        status=403)
 
 
 # adding a missions
@@ -140,22 +132,31 @@ def create_point_of_interest(mission_id, point_of_interest):
     return poi
 
 
-def add_a_mission_error():
-    return send_missions_error("Invalid request only POST allowed on this end point")
-
-
 # this includes aborting a mission
-def start_mission(data, mission_id):
-    #mission = missions_queued.get_mission(int(mission_id))
-
+def start_mission(mission_id):
     mission = Mission.objects.get(missionid=mission_id)
     print(mission)
-    if (mission is not None) and (verify_no_missions_are_active()):
+    no_missions_are_running = verify_no_missions_are_active()
+    drone_is_available = verify_drone_is_available(mission.drone_droneid.droneid)
+    if (mission is not None) and no_missions_are_running and drone_is_available:
+        mission.missionstatus_missionstatustid = Missionstatus.objects.get(missionstatusid=MISSION_STATUS["IN_PROGRESS"])
+        mission.save()
+
+        drone = Drone.objects.get(droneid=mission.drone_droneid.droneid)
+        drone.dronestatus_dronestatusid = DroneStatus.objects.get(dronestatusid=DRONE_STATUS["TAKING OFF"])
+        drone.save()
+
         Popen("python experiments/process_spawnee.py", shell=True)
 
         return send_response(mission.as_dict())
+    elif mission is None:
+        return send_missions_error("Could not locate mission with id: " + str(mission_id))
+    elif no_missions_are_running is not True:
+        return send_missions_error("There is already a mission running.")
+    elif drone_is_available is not True:
+        return send_missions_error("The drone for this mission is currently unavailable.")
 
-    return send_missions_error("Could not locate mission with id: " + str(data["mission"]["id"]))
+    return send_missions_error("An error has occurred.")
 
 
 def validate_mission(mission):
@@ -200,9 +201,31 @@ def validate_battery():
 
 
 def verify_no_missions_are_active():
-    active_mission = Mission.objects.get()
-    #return True
-    # deal with later
+    try:
+        active_mission = Mission.objects.get(missionstatus_missionstatustid=MISSION_STATUS["IN_PROGRESS"])
+        return active_mission is None
+    except Mission.DoesNotExist:
+        return True
+
+
+def verify_drone_is_available(drone_id):
+    try:
+        drone_status = DroneStatus.objects.get(
+            dronestatusid=Drone.objects.get(droneid=drone_id).dronestatus_dronestatusid.dronestatusid)
+        return drone_status.dronestatusid == DRONE_STATUS["IDLE"]
+    except Drone.DoesNotExist:
+        return False
+
+# mission error
+def send_missions_error(message):
+    return HttpResponse(json.dumps({"status": "error",
+                                    "data": message
+                                    }),
+                        status=403)
+
+
+def add_a_mission_error():
+    return send_missions_error("Invalid request only POST allowed on this end point")
 
 
 def send_response(message):
