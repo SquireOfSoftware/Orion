@@ -9,6 +9,9 @@ from queue import Queue
 from rest.models import Mission
 from rest.models import Missionstatus
 from rest.models import Drone
+from rest.models import Waypoint
+from rest.models import Obstacle
+from rest.models import Pointofinterest
 
 from management_constants import MISSION_STATUS
 from management_constants import DRONE_STATUS
@@ -79,15 +82,18 @@ def add_a_mission(data):
             return send_missions_error("There is not enough battery to complete this flight path")
         else:
             # parses dictionary to json
-            # missions_queued.add_to_queue(mission=data)
-            mission = create_mission(altitude, drone_id)
+            print("processing waypoints now")
+            #mission = create_mission(altitude, drone_id)
             # add all waypoints
-            create_waypoints(mission.missionid, waypoints)
+            # create_waypoints(mission.missionid, waypoints)
+            # processed_waypoints = [wp.as_dict() for wp in create_waypoints(1, waypoints)]
             # add all obstacles
-            create_obstacles(mission.missionid, obstacles)
+            # create_obstacles(mission.missionid, obstacles)
+
             # add point of interest
-            create_point_of_interest(mission.missionid, point_of_interest)
-            return HttpResponse(json.dumps(mission.as_dict()))
+            # create_point_of_interest(mission.missionid, point_of_interest)
+            #return HttpResponse(json.dumps(mission.as_dict()))
+            return HttpResponse(json.dumps(processed_waypoints))
 
     return send_missions_error("Drone with id " + str(drone_id) + " is not available")
 
@@ -102,13 +108,25 @@ def create_mission(altitude, drone_id):
     return mission
 
 def create_waypoints(mission_id, waypoint_array):
-
+    waypoints = []
+    for waypoint in waypoint_array:
+        print(waypoint)
+        points_are_valid = validate_points(waypoint)
+        if points_are_valid:
+            print("point is valid")
+            waypoints.append(Waypoint.objects.create(
+                waypointx=float(waypoint["x"]),
+                waypointy=float(waypoint["y"]),
+                mission_missionid=Mission.objects.get(missionid=mission_id)
+            ))
+    print(waypoints)
+    return waypoints
 
 def create_obstacles(mission_id, obstacle_array):
-
+    pass
 
 def create_point_of_interest(mission_id, point_of_interest):
-
+    pass
 
 
 def add_a_mission_error():
@@ -137,13 +155,21 @@ def validate_altitude(altitude):
     return (altitude > MIN_ALTITUDE) and (altitude < MAX_ALTITUDE)
 
 
-def validate_point_of_interest(point_of_interest):
+def validate_points(point):
+    return (point["x"] >= MIN_X) and \
+           (point["x"] <= MAX_X) and \
+           (point["y"] >= MIN_Y) and \
+           (point["y"] <= MAX_Y)
+
+
+def validate_point_of_interest(point):
     # verify that it exists
     # verify that it is within the boundaries of 3m by 3m
-    return (point_of_interest[0]["x"] > MIN_X) and \
-           (point_of_interest[0]["x"] < MAX_X) and \
-           (point_of_interest[0]["y"] > MIN_Y) and \
-           (point_of_interest[0]["y"] < MAX_Y)
+
+    return (point[0]["x"] > MIN_X) and \
+           (point[0]["x"] < MAX_X) and \
+           (point[0]["y"] > MIN_Y) and \
+           (point[0]["y"] < MAX_Y)
 
 
 def validate_flight_path(waypoints, obstacles):
