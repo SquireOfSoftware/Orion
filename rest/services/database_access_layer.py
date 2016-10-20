@@ -88,14 +88,25 @@ pool = mysql.connector.pooling.MySQLConnectionPool
 class connector(object):
     def __init__(self):
         self.connection = None;
-
+        logging.basicConfig(filename='dbmsql.log', level=logging.DEBUG)
         return
 
     # add to connection pool
     def connect(self):
-        self.connection = pool.get_connection(    pool_name="dronepool",
-                                                            pool_size=4,
-                                                            **dbconfig)
+        try:
+            logging.info('Attempting Connection to mysql db')
+            self.connection = pool.get_connection(pool_name="dronepool",
+                                                  pool_size=4,
+                                                  **dbconfig)
+        except mysql.connector.Error as err:
+            if err.errno == errorcode.ER_ACCESS_DENIED_ERROR
+                logging.debug('Access denied')
+            elif err.errno == errocode.ER_BAD_DB_ERROR:
+                logging.debug('Database does not exist')
+            else:
+                logging.debug(err)
+        else:
+            self.disconnect()
         self.cursor = connection.cursor()
         return
 
