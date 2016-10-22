@@ -41,8 +41,6 @@ class connector(object):
                 logging.debug('Database does not exist')
             else:
                 logging.debug(err)
-        #else:
-            #self.disconnect()
         self.cursor = self.connection.cursor()
         return
 
@@ -53,3 +51,8 @@ class connector(object):
 
 testConnector = connector()
 testConnector.connect()
+
+testQuery = "SELECT * from Mission;"
+
+print(testConnector.cursor(dictionary=True).execute(testQuery))
+testConnector.disconnect()
