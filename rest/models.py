@@ -11,6 +11,21 @@ from django.db import models
 from management_constants import MISSION_STATUS
 from management_constants import DRONE_STATUS
 
+
+def convert_mission_status(id):
+    for key, value in MISSION_STATUS.iteritems():
+        if value == id:
+            return key
+    return None
+
+
+def convert_drone_status(id):
+    for key, value in DRONE_STATUS.iteritems():
+        if value == id:
+            return key
+    return None
+
+
 class DroneStatus(models.Model):
     dronestatusid = models.AutoField(db_column='DroneStatusID',
                                      primary_key=True)  # Field name made lowercase.
@@ -32,8 +47,7 @@ class DroneStatus(models.Model):
 
 
 class Drone(models.Model):
-    droneid = models.IntegerField(db_column='DroneID',
-                                  primary_key=True)  # Field name made lowercase.
+    droneid = models.AutoField(db_column='DroneID', primary_key=True)  # Field name made lowercase.
     dronename = models.CharField(db_column='DroneName',
                                  max_length=10,
                                  blank=True,
@@ -57,13 +71,16 @@ class Drone(models.Model):
             "id": self.droneid,
             "ip": self.droneip,
             "name": self.dronename,
-            "status": self.dronestatus_dronestatusid.dronestatusid
+            "status": convert_drone_status(int(self.dronestatus_dronestatusid.dronestatusid))
         }
+
+    def get_status(self):
+        return convert_drone_status(int(self.dronestatus_dronestatusid.dronestatusid))
 
 
 class Missionstatus(models.Model):
     missionstatusid = models.AutoField(db_column='MissionStatustID',
-                                        primary_key=True)  # Field name made lowercase.
+                                       primary_key=True)  # Field name made lowercase.
     missionstatusname = models.CharField(db_column='MissionStatusName',
                                          max_length=45,
                                          blank=True,
@@ -82,7 +99,7 @@ class Missionstatus(models.Model):
 
 
 class Mission(models.Model):
-    missionid = models.IntegerField(db_column='MissionID',
+    missionid = models.AutoField(db_column='MissionID',
                                     primary_key=True)  # Field name made lowercase.
     missionstarttime = models.DateTimeField(db_column='MissionStartTime',
                                             blank=True,
@@ -125,17 +142,18 @@ class Mission(models.Model):
 
         return {
             "id": self.missionid,
-            "start_time": self.missionstarttime,
-            "end_time": self.missionendtime,
-            "creation_date": self.missioncreationdate,
+            "start_time": self.missionstarttime.__str__(),
+            "end_time": self.missionendtime.__str__(),
+            "creation_date": self.missioncreationdate.__str__(),
             "altitude": self.missionaltitude,
-            "status": mission_status_id,
+            "status": convert_mission_status(int(mission_status_id)),
             "drone_id": drone_id
         }
 
 
 class Metadata(models.Model):
-    metadataid = models.IntegerField(db_column='MetadataID')  # Field name made lowercase.
+    metadataid = models.IntegerField(db_column='MetadataID',
+                                     primary_key=True)  # Field name made lowercase.
     metadatablob = models.TextField(db_column='MetadataBlob',
                                     blank=True,
                                     null=True)  # Field name made lowercase.
@@ -156,13 +174,14 @@ class Metadata(models.Model):
         return {
             "id": self.metadataid,
             "data": self.metadatablob,
-            "timestamp": self.metadatatimestamp,
+            "timestamp": self.metadatatimestamp.__str__(),
             "drone_id": self.drone_droneid.droneid
         }
 
 
 class Image(models.Model):
-    imageid = models.IntegerField(db_column='ImageID')  # Field name made lowercase.
+    imageid = models.IntegerField(db_column='ImageID',
+                                  primary_key=True)  # Field name made lowercase.
     imagetimestamp = models.DateTimeField(db_column='ImageTimestamp',
                                           blank=True,
                                           null=True)  # Field name made lowercase.
@@ -183,14 +202,15 @@ class Image(models.Model):
     def as_dict(self):
         return {
             "id": self.imageid,
-            "timestamp": self.imagetimestamp,
+            "timestamp": self.imagetimestamp.__str__(),
             "filepath": self.imagefilepath,
             "status": self.mission_missionid.missionid
         }
 
 
 class Obstacle(models.Model):
-    obstacleid = models.IntegerField(db_column='ObstacleID')  # Field name made lowercase.
+    obstacleid = models.IntegerField(db_column='ObstacleID',
+                                     primary_key=True)  # Field name made lowercase.
     obstaclecoordinatex = models.FloatField(db_column='ObstacleCoordinateX',
                                             blank=True,
                                             null=True)  # Field name made lowercase.
@@ -217,7 +237,8 @@ class Obstacle(models.Model):
 
 
 class Pointofinterest(models.Model):
-    pointofinterestid = models.IntegerField(db_column='PointOfInterestIDPointOfInterestID')  # Field name made lowercase.
+    pointofinterestid = models.IntegerField(db_column='PointOfInterestIDPointOfInterestID',
+                                            primary_key=True)  # Field name made lowercase.
     pointofinterestx = models.FloatField(db_column='PointOfInterestX',
                                          blank=True,
                                          null=True)  # Field name made lowercase.
@@ -244,7 +265,8 @@ class Pointofinterest(models.Model):
 
 
 class Waypoint(models.Model):
-    waypointid = models.IntegerField(db_column='WaypointID')  # Field name made lowercase.
+    waypointid = models.IntegerField(db_column='WaypointID',
+                                     primary_key=True)  # Field name made lowercase.
     waypointy = models.FloatField(db_column='WaypointY',
                                   blank=True,
                                   null=True)  # Field name made lowercase.
@@ -269,7 +291,7 @@ class Waypoint(models.Model):
             "id": self.waypointid,
             "x": self.waypointx,
             "y": self.waypointy,
-            "time_arrived": self.waypointtimearrived,
+            "time_arrived": self.waypointtimearrived.__str__(),
             "mission_id": self.mission_missionid.missionid
         }
 

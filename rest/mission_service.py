@@ -1,19 +1,21 @@
 import json
-from datetime import datetime
+from django.utils import timezone
 from subprocess import Popen
 
 from django.http import HttpResponse
 
 from drone_service import drones
-from queue import Queue
 from rest.models import Mission
 from rest.models import Missionstatus
 from rest.models import Drone
+from rest.models import DroneStatus
+from rest.models import Waypoint
+from rest.models import Obstacle
+from rest.models import Pointofinterest
 
 from management_constants import MISSION_STATUS
 from management_constants import DRONE_STATUS
 
-missions_queued = Queue()
 
 MIN_ALTITUDE = 0.5
 MAX_ALTITUDE = 2.5
@@ -46,14 +48,6 @@ def get_mission(mission_id):
     return HttpResponse(json.dumps(mission.as_dict()))
 
 
-# mission error
-def send_missions_error(message):
-    return HttpResponse(json.dumps({"status": "error",
-                                    "data": message
-                                    }),
-                        status=403)
-
-
 # adding a missions
 def add_a_mission(data):
     # parses string to dictionary
@@ -79,7 +73,7 @@ def add_a_mission(data):
             return send_missions_error("There is not enough battery to complete this flight path")
         else:
             # parses dictionary to json
-            # missions_queued.add_to_queue(mission=data)
+            print("processing waypoints now")
             mission = create_mission(altitude, drone_id)
             # add all waypoints
             create_waypoints(mission.missionid, waypoints)
@@ -94,35 +88,75 @@ def add_a_mission(data):
 
 def create_mission(altitude, drone_id):
     mission = Mission.objects.create(
-        missioncreationdate=datetime.now().__str__(),
+        missioncreationdate=get_current_time(),
         missionaltitude=float(altitude),
         missionstatus_missionstatustid=Missionstatus.objects.get(missionstatusid=MISSION_STATUS["QUEUED"]),
         drone_droneid=Drone.objects.get(droneid=drone_id)
     )
     return mission
 
+
 def create_waypoints(mission_id, waypoint_array):
+    waypoints = []
+    for waypoint in waypoint_array:
+        points_are_valid = validate_points(waypoint)
+        if points_are_valid:
+            waypoints.append(Waypoint.objects.create(
+                waypointx=float(waypoint["x"]),
+                waypointy=float(waypoint["y"]),
+                mission_missionid=Mission.objects.get(missionid=mission_id)
+            ))
+    return waypoints
 
 
 def create_obstacles(mission_id, obstacle_array):
+    obstacles = []
+    for obstacle in obstacle_array:
+        points_are_valid = validate_points(obstacle)
+        if points_are_valid:
+            obstacles.append(Obstacle.objects.create(
+                obstaclecoordinatex=float(obstacle["x"]),
+                obstaclecoordinatey=float(obstacle["y"]),
+                mission_missionid=Mission.objects.get(missionid=mission_id)
+            ))
+    return obstacles
 
 
 def create_point_of_interest(mission_id, point_of_interest):
-
-
-
-def add_a_mission_error():
-    return send_missions_error("Invalid request only POST allowed on this end point")
+    # assume there is only one point of interest
+    poi = Pointofinterest.objects.create(
+        pointofinterestx=float(point_of_interest[0]["x"]),
+        pointofinteresty=float(point_of_interest[0]["y"]),
+        mission_missionid=Mission.objects.get(missionid=mission_id)
+    )
+    return poi
 
 
 # this includes aborting a mission
-def start_mission(data, mission_id):
-    data = json.loads(data)
-    mission = missions_queued.get_mission(int(mission_id))
-    if (mission is not None) and (verify_no_missions_are_active()):
+def start_mission(mission_id):
+    mission = Mission.objects.get(missionid=mission_id)
+    print(mission)
+    no_missions_are_running = verify_no_missions_are_active()
+    drone_is_available = verify_drone_is_available(mission.drone_droneid.droneid)
+    if (mission is not None) and no_missions_are_running and drone_is_available:
+        mission.missionstatus_missionstatustid = Missionstatus.objects.get(missionstatusid=MISSION_STATUS["IN_PROGRESS"])
+        mission.save()
+
+        drone = Drone.objects.get(droneid=mission.drone_droneid.droneid)
+        drone.dronestatus_dronestatusid = DroneStatus.objects.get(dronestatusid=DRONE_STATUS["TAKING OFF"])
+        drone.save()
+
         Popen("python experiments/process_spawnee.py", shell=True)
-        return send_response(missions_queued.update_mission(data))
-    return send_missions_error("Could not locate mission with id: " + str(data["mission"]["id"]))
+
+        return send_response(mission.as_dict())
+    elif mission is None:
+        return send_missions_error("Could not locate mission with id: " + str(mission_id))
+    elif no_missions_are_running is not True:
+        return send_missions_error("There is already a mission running.")
+    elif drone_is_available is not True:
+        return send_missions_error("The drone for this mission is currently unavailable.")
+
+    return send_missions_error("An error has occurred.")
 
 
 def validate_mission(mission):
@@ -137,13 +171,21 @@ def validate_altitude(altitude):
     return (altitude > MIN_ALTITUDE) and (altitude < MAX_ALTITUDE)
 
 
-def validate_point_of_interest(point_of_interest):
+def validate_points(point):
+    return (point["x"] >= MIN_X) and \
+           (point["x"] <= MAX_X) and \
+           (point["y"] >= MIN_Y) and \
+           (point["y"] <= MAX_Y)
+
+
+def validate_point_of_interest(point):
     # verify that it exists
     # verify that it is within the boundaries of 3m by 3m
-    return (point_of_interest[0]["x"] > MIN_X) and \
-           (point_of_interest[0]["x"] < MAX_X) and \
-           (point_of_interest[0]["y"] > MIN_Y) and \
-           (point_of_interest[0]["y"] < MAX_Y)
+
+    return (point[0]["x"] > MIN_X) and \
+           (point[0]["x"] < MAX_X) and \
+           (point[0]["y"] > MIN_Y) and \
+           (point[0]["y"] < MAX_Y)
 
 
 def validate_flight_path(waypoints, obstacles):
@@ -159,8 +201,37 @@ def validate_battery():
 
 
 def verify_no_missions_are_active():
-    return missions_queued.is_any_mission_active()
+    try:
+        active_mission = Mission.objects.get(missionstatus_missionstatustid=MISSION_STATUS["IN_PROGRESS"])
+        return active_mission is None
+    except Mission.DoesNotExist:
+        return True
+
+
+def verify_drone_is_available(drone_id):
+    try:
+        drone_status = DroneStatus.objects.get(
+            dronestatusid=Drone.objects.get(droneid=drone_id).dronestatus_dronestatusid.dronestatusid)
+        return drone_status.dronestatusid == DRONE_STATUS["IDLE"]
+    except Drone.DoesNotExist:
+        return False
+
+# mission error
+def send_missions_error(message):
+    return HttpResponse(json.dumps({"status": "error",
+                                    "data": message
+                                    }),
+                        status=403)
+
+
+def add_a_mission_error():
+    return send_missions_error("Invalid request only POST allowed on this end point")
 
 
 def send_response(message):
     return HttpResponse(json.dumps(message))
+
+
+def get_current_time():
+    time = timezone.now().__str__()
+    return time
