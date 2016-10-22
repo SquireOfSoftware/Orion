@@ -7,7 +7,8 @@ from database_access_layer import connector
 
 class mission_reader(connector, resource):
     def __init__(self, resource_locator):
-        super(resource_locator);
+        resource.__init__(resource_locator)
+        connector.__init__()
 
     def read(self):
         testConnector = connector()
