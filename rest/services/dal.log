@@ -1,0 +1,5 @@
+INFO:root:Attempting Connection to mysql db
+DEBUG:rospy.topics:tm._add: /cmd_vel, geometry_msgs/Twist, pub
+DEBUG:rospy.topics:tm._add: /ardrone/land, std_msgs/Empty, pub
+DEBUG:rospy.topics:tm._add: /ardrone/emergency, std_msgs/Empty, pub
+DEBUG:rospy.topics:tm._add: /ardrone/takeoff, std_msgs/Empty, pub

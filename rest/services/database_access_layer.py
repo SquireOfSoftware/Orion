@@ -16,7 +16,7 @@ logging.basicConfig(filename='dal.log', filemode='w', level=logging.DEBUG)
 # """All services using connection should inherit this code."""
 dbconfig = {"database": "Drone_Surveying_System",
             "user"    : "root",
-            "passwd"  : "admin"}
+            "passwd"  : "default"}
 
 pool = mysql.connector.pooling.MySQLConnectionPool(pool_name="dronepool",
                                                   pool_size=4,

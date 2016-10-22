@@ -17,7 +17,7 @@ class resource(object):
 
     def acquire(self):
         #Lock the resource while there it is not available.
-        while self.count is 0
+        while (self.count is 0):
             pass
         self.count -= 1
 
