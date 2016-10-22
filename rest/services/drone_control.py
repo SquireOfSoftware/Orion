@@ -15,7 +15,11 @@ class drone_control (object):
         self._emergency = rospy.Publisher('/ardrone/emergency', Empty, queue_size = 5)
         self._takeoff = rospy.Publisher('/ardrone/takeoff', Empty, queue_size = 5)
         rospy.init_node('orion_controller', anonymous=True)
-        rate = rospy.Rate(100)
+        rate = rospy.Rate(60)
+        
+        #Wait until publisher has starded up.
+        rospy.sleep(1)
+        
 
 
     def land(self):
@@ -32,7 +36,7 @@ class drone_control (object):
 
     # Stops the drone from moving
     def stop(self):
-        self.move({'linear':{'x':0,'y':0,'z':0}, 'angular':{'x':0,'y':0,'z':0}
+        self.move({'linear':{'x':0,'y':0,'z':0}, 'angular':{'x':0,'y':0,'z':0}})
 
     def move(self, data):
         self.linear = data['linear']
@@ -46,21 +50,21 @@ class drone_control (object):
     def test(self):
         self.takeoff()
         #Takes more time
-        time.sleep(5)
-        self.move({'linear':{'x':0, 'y':0, 'z':0}, 'angular':{'x':0, 'y':0, 'z':0}})
+        time.sleep(6)
+        self.stop()
         time.sleep(1)
-        self.move({'linear':{'x':0, 'y':0, 'z':0}, 'angular':{'x':0, 'y':0, 'z':0.1}})
+        self.move({'linear':{'x':0, 'y':0, 'z':0}, 'angular':{'x':0, 'y':0, 'z':(1.0)}})
         #2 Second rotation = 180 at 100%
         #Also very unpredictable
-        time.sleep(6)
-        self.move({'linear':{'x':0, 'y':0, 'z':0}, 'angular':{'x':0, 'y':0, 'z':0}})
-        time.sleep(5)
+        time.sleep(2)
+        self.stop()
+        self.sleep(1)
         self.move({'linear':{'x':0.1, 'y':0, 'z':0}, 'angular':{'x':0, 'y':0, 'z':0}})
         time.sleep(1)
-        self.move({'linear':{'x':0, 'y':0, 'z':0}, 'angular':{'x':0, 'y':0, 'z':0}})
+        self.stop()
         time.sleep(1)
         self.move({'linear':{'x':0, 'y':0, 'z':-0.5}, 'angular':{'x':0, 'y':0, 'z':0}})
-        time.sleep(3)
-        self.move({'linear':{'x':0, 'y':0, 'z':0}, 'angular':{'x':0, 'y':0, 'z':0}})
+        time.sleep(1)
+        self.stop()
         self.land()
 
