@@ -54,6 +54,7 @@ var webServer = angular.module("webServer", [])
         $log.log("drone with id: " + selectedDrone.id + " has been selected.");
 
         $scope.selectedDrone = selectedDrone;
+        jQuery("#selected-drone-message").show();
     };
 
     $scope.submitMission = function () {
@@ -65,7 +66,6 @@ var webServer = angular.module("webServer", [])
         else {
             $log.log($scope.selectedDrone.id);
             $log.log("Mission has been started");
-
 
             var currentMission = {
                 selectedDrone: selectedDrone.id,

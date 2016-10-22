@@ -15,7 +15,7 @@
     <link rel="stylesheet" type="text/css" href="../../css/specific-pages/mission-composer.css"/>
 </head>
 <body ng-controller="missionCtrl" ng-init="init()">
-    <div id="warning-message" model="warningMsg">{{warningMsg}}</div>
+    <div ng-cloak="warningMsg === ''" id="warning-message" model="warningMsg">{{warningMsg}}</div>
     <div id="select-a-drone-page" class="mission-page">
         <div class="title col-md-12">
             <h1><a href="../index.html">Home</a> / Select a Drone</h1>
@@ -25,6 +25,9 @@
                 <div class="drone-name">{{drone.name}}</div>
                 <img class="drone" src="{{drone.image}}"/>
             </button>
+        </div>
+        <div id="selected-drone-message" class="col-md-12 good-message">
+            {{selectedDrone.name}} has been selected.
         </div>
         <div class="col-sm-offset-9 col-sm-12" >
             <button class="button col-sm-2" ng-click="sayHiForMe()">
