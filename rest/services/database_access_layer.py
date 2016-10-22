@@ -1,12 +1,9 @@
 #!/usr/bin/env python
 
 import mysql.connector
-from mysql.connector import connection
 from mysql.connector import pooling
 from mysql.connector import errorcode
-from abc import ABCMeta, abstractmethod
 import logging
-import singleton
 
 logging.basicConfig(filename='dal.log', filemode='w', level=logging.DEBUG)
 
@@ -16,7 +13,7 @@ logging.basicConfig(filename='dal.log', filemode='w', level=logging.DEBUG)
 # """All services using connection should inherit this code."""
 dbconfig = {"database": "Drone_Surveying_System",
             "user"    : "root",
-            "passwd"  : "default"}
+            "password"  : "admin"}
 
 pool = mysql.connector.pooling.MySQLConnectionPool(pool_name="dronepool",
                                                   pool_size=4,
@@ -46,13 +43,7 @@ class connector(object):
 
     # close the connection
     def disconnect(self):
+        self.cursor.close()
         self.connection.close()
         return
 
-testConnector = connector()
-testConnector.connect()
-
-testQuery = "SELECT * from Mission;"
-
-print(testConnector.cursor(dictionary=True).execute(testQuery))
-testConnector.disconnect()
