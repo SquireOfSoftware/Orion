@@ -8,7 +8,7 @@ from drone_control import *
 from resource_locator import resource
 
 class drone_mission(connector, resource):
-    def __init__(self,resource_locator):
+    def __init__(self, resource_locator):
 
         self.controller = drone_control()
         super(self).__init__()
