@@ -16,6 +16,11 @@ button {
 
 /* IDs */
 
+#canvas-test {
+    width: 100%;
+    height: auto;
+}
+
 #configure-mission-page {
     display: none;
 }

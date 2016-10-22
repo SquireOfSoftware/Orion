@@ -14,8 +14,12 @@ var webServer = angular.module("webServer", [])
     $scope.selectedDrone = {};
     $scope.baseurl = "http://localhost:5000";
     $scope.warningMsg = "";
+    $scope.canvasGrid = null;
 
     $scope.currentMission = {};
+
+    var MINGRID = 0;
+    var MAXGRID = 300;
 
     $scope.init = function() {
         $(".mission-page").hide();
@@ -26,6 +30,32 @@ var webServer = angular.module("webServer", [])
     function initialiseDrones() {
         addDrone(setupDrone("voyager", "Voyager", "../../images/Drone1.png"));
         addDrone(setupDrone("sputnik", "Sputnik", "../../images/Drone2.png"));
+    }
+
+    function initialiseGrid() {
+        var canvasGrid = jQuery("#canvas-test")[0].getContext('2d');
+        $log.log(canvasGrid[0]);
+        canvasGrid = drawVerticalLines(canvasGrid);
+        canvasGrid = drawHorizontalLines(canvasGrid);
+        $scope.canvasGrid = canvasGrid;
+    }
+
+    function drawVerticalLines(canvasGrid) {
+        for (var x = 0; x <= 300; x += 10) {
+            canvasGrid.moveTo(x, MINGRID);
+            canvasGrid.lineTo(x, MAXGRID);
+            canvasGrid.stroke();
+        }
+        return canvasGrid;
+    }
+
+    function drawHorizontalLines(canvasGrid) {
+        for (var y = 0; y <= 300; y += 10) {
+            canvasGrid.moveTo(MINGRID, y);
+            canvasGrid.lineTo(MAXGRID, y);
+            canvasGrid.stroke();
+        }
+        return canvasGrid;
     }
 
     function setupDrone(id, name, imagePath) {
@@ -48,6 +78,7 @@ var webServer = angular.module("webServer", [])
         $log.debug("YOU CLICKED ME!");
         jQuery("#select-a-drone-page").hide();
         jQuery("#configure-mission-page").show();
+        initialiseGrid();
     };
 
     $scope.selectDrone = function (selectedDrone) {
