@@ -33,15 +33,18 @@ var webServer = angular.module("webServer", [])
     }
 
     function initialiseGrid() {
-        var canvasGrid = jQuery("#canvas-test")[0].getContext('2d');
-        $log.log(canvasGrid[0]);
+        var canvasObject = jQuery("#canvas-test")[0];
+        canvasObject.addEventListener("mousedown", triggerMouseClick, false);
+        var canvasGrid = canvasObject.getContext('2d');
+        checkScale(canvasObject);
         canvasGrid = drawVerticalLines(canvasGrid);
         canvasGrid = drawHorizontalLines(canvasGrid);
         $scope.canvasGrid = canvasGrid;
+
     }
 
     function drawVerticalLines(canvasGrid) {
-        for (var x = 0; x <= 300; x += 10) {
+        for (var x = 0; x <= 300; x += 50) {
             canvasGrid.moveTo(x, MINGRID);
             canvasGrid.lineTo(x, MAXGRID);
             canvasGrid.stroke();
@@ -50,12 +53,34 @@ var webServer = angular.module("webServer", [])
     }
 
     function drawHorizontalLines(canvasGrid) {
-        for (var y = 0; y <= 300; y += 10) {
+        for (var y = 0; y <= 300; y += 50) {
             canvasGrid.moveTo(MINGRID, y);
             canvasGrid.lineTo(MAXGRID, y);
             canvasGrid.stroke();
         }
         return canvasGrid;
+    }
+
+    function checkScale(canvasObject) {
+        var originalWindowWidth=window.innerWidth;
+        var originalCanvasWidth=canvasObject.width;
+        $log.log(originalCanvasWidth);
+        var offsetCanvasWidth=canvasObject.offsetWidth;
+        $log.log(offsetCanvasWidth);
+        var scale=window.innerWidth/originalWindowWidth;
+        var canvasScale = 300/offsetCanvasWidth;
+        $log.log(scale + " " + window.innerWidth + " " + originalWindowWidth);
+        $log.log(canvasScale + " 300 " + offsetCanvasWidth);
+        $log.log("canvas x:" + canvasObject.top);
+        $log.log("canvas y:" + canvasObject.left);
+    }
+
+    function triggerMouseClick(e) {
+        // http://stackoverflow.com/questions/28628964/mouse-position-within-html-5-responsive-canvas
+        // TODO please scale mouse clicks
+        $log.log("x: " + e.x);
+        $log.log("y: " + e.y);
+
     }
 
     function setupDrone(id, name, imagePath) {

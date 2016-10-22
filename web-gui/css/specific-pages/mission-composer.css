@@ -19,6 +19,7 @@ button {
 #canvas-test {
     width: 100%;
     height: auto;
+    background-color: #fff;
 }
 
 #configure-mission-page {
