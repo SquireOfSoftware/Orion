@@ -36,8 +36,8 @@ var webServer = angular.module("webServer", [])
     * */
 
     function initialiseDrones() {
-        addDrone(setupDrone("voyager", "Voyager", "../../images/Drone1.png"));
-        addDrone(setupDrone("sputnik", "Sputnik", "../../images/Drone2.png"));
+        addDrone(setupDrone("2", "Voyager", "../../images/Drone1.png"));
+        addDrone(setupDrone("1", "Sputnik", "../../images/Drone2.png"));
     }
 
     function setupDrone(id, name, imagePath) {
@@ -220,7 +220,7 @@ var webServer = angular.module("webServer", [])
             $log.debug("Mission has been started");
 
             var currentMission = {
-                selectedDrone: selectedDrone.id,
+                selectedDrone: selectedDrone,
                 waypoints: $scope.currentWaypoints,
                 altitude: 1,
                 obstacles: [],
@@ -243,6 +243,9 @@ var webServer = angular.module("webServer", [])
                 },
                 data: currentMission
             };
+
+            // How to bypass CORS on mac
+            // open -a Google\ Chrome --args --disable-web-security --user-data-dir
 
             var config = {
                 'Access-Control-Allow-Origin': '*',
