@@ -12,7 +12,7 @@ var webServer = angular.module("webServer", [])
 {
     $scope.drones = [];
     $scope.selectedDrone = {};
-    $scope.baseurl = "http://localhost:5000";
+    $scope.baseurl = "http://localhost:5001";
     $scope.warningMsg = "";
 
     $scope.currentMission = {};
@@ -227,12 +227,12 @@ var webServer = angular.module("webServer", [])
                 pointOfInterest: {"x": 1, "y": 1}
             };
 
-            var url = $scope.baseurl + "/testREST";
+            var url = $scope.baseurl + "/rest/missions";
             $log.debug(currentMission);
 
             var request = {
-                url: url,
-                method: 'GET',
+                //url: url,
+                //method: 'POST',
                 headers: {
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE',
@@ -240,10 +240,20 @@ var webServer = angular.module("webServer", [])
                     'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
                     'Content-Type': 'application/text',
                     'Access-Control-Allow-Credentials': false
-                }
-                //data: currentMission
+                },
+                data: currentMission
             };
-            $log.debug(request);
+
+            var config = {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE',
+                'Access-Control-Max-Age': '3600',
+                'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+                'Content-Type': 'application/text',
+                'Access-Control-Allow-Credentials': false
+            };
+
+            //$log.debug(request);
 
             /*$http.post(
                 url,
@@ -251,7 +261,7 @@ var webServer = angular.module("webServer", [])
                 $log.debug(data);
                 $log.debug(typeof(data));
             });*/
-            $http(request).then(function(data) {
+            $http.post(url, currentMission, config).then(function(data) {
                 $log.debug(data);
                 $log.debug(typeof(data));
             });
