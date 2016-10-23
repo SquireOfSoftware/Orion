@@ -118,6 +118,9 @@ var webServer = angular.module("webServer", [])
         canvasOffsets.scale = canvasScale;
     }
 
+    /*
+    * TODO PLEASE FIX THIS FOR FIREFOX, SINCE THIS ONLY WORKS FOR CHROME
+    * */
     function getOffsets(canvasObject) {
         $log.debug("parent parent offsets: " + canvasObject.offsetParent.offsetParent.offsetLeft + " " +
             canvasObject.offsetParent.offsetParent.offsetTop);

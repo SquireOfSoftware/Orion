@@ -182,11 +182,13 @@ def validate_points(point):
 def validate_point_of_interest(point):
     # verify that it exists
     # verify that it is within the boundaries of 3m by 3m
+    x = int(point["x"])
+    y = int(point["y"])
 
-    return (point["x"] > MIN_X) and \
-           (point["x"] < MAX_X) and \
-           (point["y"] > MIN_Y) and \
-           (point["y"] < MAX_Y)
+    return (x > MIN_X) and \
+           (x < MAX_X) and \
+           (y > MIN_Y) and \
+           (y < MAX_Y)
 
 
 def validate_flight_path(waypoints, obstacles):
