@@ -166,7 +166,7 @@ var webServer = angular.module("webServer", [])
     }
 
     function addWaypoint(mouseClick) {
-        if (matchesPreviousWaypoint(mouseClick)) {
+        if (!matchesPreviousWaypoint(mouseClick)) {
             $scope.currentWaypoints.push(mouseClick);
             return true;
         }
@@ -174,7 +174,13 @@ var webServer = angular.module("webServer", [])
     }
 
     function matchesPreviousWaypoint(mouseClick) {
-
+        if ($scope.currentWaypoints.length > 1) {
+            var lastWaypoint = $scope.currentWaypoints[$scope.currentWaypoints.length - 1];
+            //var matchesLastWaypoint = (lastWaypoint.x === mouseClick.x) && (lastWaypoint.y === mouseClick.y);
+            //$log.debug("Does this click match last waypoint: " + matchesLastWaypoint);
+            return (lastWaypoint.x === mouseClick.x) && (lastWaypoint.y === mouseClick.y);
+        }
+        return false;
     }
 
     function drawDot(mouseClick) {
@@ -189,17 +195,13 @@ var webServer = angular.module("webServer", [])
     function drawFlightPath() {
         // Using the waypoints array join each one together
         var currentWaypoints = $scope.currentWaypoints;
-        $log.debug(currentWaypoints.length);
         if (currentWaypoints.length > 1) {
             $log.debug("Drawing flight path now");
-            for (var i = 0; i < currentWaypoints.length - 1; i++) {
-                var currentWaypoint = currentWaypoints[i];
-                var nextWaypoint = currentWaypoints[i + 1];
-                globalCanvasGrid.moveTo(currentWaypoint.x, currentWaypoint.y);
-                globalCanvasGrid.lineTo(nextWaypoint.x, nextWaypoint.y);
-                globalCanvasGrid.stroke();
-                $log.debug(currentWaypoint);
-            }
+            var currentWaypoint = currentWaypoints[currentWaypoints.length - 2];
+            var nextWaypoint = currentWaypoints[currentWaypoints.length - 1];
+            globalCanvasGrid.moveTo(currentWaypoint.x, currentWaypoint.y);
+            globalCanvasGrid.lineTo(nextWaypoint.x, nextWaypoint.y);
+            globalCanvasGrid.stroke();
         }
     }
 
@@ -219,16 +221,7 @@ var webServer = angular.module("webServer", [])
 
             var currentMission = {
                 selectedDrone: selectedDrone.id,
-                waypoints: [
-                    // move three blocks
-                    {"x": 0, "y": 0},
-                    {"x": 0, "y": 1},
-                    {"x": 0, "y": 2},
-                    {"x": 1, "y": 2},
-                    {"x": 2, "y": 2},
-                    {"x": 2, "y": 1},
-                    {"x": 2, "y": 0}
-                ],
+                waypoints: $scope.currentWaypoints,
                 altitude: 1,
                 obstacles: [],
                 pointOfInterest: {"x": 1, "y": 1}
