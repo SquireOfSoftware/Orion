@@ -152,14 +152,18 @@ var webServer = angular.module("webServer", [])
     }
 
     function parseMouseClick(e) {
-        $log.debug("x: " + e.x + " y: " + e.y);
+
+        var x = e.clientX;
+        var y = e.clientY;
+
+        $log.debug("x: " + x + " y: " + y);
 
         var scale = canvasOffsets.scale;
         var offsetX = canvasOffsets.offsets.x;
         var offsetY = canvasOffsets.offsets.y;
 
-        var actualX = (e.x - offsetX) * scale;
-        var actualY = (e.y - offsetY) * scale;
+        var actualX = (x - offsetX) * scale;
+        var actualY = (y - offsetY) * scale;
 
         $log.debug("actual x: " + actualX + " actual y: " + actualY);
         return {
