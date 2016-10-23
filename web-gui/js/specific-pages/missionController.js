@@ -21,6 +21,8 @@ var webServer = angular.module("webServer", [])
     var MINGRID = 0;
     var MAXGRID = 300;
 
+    var canvasOffsets = {};
+
     $scope.init = function() {
         $(".mission-page").hide();
         $("#select-a-drone-page").show();
@@ -62,24 +64,43 @@ var webServer = angular.module("webServer", [])
     }
 
     function checkScale(canvasObject) {
-        var originalWindowWidth=window.innerWidth;
-        var originalCanvasWidth=canvasObject.width;
-        $log.log(originalCanvasWidth);
         var offsetCanvasWidth=canvasObject.offsetWidth;
-        $log.log(offsetCanvasWidth);
-        var scale=window.innerWidth/originalWindowWidth;
-        var canvasScale = 300/offsetCanvasWidth;
-        $log.log(scale + " " + window.innerWidth + " " + originalWindowWidth);
+        var canvasScale = canvasObject.width/offsetCanvasWidth;
         $log.log(canvasScale + " 300 " + offsetCanvasWidth);
-        $log.log("canvas x:" + canvasObject.top);
-        $log.log("canvas y:" + canvasObject.left);
+
+        $log.log("canvas x: " + canvasObject.offsetLeft + " canvas y: " + canvasObject.offsetTop);
+        $log.log("parent parent offsets: " + canvasObject.offsetParent.offsetParent.offsetLeft + " " +
+            canvasObject.offsetParent.offsetParent.offsetTop);
+
+        canvasOffsets.scale = canvasScale;
+        canvasOffsets.offsets = {
+            x: canvasObject.offsetParent.offsetParent.offsetLeft +
+                canvasObject.offsetParent.offsetLeft +
+                canvasObject.offsetLeft,
+            y: canvasObject.offsetParent.offsetParent.offsetTop +
+                canvasObject.offsetParent.offsetTop +
+                canvasObject.offsetTop
+        };
+
+        $log.log(canvasOffsets);
     }
 
     function triggerMouseClick(e) {
         // http://stackoverflow.com/questions/28628964/mouse-position-within-html-5-responsive-canvas
         // TODO please scale mouse clicks
-        $log.log("x: " + e.x);
-        $log.log("y: " + e.y);
+        $log.log("x: " + e.x + " y: " + e.y);
+
+        //var actualX = (e.x - canvasOffsets.offsets.x) * canvasOffsets.scale;
+        //var actualY = (e.y - canvasOffsets.offsets.y) * canvasOffsets.scale;
+
+        var scale = canvasOffsets.scale;
+        var offsetX = canvasOffsets.offsets.x;
+        var offsetY = canvasOffsets.offsets.y;
+
+        var actualX = (e.x - offsetX);
+        var actualY = (e.y - offsetY);
+
+        $log.log("actual x: " + actualX + " actual y: " + actualY);
 
     }
 
