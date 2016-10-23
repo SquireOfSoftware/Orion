@@ -14,14 +14,16 @@ var webServer = angular.module("webServer", [])
     $scope.selectedDrone = {};
     $scope.baseurl = "http://localhost:5000";
     $scope.warningMsg = "";
-    $scope.canvasGrid = null;
 
     $scope.currentMission = {};
 
     var MINGRID = 0;
     var MAXGRID = 300;
 
+    var globalCanvasGrid = null;
     var canvasOffsets = {};
+
+    $scope.currentWaypoints = [];
 
     $scope.init = function() {
         $(".mission-page").hide();
@@ -29,79 +31,13 @@ var webServer = angular.module("webServer", [])
         initialiseDrones();
     };
 
+    /*
+    * This is for the first screen
+    * */
+
     function initialiseDrones() {
         addDrone(setupDrone("voyager", "Voyager", "../../images/Drone1.png"));
         addDrone(setupDrone("sputnik", "Sputnik", "../../images/Drone2.png"));
-    }
-
-    function initialiseGrid() {
-        var canvasObject = jQuery("#canvas-test")[0];
-        canvasObject.addEventListener("mousedown", triggerMouseClick, false);
-        var canvasGrid = canvasObject.getContext('2d');
-        checkScale(canvasObject);
-        canvasGrid = drawVerticalLines(canvasGrid);
-        canvasGrid = drawHorizontalLines(canvasGrid);
-        $scope.canvasGrid = canvasGrid;
-
-    }
-
-    function drawVerticalLines(canvasGrid) {
-        for (var x = 0; x <= 300; x += 50) {
-            canvasGrid.moveTo(x, MINGRID);
-            canvasGrid.lineTo(x, MAXGRID);
-            canvasGrid.stroke();
-        }
-        return canvasGrid;
-    }
-
-    function drawHorizontalLines(canvasGrid) {
-        for (var y = 0; y <= 300; y += 50) {
-            canvasGrid.moveTo(MINGRID, y);
-            canvasGrid.lineTo(MAXGRID, y);
-            canvasGrid.stroke();
-        }
-        return canvasGrid;
-    }
-
-    function checkScale(canvasObject) {
-        var offsetCanvasWidth=canvasObject.offsetWidth;
-        var canvasScale = canvasObject.width/offsetCanvasWidth;
-        $log.log(canvasScale + " 300 " + offsetCanvasWidth);
-
-        $log.log("canvas x: " + canvasObject.offsetLeft + " canvas y: " + canvasObject.offsetTop);
-        $log.log("parent parent offsets: " + canvasObject.offsetParent.offsetParent.offsetLeft + " " +
-            canvasObject.offsetParent.offsetParent.offsetTop);
-
-        canvasOffsets.scale = canvasScale;
-        canvasOffsets.offsets = {
-            x: canvasObject.offsetParent.offsetParent.offsetLeft +
-                canvasObject.offsetParent.offsetLeft +
-                canvasObject.offsetLeft,
-            y: canvasObject.offsetParent.offsetParent.offsetTop +
-                canvasObject.offsetParent.offsetTop +
-                canvasObject.offsetTop
-        };
-
-        $log.log(canvasOffsets);
-    }
-
-    function triggerMouseClick(e) {
-        // http://stackoverflow.com/questions/28628964/mouse-position-within-html-5-responsive-canvas
-        // TODO please scale mouse clicks
-        $log.log("x: " + e.x + " y: " + e.y);
-
-        //var actualX = (e.x - canvasOffsets.offsets.x) * canvasOffsets.scale;
-        //var actualY = (e.y - canvasOffsets.offsets.y) * canvasOffsets.scale;
-
-        var scale = canvasOffsets.scale;
-        var offsetX = canvasOffsets.offsets.x;
-        var offsetY = canvasOffsets.offsets.y;
-
-        var actualX = (e.x - offsetX);
-        var actualY = (e.y - offsetY);
-
-        $log.log("actual x: " + actualX + " actual y: " + actualY);
-
     }
 
     function setupDrone(id, name, imagePath) {
@@ -128,21 +64,158 @@ var webServer = angular.module("webServer", [])
     };
 
     $scope.selectDrone = function (selectedDrone) {
-        $log.log("drone with id: " + selectedDrone.id + " has been selected.");
+        $log.debug("drone with id: " + selectedDrone.id + " has been selected.");
 
         $scope.selectedDrone = selectedDrone;
         jQuery("#selected-drone-message").show();
     };
+
+    /*
+    * This is for the grid screen
+    * */
+
+    function initialiseGrid() {
+        var canvasObject = jQuery("#canvas-test")[0];
+        canvasObject.addEventListener("mousedown", triggerMouseClick, false);
+        var canvasGrid = canvasObject.getContext('2d');
+        getScale(canvasObject);
+        getOffsets(canvasObject);
+        canvasGrid = drawVerticalLines(canvasGrid);
+        canvasGrid = drawHorizontalLines(canvasGrid);
+        globalCanvasGrid = canvasGrid;
+    }
+
+    function drawVerticalLines(canvasGrid) {
+        for (var x = 0; x <= 300; x += 50) {
+            canvasGrid.moveTo(x, MINGRID);
+            canvasGrid.lineTo(x, MAXGRID);
+            canvasGrid.stroke();
+        }
+        return canvasGrid;
+    }
+
+    function drawHorizontalLines(canvasGrid) {
+        for (var y = 0; y <= 300; y += 50) {
+            canvasGrid.moveTo(MINGRID, y);
+            canvasGrid.lineTo(MAXGRID, y);
+            canvasGrid.stroke();
+        }
+        return canvasGrid;
+    }
+
+    function getScale(canvasObject) {
+        /*
+         * Basically figure out where the offsets are
+         * Since canvas resides two divs down, you need to determine the offsets from each
+         * Add them up and you have the approximate position of the canvas
+         *
+         * To figure out the scale, you figure out how much it has deviated from the original
+         * size.
+         * */
+        var canvasScale = canvasObject.width/canvasObject.offsetWidth;
+        $log.debug(canvasScale + " " + canvasObject.width + " " + canvasObject.offsetWidth);
+
+        canvasOffsets.scale = canvasScale;
+    }
+
+    function getOffsets(canvasObject) {
+        $log.debug("parent parent offsets: " + canvasObject.offsetParent.offsetParent.offsetLeft + " " +
+            canvasObject.offsetParent.offsetParent.offsetTop);
+
+        canvasOffsets.offsets = {
+            x: canvasObject.offsetParent.offsetParent.offsetLeft +
+            canvasObject.offsetParent.offsetLeft +
+            canvasObject.offsetLeft,
+            y: canvasObject.offsetParent.offsetParent.offsetTop +
+            canvasObject.offsetParent.offsetTop +
+            canvasObject.offsetTop
+        };
+    }
+
+    function triggerMouseClick(e) {
+        // http://stackoverflow.com/questions/28628964/mouse-position-within-html-5-responsive-canvas
+        var mouseClick = parseMouseClick(e);
+
+        if (addWaypoint(mouseClick)) {
+            drawDot(mouseClick);
+            drawFlightPath();
+        }
+
+        /*
+        * Please note that if you need to delete a point you will need to redraw all the points
+        * Since it stored as an array, could in theory, wipe then redraw
+        * http://stackoverflow.com/questions/24140805/how-to-clear-specific-line-in-canvas-html5
+        * */
+    }
+
+    function parseMouseClick(e) {
+        $log.debug("x: " + e.x + " y: " + e.y);
+
+        var scale = canvasOffsets.scale;
+        var offsetX = canvasOffsets.offsets.x;
+        var offsetY = canvasOffsets.offsets.y;
+
+        var actualX = (e.x - offsetX) * scale;
+        var actualY = (e.y - offsetY) * scale;
+
+        $log.debug("actual x: " + actualX + " actual y: " + actualY);
+        return {
+            x: actualX,
+            y: actualY
+        };
+    }
+
+    function addWaypoint(mouseClick) {
+        if (matchesPreviousWaypoint(mouseClick)) {
+            $scope.currentWaypoints.push(mouseClick);
+            return true;
+        }
+        return false;
+    }
+
+    function matchesPreviousWaypoint(mouseClick) {
+
+    }
+
+    function drawDot(mouseClick) {
+        globalCanvasGrid.beginPath();
+        globalCanvasGrid.arc(mouseClick.x, mouseClick.y, 2, 0, 2 * Math.PI, true);
+        globalCanvasGrid.fill();
+    }
+
+    /*
+    * Ideally this function should only be called once
+    * */
+    function drawFlightPath() {
+        // Using the waypoints array join each one together
+        var currentWaypoints = $scope.currentWaypoints;
+        $log.debug(currentWaypoints.length);
+        if (currentWaypoints.length > 1) {
+            $log.debug("Drawing flight path now");
+            for (var i = 0; i < currentWaypoints.length - 1; i++) {
+                var currentWaypoint = currentWaypoints[i];
+                var nextWaypoint = currentWaypoints[i + 1];
+                globalCanvasGrid.moveTo(currentWaypoint.x, currentWaypoint.y);
+                globalCanvasGrid.lineTo(nextWaypoint.x, nextWaypoint.y);
+                globalCanvasGrid.stroke();
+                $log.debug(currentWaypoint);
+            }
+        }
+    }
+
+    /*
+    * Final submission to the server
+    * */
 
     $scope.submitMission = function () {
         var selectedDrone = $scope.selectedDrone;
 
         if (selectedDrone == undefined ||
             selectedDrone == null)
-            $log.log("An undefined selectedDrone");
+            $log.debug("An undefined selectedDrone");
         else {
-            $log.log($scope.selectedDrone.id);
-            $log.log("Mission has been started");
+            $log.debug($scope.selectedDrone.id);
+            $log.debug("Mission has been started");
 
             var currentMission = {
                 selectedDrone: selectedDrone.id,
@@ -162,7 +235,7 @@ var webServer = angular.module("webServer", [])
             };
 
             var url = $scope.baseurl + "/testREST";
-            $log.log(currentMission);
+            $log.debug(currentMission);
 
             var request = {
                 url: url,
@@ -177,17 +250,17 @@ var webServer = angular.module("webServer", [])
                 }
                 //data: currentMission
             };
-            $log.log(request);
+            $log.debug(request);
 
             /*$http.post(
                 url,
                 currentMission, function(data) {
-                $log.log(data);
-                $log.log(typeof(data));
+                $log.debug(data);
+                $log.debug(typeof(data));
             });*/
             $http(request).then(function(data) {
-                $log.log(data);
-                $log.log(typeof(data));
+                $log.debug(data);
+                $log.debug(typeof(data));
             });
         }
 
