@@ -16,10 +16,21 @@ button {
 
 /* IDs */
 
-#canvas-test {
+#altitude-box {
+    color: #000;
+}
+
+#canvas-grid {
     width: 100%;
     height: auto;
     background-color: #fff;
+}
+
+#canvas-flight-path {
+    width: 100%;
+    height: auto;
+    background-color: transparent;
+    position: absolute;
 }
 
 #configure-mission-page {

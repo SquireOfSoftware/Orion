@@ -15,16 +15,20 @@ var webServer = angular.module("webServer", [])
     $scope.baseurl = "http://localhost:5001";
     $scope.warningMsg = "";
 
-    $scope.currentMission = {};
+    $scope.currentMission = {
+    };
+
+    $scope.altitude = 50;
 
     var MINGRID = 0;
     var MAXGRID = 300;
 
     var globalCanvasGrid = null;
     var canvasOffsets = {};
-    var canvasObject = null;
 
     $scope.currentWaypoints = [];
+
+    $scope.canSubmitMission = false;
 
     $scope.init = function() {
         $(".mission-page").hide();
@@ -76,12 +80,16 @@ var webServer = angular.module("webServer", [])
     * */
 
     function initialiseGrid() {
-        canvasObject = jQuery("#canvas-test")[0];
-        canvasObject.addEventListener("mousedown", triggerMouseClick, false);
-        var canvasGrid = canvasObject.getContext('2d');
+        var canvasGrid = jQuery("#canvas-grid")[0].getContext('2d');
         canvasGrid = drawVerticalLines(canvasGrid);
         canvasGrid = drawHorizontalLines(canvasGrid);
         globalCanvasGrid = canvasGrid;
+        initialiseFlightPathGrid();
+    }
+
+    function initialiseFlightPathGrid() {
+        var canvasObject = jQuery("#canvas-flight-path")[0];
+        canvasObject.addEventListener("mousedown", triggerMouseClick, false);
     }
 
     function drawVerticalLines(canvasGrid) {
@@ -102,7 +110,7 @@ var webServer = angular.module("webServer", [])
         return canvasGrid;
     }
 
-    function getScale() {
+    function getScale(canvasObject) {
         /*
          * Basically figure out where the offsets are
          * Since canvas resides two divs down, you need to determine the offsets from each
@@ -120,7 +128,7 @@ var webServer = angular.module("webServer", [])
     /*
     * TODO PLEASE FIX THIS FOR FIREFOX, SINCE THIS ONLY WORKS FOR CHROME
     * */
-    function getOffsets() {
+    function getOffsets(canvasObject) {
         $log.debug("parent parent offsets: " + canvasObject.offsetParent.offsetParent.offsetLeft + " " +
             canvasObject.offsetParent.offsetParent.offsetTop);
 
@@ -136,8 +144,10 @@ var webServer = angular.module("webServer", [])
 
     function triggerMouseClick(e) {
         // http://stackoverflow.com/questions/28628964/mouse-position-within-html-5-responsive-canvas
-        getScale();
-        getOffsets();
+        var canvasObject = jQuery("#canvas-grid")[0];
+        getScale(canvasObject);
+        getOffsets(canvasObject);
+
         var mouseClick = parseMouseClick(e);
 
         if (addWaypoint(mouseClick)) {
@@ -171,6 +181,8 @@ var webServer = angular.module("webServer", [])
 
         var actualX = (x - offsetX) * scale;
         var actualY = (y - offsetY) * scale;
+
+        $log.debug("offset x:" + offsetX + " offset y:" + offsetY);
 
         $log.debug("actual x: " + actualX + " actual y: " + actualY);
         return {
@@ -223,6 +235,40 @@ var webServer = angular.module("webServer", [])
     * Final submission to the server
     * */
 
+    function isValidMission () {
+        var currentMission = $scope.currentMission;
+        var isValid = hasDrone(currentMission.selectedDrone) &&
+                hasWaypoints(currentMission.waypoints) &&
+                hasAltitude(currentMission.altitude) &&
+                hasPointOfInterest(currentMission.pointOfInterest);
+        $log.debug(isValid);
+        $scope.canSubmitMission = isValid;
+    };
+
+    function hasDrone(selectedDrone) {
+        return (exists(selectedDrone));
+    }
+
+    function hasWaypoints(waypoints) {
+        return (exists(waypoints)) &&
+            (waypoints.length > 0);
+    }
+
+    function hasAltitude(altitude) {
+        return (exists(altitude)) &&
+            (altitude > 0) &&
+            (altitude < 300);
+    }
+
+    function hasPointOfInterest(pointOfInterest) {
+        return (exists(pointOfInterest));
+    }
+
+    function exists(object) {
+        return (object !== undefined) &&
+            (object !== null);
+    }
+
     $scope.submitMission = function () {
         var selectedDrone = $scope.selectedDrone;
 
@@ -236,27 +282,13 @@ var webServer = angular.module("webServer", [])
             var currentMission = {
                 selectedDrone: selectedDrone,
                 waypoints: $scope.currentWaypoints,
-                altitude: 1,
+                altitude: $scope.altitude,
                 obstacles: [],
                 pointOfInterest: {"x": 1, "y": 1}
             };
 
             var url = $scope.baseurl + "/rest/missions";
             $log.debug(currentMission);
-
-            var request = {
-                //url: url,
-                //method: 'POST',
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE',
-                    'Access-Control-Max-Age': '3600',
-                    'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
-                    'Content-Type': 'application/text',
-                    'Access-Control-Allow-Credentials': false
-                },
-                data: currentMission
-            };
 
             // How to bypass CORS on mac
             // open -a Google\ Chrome --args --disable-web-security --user-data-dir
@@ -270,14 +302,6 @@ var webServer = angular.module("webServer", [])
                 'Access-Control-Allow-Credentials': false
             };
 
-            //$log.debug(request);
-
-            /*$http.post(
-                url,
-                currentMission, function(data) {
-                $log.debug(data);
-                $log.debug(typeof(data));
-            });*/
             $http.post(url, currentMission, config).then(function(data) {
                 $log.debug(data);
                 $log.debug(typeof(data));
