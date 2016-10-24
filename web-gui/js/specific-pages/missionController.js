@@ -151,6 +151,12 @@ var webServer = angular.module("webServer", [])
         * */
     }
 
+    /*
+    * This needs to be cross browser supported
+    * http://www.quirksmode.org/mobile/viewports2.html
+    * TODO Look at view ports
+    * TODO fix so that it uses PageX not clientX
+    * */
     function parseMouseClick(e) {
 
         var x = e.clientX;

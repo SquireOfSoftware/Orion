@@ -17,13 +17,13 @@ from management_constants import MISSION_STATUS
 from management_constants import DRONE_STATUS
 
 
-MIN_ALTITUDE = 0.5
-MAX_ALTITUDE = 2.5
+MIN_ALTITUDE = 0.0
+MAX_ALTITUDE = 250.0
 
-MIN_X = 0
-MAX_X = 3.0
-MIN_Y = 0
-MAX_Y = 3.0
+MIN_X = 0.0
+MAX_X = 300.0
+MIN_Y = 0.0
+MAX_Y = 300.0
 
 missions_test = []
 
@@ -61,6 +61,7 @@ def add_a_mission(data):
     obstacles = data["obstacles"]
 
     if drones.validate_drone(int(drone_id)):
+        print("validating data now")
         if not validate_altitude(altitude):
             return send_missions_error("Please verify that the altitude is between " +
                                        str(MIN_ALTITUDE) +
@@ -101,12 +102,14 @@ def create_waypoints(mission_id, waypoint_array):
     waypoints = []
     for waypoint in waypoint_array:
         points_are_valid = validate_points(waypoint)
+        print(waypoint)
         if points_are_valid:
-            waypoints.append(Waypoint.objects.create(
+            waypoint_object = Waypoint.objects.create(
                 waypointx=float(waypoint["x"]),
                 waypointy=float(waypoint["y"]),
                 mission_missionid=Mission.objects.get(missionid=mission_id)
-            ))
+            )
+            waypoints.append(waypoint_object)
     return waypoints
 
 
