@@ -22,6 +22,7 @@ var webServer = angular.module("webServer", [])
 
     var globalCanvasGrid = null;
     var canvasOffsets = {};
+    var canvasObject = null;
 
     $scope.currentWaypoints = [];
 
@@ -75,11 +76,9 @@ var webServer = angular.module("webServer", [])
     * */
 
     function initialiseGrid() {
-        var canvasObject = jQuery("#canvas-test")[0];
+        canvasObject = jQuery("#canvas-test")[0];
         canvasObject.addEventListener("mousedown", triggerMouseClick, false);
         var canvasGrid = canvasObject.getContext('2d');
-        getScale(canvasObject);
-        getOffsets(canvasObject);
         canvasGrid = drawVerticalLines(canvasGrid);
         canvasGrid = drawHorizontalLines(canvasGrid);
         globalCanvasGrid = canvasGrid;
@@ -103,7 +102,7 @@ var webServer = angular.module("webServer", [])
         return canvasGrid;
     }
 
-    function getScale(canvasObject) {
+    function getScale() {
         /*
          * Basically figure out where the offsets are
          * Since canvas resides two divs down, you need to determine the offsets from each
@@ -121,7 +120,7 @@ var webServer = angular.module("webServer", [])
     /*
     * TODO PLEASE FIX THIS FOR FIREFOX, SINCE THIS ONLY WORKS FOR CHROME
     * */
-    function getOffsets(canvasObject) {
+    function getOffsets() {
         $log.debug("parent parent offsets: " + canvasObject.offsetParent.offsetParent.offsetLeft + " " +
             canvasObject.offsetParent.offsetParent.offsetTop);
 
@@ -137,6 +136,8 @@ var webServer = angular.module("webServer", [])
 
     function triggerMouseClick(e) {
         // http://stackoverflow.com/questions/28628964/mouse-position-within-html-5-responsive-canvas
+        getScale();
+        getOffsets();
         var mouseClick = parseMouseClick(e);
 
         if (addWaypoint(mouseClick)) {
@@ -159,8 +160,8 @@ var webServer = angular.module("webServer", [])
     * */
     function parseMouseClick(e) {
 
-        var x = e.clientX;
-        var y = e.clientY;
+        var x = e.pageX;
+        var y = e.pageY;
 
         $log.debug("x: " + x + " y: " + y);
 
