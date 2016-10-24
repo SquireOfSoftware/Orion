@@ -15,18 +15,17 @@ var webServer = angular.module("webServer", [])
     $scope.baseurl = "http://localhost:5001";
     $scope.warningMsg = "";
 
-    $scope.currentMission = {
-    };
+    $scope.currentMission = {};
 
     $scope.altitude = 50;
 
     var MINGRID = 0;
     var MAXGRID = 300;
 
-    var globalCanvasGrid = null;
+    var flightPathCanvasGrid = null;
     var canvasOffsets = {};
-
     $scope.currentWaypoints = [];
+    $scope.currentPointOfInterest = {};
 
     $scope.canSubmitMission = false;
 
@@ -61,9 +60,10 @@ var webServer = angular.module("webServer", [])
 
     $scope.currentMission = {};
 
-    $scope.sayHiForMe = function () {
-        $log.debug("YOU CLICKED ME!");
+    $scope.showFlightPath = function () {
+        isValidMission();
         jQuery("#select-a-drone-page").hide();
+        jQuery("#canvas-point-of-interest").hide();
         jQuery("#configure-mission-page").show();
         initialiseGrid();
     };
@@ -83,13 +83,14 @@ var webServer = angular.module("webServer", [])
         var canvasGrid = jQuery("#canvas-grid")[0].getContext('2d');
         canvasGrid = drawVerticalLines(canvasGrid);
         canvasGrid = drawHorizontalLines(canvasGrid);
-        globalCanvasGrid = canvasGrid;
+        flightPathCanvasGrid = canvasGrid;
         initialiseFlightPathGrid();
     }
 
     function initialiseFlightPathGrid() {
         var canvasObject = jQuery("#canvas-flight-path")[0];
         canvasObject.addEventListener("mousedown", triggerMouseClick, false);
+
     }
 
     function drawVerticalLines(canvasGrid) {
@@ -154,7 +155,6 @@ var webServer = angular.module("webServer", [])
             drawDot(mouseClick);
             drawFlightPath();
         }
-
         /*
         * Please note that if you need to delete a point you will need to redraw all the points
         * Since it stored as an array, could in theory, wipe then redraw
@@ -165,8 +165,6 @@ var webServer = angular.module("webServer", [])
     /*
     * This needs to be cross browser supported
     * http://www.quirksmode.org/mobile/viewports2.html
-    * TODO Look at view ports
-    * TODO fix so that it uses PageX not clientX
     * */
     function parseMouseClick(e) {
 
@@ -210,13 +208,13 @@ var webServer = angular.module("webServer", [])
     }
 
     function drawDot(mouseClick) {
-        globalCanvasGrid.beginPath();
-        globalCanvasGrid.arc(mouseClick.x, mouseClick.y, 2, 0, 2 * Math.PI, true);
-        globalCanvasGrid.fill();
+        flightPathCanvasGrid.beginPath();
+        flightPathCanvasGrid.arc(mouseClick.x, mouseClick.y, 2, 0, 2 * Math.PI, true);
+        flightPathCanvasGrid.fill();
     }
 
     /*
-    * Ideally this function should only be called once
+    * Ideally this function should only be called once per click
     * */
     function drawFlightPath() {
         // Using the waypoints array join each one together
@@ -225,10 +223,32 @@ var webServer = angular.module("webServer", [])
             $log.debug("Drawing flight path now");
             var currentWaypoint = currentWaypoints[currentWaypoints.length - 2];
             var nextWaypoint = currentWaypoints[currentWaypoints.length - 1];
-            globalCanvasGrid.moveTo(currentWaypoint.x, currentWaypoint.y);
-            globalCanvasGrid.lineTo(nextWaypoint.x, nextWaypoint.y);
-            globalCanvasGrid.stroke();
+            flightPathCanvasGrid.moveTo(currentWaypoint.x, currentWaypoint.y);
+            flightPathCanvasGrid.lineTo(nextWaypoint.x, nextWaypoint.y);
+            flightPathCanvasGrid.stroke();
         }
+    }
+
+    /*
+    * Point of interest
+    * */
+    $scope.showPointOfInterest = function() {
+        flightPathCanvasActive = false;
+        // Need proper architecture after this is resolved.
+        jQuery("#canvas-flight-path").hide();
+        var canvasObject = jQuery("#canvas-point-of-interest")[0];
+        jQuery("#canvas-point-of-interest").show();
+        canvasObject.addEventListener("mousedown", selectPointOfInterest, false);
+        isValidMission();
+    };
+
+    function selectPointOfInterest(e) {
+        var canvasObject = jQuery("#canvas-grid")[0];
+        getScale(canvasObject);
+        getOffsets(canvasObject);
+
+        var mouseClick = parseMouseClick(e);
+        $scope.currentPointOfInterest = mouseClick;
     }
 
     /*
@@ -243,7 +263,7 @@ var webServer = angular.module("webServer", [])
                 hasPointOfInterest(currentMission.pointOfInterest);
         $log.debug(isValid);
         $scope.canSubmitMission = isValid;
-    };
+    }
 
     function hasDrone(selectedDrone) {
         return (exists(selectedDrone));
@@ -284,7 +304,7 @@ var webServer = angular.module("webServer", [])
                 waypoints: $scope.currentWaypoints,
                 altitude: $scope.altitude,
                 obstacles: [],
-                pointOfInterest: {"x": 1, "y": 1}
+                pointOfInterest: $scope.currentPointOfInterest
             };
 
             var url = $scope.baseurl + "/rest/missions";

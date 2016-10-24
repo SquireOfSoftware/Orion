@@ -30,7 +30,7 @@
             {{selectedDrone.name}} has been selected.
         </div>
         <div class="col-sm-offset-9 col-sm-12" >
-            <button class="button col-sm-2" ng-click="sayHiForMe()">
+            <button class="button col-sm-2" ng-click="showFlightPath()">
                 Configure the mission >
             </button>
         </div>
@@ -48,7 +48,7 @@
         </div>
         <div class="col-sm-12">
             <div id="selection-grid" class="col-sm-8">
-                <canvas id="canvas-point-of-interest" class="hidden" width="300" height="300">
+                <canvas id="canvas-point-of-interest" width="300" height="300">
                     Sorry, your browser doesn't support the &lt;canvas&gt; element.
                 </canvas>
 
@@ -66,12 +66,12 @@
                 <input id="altitude-box" name="altitude" ng-model="altitude" type="number" placeholder="Enter the altitude in meters"/>
             </div>
         </div>
-        <div class="col-sm-offset-9 col-sm-12" >
-            <button class="button col-sm-2" ng-click="submitMission()">
+        <div class="col-sm-offset-8 col-sm-12" >
+            <button class="button col-xs-12 col-sm-2" ng-click="showPointOfInterest()">
                 Select the point of interest >
             </button>
 
-            <button class="button col-sm-2" ng-click="submitMission()">
+            <button class="button col-xs-12 col-sm-2" ng-click="submitMission()">
                 Start the mission >
             </button>
         </div>

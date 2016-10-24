@@ -4,6 +4,11 @@ button {
     height: auto;
 }
 
+canvas {
+    width: 100%;
+    height: auto;
+}
+
 /* Classes */
 
 .drone {
@@ -20,17 +25,25 @@ button {
     color: #000;
 }
 
-#canvas-grid {
+#canvas-grid {/*
     width: 100%;
-    height: auto;
+    height: auto;*/
     background-color: #fff;
 }
 
-#canvas-flight-path {
+#canvas-flight-path {/*
     width: 100%;
-    height: auto;
+    height: auto;*/
     background-color: transparent;
     position: absolute;
+    padding-right: 30px;
+}
+
+#canvas-point-of-interest {
+    background-color: transparent;
+    position: absolute;
+    padding-right: 30px;
+    display: none;
 }
 
 #configure-mission-page {
