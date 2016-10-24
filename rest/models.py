@@ -79,7 +79,7 @@ class Drone(models.Model):
 
 
 class Missionstatus(models.Model):
-    missionstatusid = models.AutoField(db_column='MissionStatustID',
+    missionstatusid = models.AutoField(db_column='MissionStatusID',
                                        primary_key=True)  # Field name made lowercase.
     missionstatusname = models.CharField(db_column='MissionStatusName',
                                          max_length=45,
@@ -93,7 +93,7 @@ class Missionstatus(models.Model):
 
     def as_dict(self):
         return {
-            "id": self.missionstatustid,
+            "id": self.missionstatusid,
             "status": self.missionstatusname
         }
 
@@ -111,9 +111,9 @@ class Mission(models.Model):
     missionaltitude = models.FloatField(db_column='MissionAltitude',
                                         blank=True,
                                         null=True)  # Field name made lowercase.
-    missionstatus_missionstatustid = models.ForeignKey(Missionstatus,
+    missionstatus_missionstatusid = models.ForeignKey(Missionstatus,
                                                        models.DO_NOTHING,
-                                                       db_column='MissionStatus_MissionStatustID',
+                                                       db_column='MissionStatus_MissionStatusID',
                                                        blank=True,
                                                        null=True)  # Field name made lowercase.
     drone_droneid = models.ForeignKey(Drone,
@@ -130,10 +130,10 @@ class Mission(models.Model):
     def as_dict(self):
         mission_status_id = ""
         drone_id = ""
-        if self.missionstatus_missionstatustid is None:
+        if self.missionstatus_missionstatusid is None:
             mission_status_id = MISSION_STATUS["QUEUED"]
         else:
-            mission_status_id = self.missionstatus_missionstatustid.missionstatusid
+            mission_status_id = self.missionstatus_missionstatusid.missionstatusid
 
         if self.drone_droneid is None:
             drone_id = -1

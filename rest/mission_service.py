@@ -17,13 +17,13 @@ from management_constants import MISSION_STATUS
 from management_constants import DRONE_STATUS
 
 
-MIN_ALTITUDE = 0.5
-MAX_ALTITUDE = 2.5
+MIN_ALTITUDE = 0.0
+MAX_ALTITUDE = 250.0
 
-MIN_X = 0
-MAX_X = 3.0
-MIN_Y = 0
-MAX_Y = 3.0
+MIN_X = 0.0
+MAX_X = 300.0
+MIN_Y = 0.0
+MAX_Y = 300.0
 
 missions_test = []
 
@@ -53,13 +53,15 @@ def add_a_mission(data):
     # parses string to dictionary
     data = json.loads(data)
 
-    altitude = data["mission"]["altitude"]
-    drone_id = data['mission']['drone']['id']
-    point_of_interest = data["mission"]["point_of_interest"]
-    waypoints = data["mission"]["waypoints"]
-    obstacles = data["mission"]["obstacles"]
+    print(data)
+    altitude = float(data["altitude"])
+    drone_id = int(data['selectedDrone']['id'])
+    point_of_interest = data["pointOfInterest"]
+    waypoints = data["waypoints"]
+    obstacles = data["obstacles"]
 
     if drones.validate_drone(int(drone_id)):
+        print("validating data now")
         if not validate_altitude(altitude):
             return send_missions_error("Please verify that the altitude is between " +
                                        str(MIN_ALTITUDE) +
@@ -90,7 +92,7 @@ def create_mission(altitude, drone_id):
     mission = Mission.objects.create(
         missioncreationdate=get_current_time(),
         missionaltitude=float(altitude),
-        missionstatus_missionstatustid=Missionstatus.objects.get(missionstatusid=MISSION_STATUS["QUEUED"]),
+        missionstatus_missionstatusid=Missionstatus.objects.get(missionstatusid=MISSION_STATUS["QUEUED"]),
         drone_droneid=Drone.objects.get(droneid=drone_id)
     )
     return mission
@@ -100,12 +102,14 @@ def create_waypoints(mission_id, waypoint_array):
     waypoints = []
     for waypoint in waypoint_array:
         points_are_valid = validate_points(waypoint)
+        print(waypoint)
         if points_are_valid:
-            waypoints.append(Waypoint.objects.create(
+            waypoint_object = Waypoint.objects.create(
                 waypointx=float(waypoint["x"]),
                 waypointy=float(waypoint["y"]),
                 mission_missionid=Mission.objects.get(missionid=mission_id)
-            ))
+            )
+            waypoints.append(waypoint_object)
     return waypoints
 
 
@@ -125,8 +129,8 @@ def create_obstacles(mission_id, obstacle_array):
 def create_point_of_interest(mission_id, point_of_interest):
     # assume there is only one point of interest
     poi = Pointofinterest.objects.create(
-        pointofinterestx=float(point_of_interest[0]["x"]),
-        pointofinteresty=float(point_of_interest[0]["y"]),
+        pointofinterestx=float(point_of_interest["x"]),
+        pointofinteresty=float(point_of_interest["y"]),
         mission_missionid=Mission.objects.get(missionid=mission_id)
     )
     return poi
@@ -139,7 +143,7 @@ def start_mission(mission_id):
     no_missions_are_running = verify_no_missions_are_active()
     drone_is_available = verify_drone_is_available(mission.drone_droneid.droneid)
     if (mission is not None) and no_missions_are_running and drone_is_available:
-        mission.missionstatus_missionstatustid = Missionstatus.objects.get(missionstatusid=MISSION_STATUS["IN_PROGRESS"])
+        mission.missionstatus_missionstatusid = Missionstatus.objects.get(missionstatusid=MISSION_STATUS["IN_PROGRESS"])
         mission.save()
 
         drone = Drone.objects.get(droneid=mission.drone_droneid.droneid)
@@ -181,11 +185,13 @@ def validate_points(point):
 def validate_point_of_interest(point):
     # verify that it exists
     # verify that it is within the boundaries of 3m by 3m
+    x = int(point["x"])
+    y = int(point["y"])
 
-    return (point[0]["x"] > MIN_X) and \
-           (point[0]["x"] < MAX_X) and \
-           (point[0]["y"] > MIN_Y) and \
-           (point[0]["y"] < MAX_Y)
+    return (x > MIN_X) and \
+           (x < MAX_X) and \
+           (y > MIN_Y) and \
+           (y < MAX_Y)
 
 
 def validate_flight_path(waypoints, obstacles):
@@ -202,7 +208,7 @@ def validate_battery():
 
 def verify_no_missions_are_active():
     try:
-        active_mission = Mission.objects.get(missionstatus_missionstatustid=MISSION_STATUS["IN_PROGRESS"])
+        active_mission = Mission.objects.get(missionstatus_missionstatusid=MISSION_STATUS["IN_PROGRESS"])
         return active_mission is None
     except Mission.DoesNotExist:
         return True
