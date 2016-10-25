@@ -15,7 +15,8 @@
     <link rel="stylesheet" type="text/css" href="../../css/specific-pages/mission-composer.css"/>
 </head>
 <body ng-controller="missionCtrl" ng-init="init()">
-    <div ng-cloak="warningMsg === ''" id="warning-message" model="warningMsg">{{warningMsg}}</div>
+    <div id="warning-message" ng-model="warningMsg">{{warningMsg}}</div>
+    <div id="overlay" class="col-md-12 errors"></div>
     <!--
     Drone id
     List of Way-points

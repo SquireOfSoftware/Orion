@@ -356,8 +356,8 @@ angular.module("webServer", [])
                     $log.debug(typeof(data));
                 })
                 .catch(function(data) {
-
                     $scope.warningMsg = "There was an error with your submission.";
+                    jQuery(".errors")
                 })
             ;
         }
