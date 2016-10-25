@@ -7,7 +7,7 @@ from mission_reader import mission_reader
 
 def __main__():
     test = drone_control()
-    test.test()
+    test.test2()
     print("Test initialised i guess")
 
     return
