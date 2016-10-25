@@ -52,26 +52,30 @@
                     <select name="drone-dropdown"
                             id="drone-dronedown"
                             ng-model="selectedDrone"
-                            ng-options="drone.name for drone in drones">
+                            ng-options="drone.name for drone in drones"
+                            required>
                     </select>
                     <p ng-cloak="selectedDrone != null">
                         Drone selected: {{selectedDrone.name}} {{selectedDrone.id}}
                     </p>
                 </div>
-                <div class="col-sm-12">
-                    Enter in the altitude (in meters):
-                    <input id="altitude-box" name="altitude" ng-model="altitude" type="number" placeholder="Enter the altitude in meters"/>
+                <div id="input-bar" class="col-sm-12">
+                    <div>
+                        Enter in the altitude (in centimeters):
+                        <input id="altitude-box" name="altitude" ng-model="altitude" type="number" placeholder="Enter the altitude in meters"/>
+                    </div>
+
+                    <button class="button col-xs-12" ng-click="switchToFlightPath()">
+                        Select the flight path
+                    </button>
+                    <button class="button col-xs-12" ng-click="switchToPointOfInterest()">
+                        Select the point of interest
+                    </button>
+                    <button input="button" class="button col-xs-12" ng-disabled="canSubmitMission" ng-click="submitMission()">
+                        Start the mission >
+                    </button>
                 </div>
             </div>
-        </div>
-        <div class="col-sm-offset-8 col-sm-12" >
-            <button class="button col-xs-12 col-sm-2" ng-click="showPointOfInterest()">
-                Select the point of interest >
-            </button>
-
-            <button input="button" class="button col-xs-12 col-sm-2" ng-disabled="canSubmitMission" ng-click="submitMission()">
-                Start the mission >
-            </button>
         </div>
     </div>
 

@@ -54,6 +54,7 @@ angular.module("webServer", [])
     function initialiseDummyDrones() {
         addDrone(setupDrone("2", "Voyager", "../../images/Drone1.png"));
         addDrone(setupDrone("1", "Sputnik", "../../images/Drone2.png"));
+        $scope.selectedDrone = $scope.drones[0];
     }
 
     function setupDrone(id, name, imagePath) {
@@ -75,7 +76,7 @@ angular.module("webServer", [])
     function initialiseGrids() {
         initialiseBaseGrid(jQuery("#canvas-grid")[0]);
         initialiseFlightPathGrid(jQuery("#canvas-flight-path")[0]);
-
+        initialisePointOfInterestGrid(jQuery("#canvas-point-of-interest")[0]);
         initialiseInteractionGrid(jQuery("#canvas-interaction")[0]);
         currentScreenState = SCREENS.flightPath;
     }
@@ -101,6 +102,10 @@ angular.module("webServer", [])
         $log.debug(flightPathGridContext);
     }
 
+    function initialisePointOfInterestGrid(canvasGridObject) {
+        pointOfInterestGridContext = getContextFromGrid(canvasGridObject);
+    }
+
     function drawVerticalLines(canvasGrid) {
         for (var x = MINGRID; x <= MAXGRID; x += INCREMENT) {
             canvasGrid.moveTo(x, MINGRID);
@@ -119,11 +124,10 @@ angular.module("webServer", [])
 
     function setupScaleAndOffsets() {
         var canvasObject = jQuery("#canvas-grid")[0];
-        var scaleAndOffsets = {
+        return {
             scale: getScale(canvasObject),
             offsets: getOffsets(canvasObject)
         };
-        return scaleAndOffsets;
     }
 
     function getScale(canvasObject) {
@@ -140,9 +144,6 @@ angular.module("webServer", [])
         return canvasScale;
     }
 
-    /*
-    * TODO PLEASE FIX THIS FOR FIREFOX, SINCE THIS ONLY WORKS FOR CHROME
-    * */
     function getOffsets(canvasObject) {
         $log.debug("parent parent offsets: " + canvasObject.offsetParent.offsetParent.offsetLeft + " " +
             canvasObject.offsetParent.offsetParent.offsetTop);
@@ -173,6 +174,7 @@ angular.module("webServer", [])
                 }
                 break;
             case SCREENS.pointOfInterest:
+                $log.debug(pointOfInterestGridContext);
                 clearGrid(pointOfInterestGridContext);
                 drawDot(mouseClick, pointOfInterestGridContext, "#ff8900");
                 break;
@@ -240,8 +242,8 @@ angular.module("webServer", [])
         canvasGrid.fill();
     }
 
-    function clearGrid(canvasObject) {
-        var contextObject = canvasObject.getContext("2d");
+    function clearGrid(contextObject) {
+        var canvasObject = contextObject.canvas;
         $log.debug("Clearing grid: ");
         $log.debug(contextObject);
         contextObject.clearRect(0, 0, canvasObject.width, canvasObject.height);
@@ -270,19 +272,13 @@ angular.module("webServer", [])
     * Point of interest
     * */
 
-    function selectPointOfInterest(e) {
-        var canvasObject = jQuery("#canvas-grid")[0];
-        getScale(canvasObject);
-        getOffsets(canvasObject);
+    $scope.switchToPointOfInterest = function () {
+        currentScreenState = SCREENS.pointOfInterest;
+    };
 
-        var mouseClick = parseMouseClick(e);
-        $scope.currentPointOfInterest = mouseClick;
-
-        var pointOfInterestGrid = jQuery("#canvas-point-of-interest")[0];
-
-        clearGrid(pointOfInterestGrid);
-        drawDot(mouseClick, pointOfInterestGrid.getContext("2d"), "#ff8900");
-    }
+    $scope.switchToFlightPath = function () {
+        currentScreenState = SCREENS.flightPath;
+    };
 
     /*
     * Final submission to the server
