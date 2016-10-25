@@ -7,39 +7,51 @@
  * https://www.toptal.com/angular-js/a-step-by-step-guide-to-your-first-angularjs-app
  */
 
-var webServer = angular.module("webServer", [])
+angular.module("webServer", [])
 .controller("missionCtrl", function($log, $http, $scope)
 {
     $scope.drones = [];
-    $scope.selectedDrone = {};
     $scope.baseurl = "http://localhost:5001";
     $scope.warningMsg = "";
 
+    $scope.canSubmitMission = false;
+
+    // Mission variables
+
     $scope.currentMission = {};
 
+    $scope.selectedDrone = null;
     $scope.altitude = 50;
 
-    var MINGRID = 0;
-    var MAXGRID = 300;
-
-    var flightPathCanvasGrid = null;
-    var canvasOffsets = {};
     $scope.currentWaypoints = [];
     $scope.currentPointOfInterest = {};
 
-    $scope.canSubmitMission = false;
+    var MINGRID = 0;
+    var MAXGRID = 300;
+    var INCREMENT = 50;
+
+    // Grids
+    var interactionGridContext = null;
+    var pointOfInterestGridContext = null;
+    var flightPathGridContext = null;
+    var baseGridContext = null;
+
+    var SCREENS = {
+        flightPath: 1,
+        pointOfInterest: 2
+    };
+    var currentScreenState = -1;
 
     $scope.init = function() {
-        $(".mission-page").hide();
-        $("#select-a-drone-page").show();
-        initialiseDrones();
+        initialiseDummyDrones();
+        initialiseGrids();
     };
 
     /*
     * This is for the first screen
     * */
 
-    function initialiseDrones() {
+    function initialiseDummyDrones() {
         addDrone(setupDrone("2", "Voyager", "../../images/Drone1.png"));
         addDrone(setupDrone("1", "Sputnik", "../../images/Drone2.png"));
     }
@@ -56,59 +68,62 @@ var webServer = angular.module("webServer", [])
         $scope.drones.push(drone);
     }
 
-    $log.debug("Hello world");
-
-    $scope.currentMission = {};
-
-    $scope.showFlightPath = function () {
-        isValidMission();
-        jQuery("#select-a-drone-page").hide();
-        jQuery("#canvas-point-of-interest").hide();
-        jQuery("#configure-mission-page").show();
-        initialiseGrid();
-    };
-
-    $scope.selectDrone = function (selectedDrone) {
-        $log.debug("drone with id: " + selectedDrone.id + " has been selected.");
-
-        $scope.selectedDrone = selectedDrone;
-        jQuery("#selected-drone-message").show();
-    };
-
     /*
     * This is for the grid screen
     * */
 
-    function initialiseGrid() {
-        var canvasGrid = jQuery("#canvas-grid")[0].getContext('2d');
-        canvasGrid = drawVerticalLines(canvasGrid);
-        canvasGrid = drawHorizontalLines(canvasGrid);
-        flightPathCanvasGrid = canvasGrid;
-        initialiseFlightPathGrid();
+    function initialiseGrids() {
+        initialiseBaseGrid(jQuery("#canvas-grid")[0]);
+        initialiseFlightPathGrid(jQuery("#canvas-flight-path")[0]);
+
+        initialiseInteractionGrid(jQuery("#canvas-interaction")[0]);
+        currentScreenState = SCREENS.flightPath;
     }
 
-    function initialiseFlightPathGrid() {
-        var canvasObject = jQuery("#canvas-flight-path")[0];
-        canvasObject.addEventListener("mousedown", triggerMouseClick, false);
+    function getContextFromGrid(canvasObject) {
+        return canvasObject.getContext("2d");
+    }
 
+    function initialiseBaseGrid(canvasGridObject) {
+        baseGridContext = getContextFromGrid(canvasGridObject);
+        drawVerticalLines(baseGridContext);
+        drawHorizontalLines(baseGridContext);
+    }
+
+    function initialiseInteractionGrid(canvasGridObject) {
+        $log.debug("Linking the mouse");
+        interactionGridContext = canvasGridObject.getContext("2d");
+        canvasGridObject.addEventListener("mousedown", triggerMouseClick, false);
+    }
+
+    function initialiseFlightPathGrid(canvasGridObject) {
+        flightPathGridContext = getContextFromGrid(canvasGridObject);
+        $log.debug(flightPathGridContext);
     }
 
     function drawVerticalLines(canvasGrid) {
-        for (var x = 0; x <= 300; x += 50) {
+        for (var x = MINGRID; x <= MAXGRID; x += INCREMENT) {
             canvasGrid.moveTo(x, MINGRID);
             canvasGrid.lineTo(x, MAXGRID);
             canvasGrid.stroke();
         }
-        return canvasGrid;
     }
 
     function drawHorizontalLines(canvasGrid) {
-        for (var y = 0; y <= 300; y += 50) {
+        for (var y = MINGRID; y <= MAXGRID; y += INCREMENT) {
             canvasGrid.moveTo(MINGRID, y);
             canvasGrid.lineTo(MAXGRID, y);
             canvasGrid.stroke();
         }
-        return canvasGrid;
+    }
+
+    function setupScaleAndOffsets() {
+        var canvasObject = jQuery("#canvas-grid")[0];
+        var scaleAndOffsets = {
+            scale: getScale(canvasObject),
+            offsets: getOffsets(canvasObject)
+        };
+        return scaleAndOffsets;
     }
 
     function getScale(canvasObject) {
@@ -122,8 +137,7 @@ var webServer = angular.module("webServer", [])
          * */
         var canvasScale = canvasObject.width/canvasObject.offsetWidth;
         $log.debug(canvasScale + " " + canvasObject.width + " " + canvasObject.offsetWidth);
-
-        canvasOffsets.scale = canvasScale;
+        return canvasScale;
     }
 
     /*
@@ -133,7 +147,7 @@ var webServer = angular.module("webServer", [])
         $log.debug("parent parent offsets: " + canvasObject.offsetParent.offsetParent.offsetLeft + " " +
             canvasObject.offsetParent.offsetParent.offsetTop);
 
-        canvasOffsets.offsets = {
+        return {
             x: canvasObject.offsetParent.offsetParent.offsetLeft +
             canvasObject.offsetParent.offsetLeft +
             canvasObject.offsetLeft,
@@ -145,15 +159,25 @@ var webServer = angular.module("webServer", [])
 
     function triggerMouseClick(e) {
         // http://stackoverflow.com/questions/28628964/mouse-position-within-html-5-responsive-canvas
-        var canvasObject = jQuery("#canvas-grid")[0];
-        getScale(canvasObject);
-        getOffsets(canvasObject);
+        $log.debug("Mouse click!!");
 
-        var mouseClick = parseMouseClick(e);
+        var scaleAndOffsets = setupScaleAndOffsets();
 
-        if (addWaypoint(mouseClick)) {
-            drawDot(mouseClick);
-            drawFlightPath();
+        var mouseClick = parseMouseClick(e, scaleAndOffsets);
+        switch(currentScreenState) {
+            //var flightPathGridContext = getContextFromGrid(jQuery("#canvas-flight-path")[0]);
+            case SCREENS.flightPath:
+                if (addWaypoint(mouseClick)) {
+                    drawDot(mouseClick, flightPathGridContext);
+                    drawFlightPath(flightPathGridContext);
+                }
+                break;
+            case SCREENS.pointOfInterest:
+                clearGrid(pointOfInterestGridContext);
+                drawDot(mouseClick, pointOfInterestGridContext, "#ff8900");
+                break;
+            default:
+                $log.error("I dont recognise this screen");
         }
         /*
         * Please note that if you need to delete a point you will need to redraw all the points
@@ -166,16 +190,16 @@ var webServer = angular.module("webServer", [])
     * This needs to be cross browser supported
     * http://www.quirksmode.org/mobile/viewports2.html
     * */
-    function parseMouseClick(e) {
+    function parseMouseClick(e, scaleAndOffsets) {
 
         var x = e.pageX;
         var y = e.pageY;
 
         $log.debug("x: " + x + " y: " + y);
 
-        var scale = canvasOffsets.scale;
-        var offsetX = canvasOffsets.offsets.x;
-        var offsetY = canvasOffsets.offsets.y;
+        var scale = scaleAndOffsets.scale;
+        var offsetX = scaleAndOffsets.offsets.x;
+        var offsetY = scaleAndOffsets.offsets.y;
 
         var actualX = (x - offsetX) * scale;
         var actualY = (y - offsetY) * scale;
@@ -207,31 +231,45 @@ var webServer = angular.module("webServer", [])
         return false;
     }
 
-    function drawDot(mouseClick) {
-        flightPathCanvasGrid.beginPath();
-        flightPathCanvasGrid.arc(mouseClick.x, mouseClick.y, 2, 0, 2 * Math.PI, true);
-        flightPathCanvasGrid.fill();
+    function drawDot(mouseClick, canvasGrid, colour) {
+        canvasGrid.beginPath();
+        canvasGrid.arc(mouseClick.x, mouseClick.y, 2, 0, 2 * Math.PI, true);
+        if (exists(colour)) {
+            canvasGrid.fillStyle = colour;
+        }
+        canvasGrid.fill();
+    }
+
+    function clearGrid(canvasObject) {
+        var contextObject = canvasObject.getContext("2d");
+        $log.debug("Clearing grid: ");
+        $log.debug(contextObject);
+        contextObject.clearRect(0, 0, canvasObject.width, canvasObject.height);
     }
 
     /*
     * Ideally this function should only be called once per click
     * */
-    function drawFlightPath() {
+    function drawFlightPath(flightPathGrid, colour) {
         // Using the waypoints array join each one together
         var currentWaypoints = $scope.currentWaypoints;
         if (currentWaypoints.length > 1) {
             $log.debug("Drawing flight path now");
             var currentWaypoint = currentWaypoints[currentWaypoints.length - 2];
             var nextWaypoint = currentWaypoints[currentWaypoints.length - 1];
-            flightPathCanvasGrid.moveTo(currentWaypoint.x, currentWaypoint.y);
-            flightPathCanvasGrid.lineTo(nextWaypoint.x, nextWaypoint.y);
-            flightPathCanvasGrid.stroke();
+            flightPathGrid.moveTo(currentWaypoint.x, currentWaypoint.y);
+            flightPathGrid.lineTo(nextWaypoint.x, nextWaypoint.y);
+            if (exists(colour)) {
+                flightPathGrid.strokeStyle = colour;
+            }
+            flightPathGrid.stroke();
         }
     }
 
     /*
     * Point of interest
     * */
+    /*
     $scope.showPointOfInterest = function() {
         flightPathCanvasActive = false;
         // Need proper architecture after this is resolved.
@@ -239,8 +277,7 @@ var webServer = angular.module("webServer", [])
         var canvasObject = jQuery("#canvas-point-of-interest")[0];
         jQuery("#canvas-point-of-interest").show();
         canvasObject.addEventListener("mousedown", selectPointOfInterest, false);
-        isValidMission();
-    };
+    };*/
 
     function selectPointOfInterest(e) {
         var canvasObject = jQuery("#canvas-grid")[0];
@@ -249,6 +286,11 @@ var webServer = angular.module("webServer", [])
 
         var mouseClick = parseMouseClick(e);
         $scope.currentPointOfInterest = mouseClick;
+
+        var pointOfInterestGrid = jQuery("#canvas-point-of-interest")[0];
+
+        clearGrid(pointOfInterestGrid);
+        drawDot(mouseClick, pointOfInterestGrid.getContext("2d"), "#ff8900");
     }
 
     /*
@@ -323,9 +365,14 @@ var webServer = angular.module("webServer", [])
             };
 
             $http.post(url, currentMission, config).then(function(data) {
-                $log.debug(data);
-                $log.debug(typeof(data));
-            });
+                    $log.debug(data);
+                    $log.debug(typeof(data));
+                })
+                .catch(function(data) {
+
+                    $scope.warningMsg = "There was an error with your submission.";
+                })
+            ;
         }
 
     };
