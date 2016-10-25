@@ -11,3 +11,14 @@ def __main__():
     print("Test initialised i guess")
 
     return
+
+def test_init():
+    locator = resource_locator()
+    drone_control(resource_locator)
+    drone_media(resource_locator)
+    drone_metadata(resource_locator)
+    drone_mission(resource_locator)
+
+
+    print("Initialisation Successful")
+    return
