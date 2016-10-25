@@ -18,7 +18,7 @@ class drone_control (object):
         rate = rospy.Rate(60)
         
         #Wait until publisher has starded up.
-        rospy.sleep(1)
+        rospy.sleep(2)
         
 
 
@@ -51,7 +51,7 @@ class drone_control (object):
         self.takeoff()
         #Takes more time
         time.sleep(8)
-        self.move({'linear':{'x':0, 'y':0, 'z':0}, 'angular':{'x':0, 'y':0, 'z':(0)}})
+        self.move({'linear':{'x':0, 'y':0, 'z':0}, 'angular':{'x':0, 'y':0, 'z':0}})
         time.sleep(0.2)
         self.stop()
         time.sleep(0.2)
@@ -98,10 +98,12 @@ class drone_control (object):
         time.sleep(8)
         self.stop()
         time.sleep(2)
-        self.move({'linear':{'x':0.5, 'y':0, 'z':0}, 'angular':{'x':0, 'y':0, 'z':0}})
+        self.move({'linear':{'x':0.1, 'y':0, 'z':0}, 'angular':{'x':0, 'y':0, 'z':0}})
         time.sleep(2)
         self.stop()
         time.sleep(2)
-        self.move({'linear':{'x':-0.5, 'y':0, 'z':0}, 'angular':{'x':0, 'y':0, 'z':0}})
+        self.move({'linear':{'x':-0.1, 'y':0, 'z':0}, 'angular':{'x':0, 'y':0, 'z':0}})
+        time.sleep(2)
+        self.stop()
         time.sleep(2)
         self.land()

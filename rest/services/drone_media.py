@@ -7,6 +7,8 @@ from database_access_layer import *
 from resource_locator import resource_locator, resource
 from cv_bridge import CvBridge, CvBridgeError
 
+
+
 class drone_media(connector, resource):
     def __init__(self, resource_locator):
         resource.__init__(resource_locator)

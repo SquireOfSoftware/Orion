@@ -4,9 +4,10 @@ from drone_control import drone_control
 #from drone_media import drone_media
 from database_access_layer import connector
 from mission_reader import mission_reader
-
+import time
 def __main__():
     test = drone_control()
+    time.sleep(10)
     test.test2()
     print("Test initialised i guess")
 
