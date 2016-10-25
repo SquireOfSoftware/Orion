@@ -1,7 +1,4 @@
-from singleton import Singleton
 
-
-@Singleton
 class resource_locator(object):
 
     def __init__(self):
@@ -13,6 +10,18 @@ class resource_locator(object):
     def get(self, name):
         return resource_locator.resources[name]
 
+    def getDroneControl():
+        return get('drone_control')
+
+    def getDroneMedia():
+        return get('drone_media')
+
+    def getDroneMetadata():
+        return get('drone_metadata')
+
+    def getDroneMission():
+        return get('drone_mission')
+
 
 class resource(object):
     def __init__(self, resource_locator):
@@ -22,8 +31,8 @@ class resource(object):
         self.count = 1
 
     def acquire(self):
-        # Lock the resource while there it is not available.
-        while self.count is 0:
+        #Lock the resource while there it is not available.
+        while (self.count is 0):
             pass
         self.count -= 1
 

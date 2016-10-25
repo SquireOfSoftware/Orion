@@ -5,7 +5,20 @@ from drone_control import drone_control
 from database_access_layer import connector
 from mission_reader import mission_reader
 
+def __main__():
+    test = drone_control()
+    test.test()
+    print("Test initialised i guess")
 
-drone_control(resource_locator.Instance())
+    return
 
-resource_locator.get("drone_control")
+def test_init():
+    locator = resource_locator()
+    drone_control(resource_locator)
+    drone_media(resource_locator)
+    drone_metadata(resource_locator)
+    drone_mission(resource_locator)
+
+
+    print("Initialisation Successful")
+    return
