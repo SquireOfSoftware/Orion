@@ -9,7 +9,18 @@ canvas {
     height: auto;
 }
 
+select {
+    color: #fff;
+    background-color: grey;
+}
+
 /* Classes */
+
+.drawable-canvas-grids {
+    background-color: transparent;
+    position: absolute;
+    padding-right: 30px;
+}
 
 .drone {
     height: auto;
@@ -25,29 +36,17 @@ canvas {
     color: #000;
 }
 
-#canvas-grid {/*
+#canvas-interaction {
+    z-index: 10;
+}
+
+#canvas-grid {
     width: 100%;
-    height: auto;*/
+    height: auto;
     background-color: #fff;
 }
 
-#canvas-flight-path {/*
-    width: 100%;
-    height: auto;*/
-    background-color: transparent;
-    position: absolute;
-    padding-right: 30px;
-}
-
-#canvas-point-of-interest {
-    background-color: transparent;
-    position: absolute;
-    padding-right: 30px;
-    display: none;
-}
-
 #configure-mission-page {
-    display: none;
 }
 
 #drone-selection-bar {
@@ -63,3 +62,8 @@ canvas {
     display: none;
 }
 
+#warning-message {
+    position: fixed;
+    background-color: red;
+    z-index: 10;
+}

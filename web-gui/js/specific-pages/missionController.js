@@ -269,15 +269,6 @@ angular.module("webServer", [])
     /*
     * Point of interest
     * */
-    /*
-    $scope.showPointOfInterest = function() {
-        flightPathCanvasActive = false;
-        // Need proper architecture after this is resolved.
-        jQuery("#canvas-flight-path").hide();
-        var canvasObject = jQuery("#canvas-point-of-interest")[0];
-        jQuery("#canvas-point-of-interest").show();
-        canvasObject.addEventListener("mousedown", selectPointOfInterest, false);
-    };*/
 
     function selectPointOfInterest(e) {
         var canvasObject = jQuery("#canvas-grid")[0];

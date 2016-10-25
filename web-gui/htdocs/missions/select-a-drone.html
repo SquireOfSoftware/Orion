@@ -16,25 +16,6 @@
 </head>
 <body ng-controller="missionCtrl" ng-init="init()">
     <div ng-cloak="warningMsg === ''" id="warning-message" model="warningMsg">{{warningMsg}}</div>
-    <div id="select-a-drone-page" class="mission-page">
-        <div class="title col-md-12">
-            <h1><a href="../index.html">Home</a> / Select a Drone</h1>
-        </div>
-        <div id="drone-selection-bar" class="col-md-12" >
-            <button class="button" ng-click="selectDrone(drone)" id="drone.id" ng-model="drone" ng-repeat="drone in drones">
-                <div class="drone-name">{{drone.name}}</div>
-                <img class="drone" src="{{drone.image}}"/>
-            </button>
-        </div>
-        <div id="selected-drone-message" class="col-md-12 good-message">
-            {{selectedDrone.name}} has been selected.
-        </div>
-        <div class="col-sm-offset-9 col-sm-12" >
-            <button class="button col-sm-2" ng-click="showFlightPath()">
-                Configure the mission >
-            </button>
-        </div>
-    </div>
     <!--
     Drone id
     List of Way-points
@@ -48,11 +29,15 @@
         </div>
         <div class="col-sm-12">
             <div id="selection-grid" class="col-sm-8">
-                <canvas id="canvas-point-of-interest" width="300" height="300">
+                <canvas id="canvas-interaction" class="drawable-canvas-grids" width="300" height="300">
                     Sorry, your browser doesn't support the &lt;canvas&gt; element.
                 </canvas>
 
-                <canvas id="canvas-flight-path" width="300" height="300">
+                <canvas id="canvas-point-of-interest" class="drawable-canvas-grids" width="300" height="300">
+                    Sorry, your browser doesn't support the &lt;canvas&gt; element.
+                </canvas>
+
+                <canvas id="canvas-flight-path" class="drawable-canvas-grids" width="300" height="300">
                     Sorry, your browser doesn't support the &lt;canvas&gt; element.
                 </canvas>
 
@@ -62,8 +47,21 @@
 
             </div>
             <div class="col-sm-4">
-                Enter in the altitude (in meters):
-                <input id="altitude-box" name="altitude" ng-model="altitude" type="number" placeholder="Enter the altitude in meters"/>
+                <div id="drone-selection-bar" class="col-sm-12" >
+                    <label for="drone-dronedown">Select a drone: </label>
+                    <select name="drone-dropdown"
+                            id="drone-dronedown"
+                            ng-model="selectedDrone"
+                            ng-options="drone.name for drone in drones">
+                    </select>
+                    <p ng-cloak="selectedDrone != null">
+                        Drone selected: {{selectedDrone.name}} {{selectedDrone.id}}
+                    </p>
+                </div>
+                <div class="col-sm-12">
+                    Enter in the altitude (in meters):
+                    <input id="altitude-box" name="altitude" ng-model="altitude" type="number" placeholder="Enter the altitude in meters"/>
+                </div>
             </div>
         </div>
         <div class="col-sm-offset-8 col-sm-12" >
@@ -71,7 +69,7 @@
                 Select the point of interest >
             </button>
 
-            <button class="button col-xs-12 col-sm-2" ng-click="submitMission()">
+            <button input="button" class="button col-xs-12 col-sm-2" ng-disabled="canSubmitMission" ng-click="submitMission()">
                 Start the mission >
             </button>
         </div>
