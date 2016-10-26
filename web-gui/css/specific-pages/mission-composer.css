@@ -45,6 +45,7 @@ select {
     padding-top: 1em;
     padding-left: 9em;
     position: fixed;
+    z-index: 10;
 }
 
 .message-icon {
@@ -90,18 +91,20 @@ select {
 
 #error-message {
     background-color: red;
-    z-index: 11;
 }
 
 #loading-message {
     background-color: grey;
-    z-index: 10;
 }
 
 #selected-drone-message {
     text-align: center;
     background-color: #265a88;
     display: none;
+}
+
+#success-message {
+    background-color: green;
 }
 
 /*SPINNING CIRCLE ANIMATION */

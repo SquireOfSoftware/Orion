@@ -356,6 +356,15 @@ angular.module("webServer", [])
         $scope.errorMsg.message = [];
     };
 
+    $scope.loadMissionScreen = function () {
+        window.location.href = "mission-control.html";
+    };
+
+    function showSuccessScreen (){
+        jQuery("#loading-message").hide();
+        jQuery("#success-message").show();
+    };
+
     function addErrorMessage(message) {
         $scope.errorMsg.message.push(message);
     }
@@ -396,10 +405,13 @@ angular.module("webServer", [])
                 'Access-Control-Allow-Credentials': false
             };
 
+            showSuccessScreen();
+/*
             $http.post(url, currentMission, config).then(function (data) {
                 toggleLoadingScreen();
                 $log.debug(data);
                 $log.debug(typeof(data));
+
             })
             .catch(function (data) {
                 $log.error(data);
@@ -407,7 +419,7 @@ angular.module("webServer", [])
                 addErrorMessage(data.message);
                 jQuery(".errors").show();
                 showErrorScreen();
-            });
+            });*/
         }
         else {
             addErrorMessage("The following are invalid:");
