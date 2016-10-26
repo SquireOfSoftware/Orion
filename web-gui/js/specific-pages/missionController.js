@@ -30,6 +30,8 @@ angular.module("webServer", [])
     var MINGRID = 0;
     var MAXGRID = 300;
     var INCREMENT = 50;
+    var MINALT = 0;
+    var MAXALT = 250;
 
     // Grids
     var interactionGridContext = null;
@@ -166,21 +168,24 @@ angular.module("webServer", [])
         var scaleAndOffsets = setupScaleAndOffsets();
 
         var mouseClick = parseMouseClick(e, scaleAndOffsets);
-        switch(currentScreenState) {
-            //var flightPathGridContext = getContextFromGrid(jQuery("#canvas-flight-path")[0]);
-            case SCREENS.flightPath:
-                if (addWaypoint(mouseClick)) {
-                    drawDot(mouseClick, flightPathGridContext);
-                    drawFlightPath(flightPathGridContext);
-                }
-                break;
-            case SCREENS.pointOfInterest:
-                $log.debug(pointOfInterestGridContext);
-                clearGrid(pointOfInterestGridContext);
-                drawDot(mouseClick, pointOfInterestGridContext, "#ff8900");
-                break;
-            default:
-                $log.error("I dont recognise this screen");
+        if (isMouseClickValid(mouseClick)) {
+            switch (currentScreenState) {
+                //var flightPathGridContext = getContextFromGrid(jQuery("#canvas-flight-path")[0]);
+                case SCREENS.flightPath:
+                    if (addWaypoint(mouseClick)) {
+                        drawDot(mouseClick, flightPathGridContext);
+                        drawFlightPath(flightPathGridContext);
+                    }
+                    break;
+                case SCREENS.pointOfInterest:
+                    $log.debug(pointOfInterestGridContext);
+                    clearGrid(pointOfInterestGridContext);
+                    drawDot(mouseClick, pointOfInterestGridContext, "#ff8900");
+                    $scope.currentPointOfInterest = mouseClick;
+                    break;
+                default:
+                    $log.error("I dont recognise this screen");
+            }
         }
         /*
         * Please note that if you need to delete a point you will need to redraw all the points
@@ -250,6 +255,13 @@ angular.module("webServer", [])
         contextObject.clearRect(0, 0, canvasObject.width, canvasObject.height);
     }
 
+    function isMouseClickValid(mouseClick) {
+        return (mouseClick.x >= MINGRID) &&
+            (mouseClick.x <= MAXGRID) &&
+            (mouseClick.y >= MINGRID) &&
+            (mouseClick.y <= MAXGRID);
+    }
+
     /*
     * Ideally this function should only be called once per click
     * */
@@ -300,7 +312,8 @@ angular.module("webServer", [])
                 hasWaypoints(currentMission.waypoints) &&
                 hasAltitude(currentMission.altitude) &&
                 hasPointOfInterest(currentMission.pointOfInterest);
-        $log.debug("Is mission valid?" + isValid);
+        $log.debug("Is mission valid? " + isValid);
+        return isValid;
     }
 
     function hasDrone(selectedDrone) {
@@ -314,8 +327,8 @@ angular.module("webServer", [])
 
     function hasAltitude(altitude) {
         return (exists(altitude)) &&
-            (altitude > 0) &&
-            (altitude < 300);
+            (altitude > MINALT) &&
+            (altitude < MAXALT);
     }
 
     function hasPointOfInterest(pointOfInterest) {
@@ -369,7 +382,7 @@ angular.module("webServer", [])
     function sendMission(currentMission) {
         if (isValidMission(currentMission)) {
             var url = $scope.baseurl;
-            $log.debug(currentMission);
+            $log.debug("trying to send mission");
 
             // How to bypass CORS on mac
             // open -a Google\ Chrome --args --disable-web-security --user-data-dir
@@ -388,13 +401,13 @@ angular.module("webServer", [])
                 $log.debug(data);
                 $log.debug(typeof(data));
             })
-                .catch(function (data) {
-                    $log.error(data);
-                    addErrorMessage("There was an error with your submission.");
-                    addErrorMessage(data.message);
-                    jQuery(".errors").show();
-                    showErrorScreen();
-                });
+            .catch(function (data) {
+                $log.error(data);
+                addErrorMessage("There was an error with your submission.");
+                addErrorMessage(data.message);
+                jQuery(".errors").show();
+                showErrorScreen();
+            });
         }
         else {
             addErrorMessage("The following are invalid:");
@@ -406,8 +419,8 @@ angular.module("webServer", [])
                 addErrorMessage("+ Altitude must be between 0 and 300cm");
             if (!hasPointOfInterest(currentMission.pointOfInterest))
                 addErrorMessage("+ A point of interest must be selected");
+            $log.debug(currentMission);
             showErrorScreen();
-
         }
     }
 });
