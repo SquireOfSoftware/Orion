@@ -15,8 +15,24 @@
     <link rel="stylesheet" type="text/css" href="../../css/specific-pages/mission-composer.css"/>
 </head>
 <body ng-controller="missionCtrl" ng-init="init()">
-    <div id="warning-message" ng-model="warningMsg">{{warningMsg}}</div>
-    <div id="overlay" class="col-md-12 errors"></div>
+    <div class="errors">
+        <div class="col-md-12 message" id="error-message">
+            <span class="message-icon glyphicon glyphicon-exclamation-sign"></span>
+            <h2>{{errorMsg.heading}}</h2>
+            <div ng-repeat="message in errorMsg.message">{{message}}</div>
+            <button class="button col-xs-9 col-sm-4" ng-click="closeErrorScreen()">
+                OK
+            </button>
+        </div>
+        <div class="col-md-12 overlay"></div>
+    </div>
+    <div class="loading">
+        <div class="col-md-12 message" id="loading-message">
+            <h2>Loading...</h2>
+            <p>Please wait</p>
+        </div>
+        <div class="col-md-12 overlay"></div>
+    </div>
     <!--
     Drone id
     List of Way-points
@@ -67,13 +83,23 @@
                     </div>
 
                     <button class="button col-xs-12" ng-click="switchToFlightPath()">
-                        Select the flight path
+                        <span class="glyphicon glyphicon-plane"></span> Select the flight path
                     </button>
+
+                    <button class="button col-xs-12" ng-click="clearFlightPath()">
+                        <span class="glyphicon glyphicon-erase"></span> Clear the flight path
+                    </button>
+
                     <button class="button col-xs-12" ng-click="switchToPointOfInterest()">
-                        Select the point of interest
+                        <span class="glyphicon glyphicon-camera"></span> Select the point of interest
                     </button>
+
+                    <button class="button col-xs-12" ng-click="clearPointOfInterest()">
+                        <span class="glyphicon glyphicon-erase"></span> Clear the point of interest
+                    </button>
+
                     <button input="button" class="button col-xs-12" ng-disabled="canSubmitMission" ng-click="submitMission()">
-                        Start the mission >
+                        <span class="glyphicon glyphicon-play"></span> Start the mission >
                     </button>
                 </div>
             </div>

@@ -2,6 +2,7 @@
 
 button {
     height: auto;
+    text-align: left;
 }
 
 canvas {
@@ -16,8 +17,8 @@ select {
 
 /* Classes */
 
-[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
-    display: none !important;
+.errors {
+    display: none;
 }
 
 .drawable-canvas-grids {
@@ -32,6 +33,36 @@ select {
 
 .drone-name {
     color: #000000;
+}
+
+.loading {
+    display: none;
+}
+
+.message {
+    width: 100%;
+    top: 30%;
+    /*height: 15em;*/
+    padding-top: 1em;
+    padding-left: 9em;
+    position: fixed;
+}
+
+.message-icon {
+    position: absolute;
+    font-size: 5em;
+    padding-left: 0.5em;
+    left: 0;
+    top: 20%;
+}
+
+.overlay {
+    width: 100%;
+    height: 100%;
+    z-index: 9;
+    background-color: #ffffff;
+    opacity: 0.5;
+    position: fixed;
 }
 
 /* IDs */
@@ -58,27 +89,18 @@ select {
     white-space: nowrap;
 }
 
-#overlay {
-    width: 100%;
-    height: 100%;
-    z-index: 9;
-    background-color: #ffffff;
-    opacity: 0.5;
-    position: absolute;
-    display: none;
+#error-message {
+    background-color: red;
+    z-index: 11;
+}
+
+#loading-message {
+    background-color: grey;
+    z-index: 10;
 }
 
 #selected-drone-message {
     text-align: center;
     background-color: #265a88;
-    display: none;
-}
-
-#warning-message {
-    position: fixed;
-    background-color: red;
-    z-index: 10;
-    left: 50%;
-    top: 50%;
     display: none;
 }

@@ -11,10 +11,11 @@ angular.module("webServer", [])
 .controller("missionCtrl", function($log, $http, $scope)
 {
     $scope.drones = [];
-    $scope.baseurl = "http://localhost:5001";
-    $scope.warningMsg = "";
-
-    $scope.canSubmitMission = false;
+    $scope.baseurl = "http://localhost:5001/rest/missions";
+    $scope.errorMsg = {
+        heading: "ERROR",
+        message: []
+    };
 
     // Mission variables
 
@@ -280,18 +281,26 @@ angular.module("webServer", [])
         currentScreenState = SCREENS.flightPath;
     };
 
+    $scope.clearPointOfInterest = function () {
+        $scope.currentPointOfInterest = {};
+        clearGrid(pointOfInterestGridContext);
+    };
+
+    $scope.clearFlightPath = function () {
+        $scope.currentWaypoints = [];
+        clearGrid(flightPathGridContext);
+    };
+
     /*
     * Final submission to the server
     * */
 
-    function isValidMission () {
-        var currentMission = $scope.currentMission;
+    function isValidMission (currentMission) {
         var isValid = hasDrone(currentMission.selectedDrone) &&
                 hasWaypoints(currentMission.waypoints) &&
                 hasAltitude(currentMission.altitude) &&
                 hasPointOfInterest(currentMission.pointOfInterest);
-        $log.debug(isValid);
-        $scope.canSubmitMission = isValid;
+        $log.debug("Is mission valid?" + isValid);
     }
 
     function hasDrone(selectedDrone) {
@@ -310,7 +319,9 @@ angular.module("webServer", [])
     }
 
     function hasPointOfInterest(pointOfInterest) {
-        return (exists(pointOfInterest));
+        return (exists(pointOfInterest) &&
+            (exists(pointOfInterest.x)) &&
+            (exists(pointOfInterest.y)));
     }
 
     function exists(object) {
@@ -318,15 +329,30 @@ angular.module("webServer", [])
             (object !== null);
     }
 
+    function toggleLoadingScreen() {
+        jQuery(".loading").toggle();
+    }
+
+    function showErrorScreen() {
+        jQuery(".loading").hide();
+        jQuery(".errors").show();
+    }
+
+    $scope.closeErrorScreen = function () {
+        jQuery(".errors").hide();
+        $scope.errorMsg.message = [];
+    };
+
+    function addErrorMessage(message) {
+        $scope.errorMsg.message.push(message);
+    }
+
     $scope.submitMission = function () {
+        toggleLoadingScreen();
         var selectedDrone = $scope.selectedDrone;
 
-        if (selectedDrone == undefined ||
-            selectedDrone == null)
-            $log.debug("An undefined selectedDrone");
-        else {
+        if (exists(selectedDrone)) {
             $log.debug($scope.selectedDrone.id);
-            $log.debug("Mission has been started");
 
             var currentMission = {
                 selectedDrone: selectedDrone,
@@ -336,7 +362,13 @@ angular.module("webServer", [])
                 pointOfInterest: $scope.currentPointOfInterest
             };
 
-            var url = $scope.baseurl + "/rest/missions";
+            sendMission(currentMission);
+        }
+    };
+
+    function sendMission(currentMission) {
+        if (isValidMission(currentMission)) {
+            var url = $scope.baseurl;
             $log.debug(currentMission);
 
             // How to bypass CORS on mac
@@ -351,16 +383,31 @@ angular.module("webServer", [])
                 'Access-Control-Allow-Credentials': false
             };
 
-            $http.post(url, currentMission, config).then(function(data) {
-                    $log.debug(data);
-                    $log.debug(typeof(data));
-                })
-                .catch(function(data) {
-                    $scope.warningMsg = "There was an error with your submission.";
-                    jQuery(".errors")
-                })
-            ;
+            $http.post(url, currentMission, config).then(function (data) {
+                toggleLoadingScreen();
+                $log.debug(data);
+                $log.debug(typeof(data));
+            })
+                .catch(function (data) {
+                    $log.error(data);
+                    addErrorMessage("There was an error with your submission.");
+                    addErrorMessage(data.message);
+                    jQuery(".errors").show();
+                    showErrorScreen();
+                });
         }
+        else {
+            addErrorMessage("The following are invalid:");
+            if (!hasDrone(currentMission.selectedDrone))
+                addErrorMessage("+ Drone must be selected");
+            if (!hasWaypoints(currentMission.waypoints))
+                addErrorMessage("+ Waypoints must be selected");
+            if (!hasAltitude(currentMission.altitude))
+                addErrorMessage("+ Altitude must be between 0 and 300cm");
+            if (!hasPointOfInterest(currentMission.pointOfInterest))
+                addErrorMessage("+ A point of interest must be selected");
+            showErrorScreen();
 
-    };
+        }
+    }
 });
