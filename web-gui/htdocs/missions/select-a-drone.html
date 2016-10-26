@@ -17,7 +17,7 @@
 <body ng-controller="missionCtrl" ng-init="init()">
     <div class="errors">
         <div class="col-md-12 message" id="error-message">
-            <span id="loading-circle" class=" message-icon glyphicon glyphicon-exclamation-sign"></span>
+            <span class=" message-icon glyphicon glyphicon-exclamation-sign"></span>
             <h2>{{errorMsg.heading}}</h2>
             <div ng-repeat="message in errorMsg.message">{{message}}</div>
             <button class="button col-xs-9 col-sm-4" ng-click="closeErrorScreen()">
@@ -28,7 +28,7 @@
     </div>
     <div class="loading">
         <div class="col-md-12 message" id="loading-message">
-            <span class="gly-spin message-icon glyphicon glyphicon glyphicon-repeat"></span>
+            <span id="loading-circle" class="message-icon glyphicon glyphicon glyphicon-repeat"></span>
             <h2>Loading...</h2>
             <p>Please wait</p>
         </div>

@@ -36,7 +36,7 @@ select {
 }
 
 .loading {
-    /*display: none;*/
+    display: none;
 }
 
 .message {
@@ -50,8 +50,8 @@ select {
 .message-icon {
     position: absolute;
     font-size: 5em;
-    padding-left: 0.5em;
-    left: 0;
+    /*padding-left: 0.5em;*/
+    left: 0.5em;
     top: 20%;
 }
 
@@ -105,7 +105,7 @@ select {
 }
 
 /*SPINNING CIRCLE ANIMATION */
-.gly-spin {
+#loading-circle {
     -webkit-animation: spin 2s infinite linear;
     -moz-animation: spin 2s infinite linear;
     -o-animation: spin 2s infinite linear;
