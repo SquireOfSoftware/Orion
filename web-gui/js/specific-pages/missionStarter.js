@@ -85,4 +85,8 @@ var webServer = angular.module("webServer", [])
                 showErrorScreen();
             });
     }
+
+    $scope.startMission = function(missionId) {
+        $log.debug("Trying to start missiong with id: " + missionId);
+    }
 });

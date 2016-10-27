@@ -5,6 +5,12 @@ button {
     text-align: left;
 }
 
+canvas {
+    background-color: #fff;
+    width: 100%
+    height: auto
+}
+
 /* Classes */
 
 /* IDs */

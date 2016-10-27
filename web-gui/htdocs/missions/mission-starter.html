@@ -53,12 +53,29 @@
     </div>
 
     <div class="col-md-12" id="mission-listing">
+        <hr class="col-xs-12"/>
         <div class="col-md-12" ng-model="missions" ng-repeat="mission in missions">
-            <h2>Mission id: {{mission.id}}</h2>
-            <p>Altitude: {{mission.altitude}}</p>
-            <p>Creation time: {{mission.creation_date}}</p>
-            <p>Current status: {{mission.status}}</p>
-            <p>Drone id: {{mission.drone_id}}</p>
+            <canvas id="mission-{{mission.mission.id}}" class="col-xs-12 col-md-6" height="300" width="300">
+                Please use a browser that supports canvass
+            </canvas>
+            <div class="col-md-6">
+                <h2>Mission id: {{mission.mission.id}}</h2>
+                <p>Altitude: {{mission.mission.altitude}}</p>
+                <p>Creation time: {{mission.mission.creation_date}}</p>
+                <p>Current status: {{mission.mission.status}}</p>
+                <p>Drone id: {{mission.mission.drone_id}}</p>
+                <p>POI: {{mission.point_of_interest.x}}, {{mission.point_of_interest.y}}</p>
+                <p>
+                    Waypoints:
+                    <span ng-repeat="waypoint in mission.waypoints">
+                        <br>({{waypoint.x}}, {{waypoint.y}})
+                    </span>
+                </p>
+                <button class="button col-xs-12 col-md-6" ng-click="startMission(mission.mission.id)">
+                    Start this mission >
+                </button>
+            </div>
+            <hr class="col-xs-12"/>
         </div>
     </div>
 
