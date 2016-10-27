@@ -29,18 +29,22 @@ var webServer = angular.module("webServer", [])
 
     $scope.loadMission = function () {
         // TODO this is to load the started mission
-        jQuery(".loading").hide();
+        $scope.closeSuccessScreen();
+        //toggleLoadingScreen();
     };
 
     function showSuccessScreen (){
-        jQuery("#loading-message").hide();
-        jQuery("#success-message").show();
+        jQuery(".loading").hide();
+        jQuery(".success").show();
+    }
+
+    $scope.closeSuccessScreen = function (){
+        jQuery(".success").hide();
     };
 
     function addErrorMessage(message) {
         $scope.errorMsg.message.push(message);
     }
-
 
     var config = {
         'Access-Control-Allow-Origin': '*',
@@ -51,6 +55,10 @@ var webServer = angular.module("webServer", [])
         'Access-Control-Allow-Credentials': false
     };
 
+    function showMissionListing() {
+        jQuery("#mission-listing").show();
+    }
+
     $scope.init = function () {
         getAllMission();
     };
@@ -59,11 +67,20 @@ var webServer = angular.module("webServer", [])
         toggleLoadingScreen();
         $http.get(baseurl + RESTMISSION)
             .then(function(data) {
-                $log.debug(data);
+                $log.debug(data.data);
+                toggleLoadingScreen();
                 showSuccessScreen();
+                var i = 0;
+                for (i = 0; i < data.data.length; i++) {
+                    $scope.missions.push(data.data[i]);
+                    $log.debug(data.data[i]);
+                }
+                showMissionListing();
+
             })
             .catch(function(data) {
-                $log.debug("Failed to send GET request");
+                addErrorMessage("Failed to send GET request");
+                addErrorMessage(data);
                 $log.debug(data);
             });
     }

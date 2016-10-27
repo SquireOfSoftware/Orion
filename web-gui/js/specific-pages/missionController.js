@@ -370,8 +370,8 @@ var webServer = angular.module("webServer", [])
     };
 
     function showSuccessScreen (){
-        jQuery("#loading-message").hide();
-        jQuery("#success-message").show();
+        jQuery(".loading").hide();
+        jQuery(".success").show();
     };
 
     function addErrorMessage(message) {

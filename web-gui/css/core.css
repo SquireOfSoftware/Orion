@@ -33,6 +33,10 @@ html {
 
 /* Classes */
 
+.errors {
+    display: none;
+}
+
 .loading {
     display: none;
 }
@@ -60,6 +64,10 @@ html {
     background-color: #ffffff;
     opacity: 0.5;
     position: fixed;
+}
+
+.success {
+    display: none;
 }
 
 .title {

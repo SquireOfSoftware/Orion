@@ -17,10 +17,6 @@ select {
 
 /* Classes */
 
-.errors {
-    display: none;
-}
-
 .drawable-canvas-grids {
     background-color: transparent;
     position: absolute;
@@ -63,8 +59,4 @@ select {
     text-align: center;
     background-color: #265a88;
     display: none;
-}
-
-#success-message {
-    background-color: green;
 }

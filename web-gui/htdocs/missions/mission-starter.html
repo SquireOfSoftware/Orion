@@ -11,7 +11,8 @@
     <script type="text/javascript" src="../../js/angular.min.js"></script>
 
     <link rel="stylesheet" type="text/css" href="../../css/core.css"/>
-    <link rel="stylesheet" type="text/css" href="../../css/specific-pages/mission-composer.css"/>
+    <!--<link rel="stylesheet" type="text/css" href="../../css/specific-pages/mission-composer.css"/>-->
+    <link rel="stylesheet" type="text/css" href="../../css/specific-pages/mission-starter.css"/>
 
 </head>
 <body ng-controller="missionStarterCtrl" ng-init="init()">
@@ -32,6 +33,9 @@
             <h2>Loading...</h2>
             <p>Please wait</p>
         </div>
+        <div class="col-md-12 overlay"></div>
+    </div>
+    <div class="success">
         <div class="col-md-12 message" id="success-message">
             <span class="message-icon glyphicon glyphicon-ok-circle"></span>
             <h2>Success</h2>
@@ -43,39 +47,21 @@
         <div class="col-md-12 overlay"></div>
     </div>
 
+
     <div class="title col-md-12">
         <h1>Mission Control</h1>
     </div>
 
-    <div class="col-md-6 col-sm-12">
-        <img width="100%" src="../../images/MapStub.png"/>
+    <div class="col-md-12" id="mission-listing">
+        <div class="col-md-12" ng-model="missions" ng-repeat="mission in missions">
+            <h2>Mission id: {{mission.id}}</h2>
+            <p>Altitude: {{mission.altitude}}</p>
+            <p>Creation time: {{mission.creation_date}}</p>
+            <p>Current status: {{mission.status}}</p>
+            <p>Drone id: {{mission.drone_id}}</p>
+        </div>
     </div>
 
-    <div class="col-md-6 col-sm-12">
-        <img width="100%" src="../../images/BatteryLevels.png"/>
-        <img width="100%" src="../../images/DemoScreen.png"/>
-    </div>
-
-    <div id="mission-bar" class="col-sm-12">
-        <button class="button col-sm-2">
-            Manual override
-        </button>
-        <button class="button col-sm-2">
-            Abort mission
-        </button>
-        <button class="button col-sm-2">
-            Change mission directives
-        </button>
-        <button class="button col-sm-2">
-            Mission log
-        </button>
-        <button class="button col-sm-2">
-            Drone settings
-        </button>
-        <button class="button col-sm-2">
-            View recorded media
-        </button>
-    </div>
 </body>
 <footer>
     <div class="col-sm-12">
