@@ -25,16 +25,23 @@ MAX_X = 300.0
 MIN_Y = 0.0
 MAX_Y = 300.0
 
-missions_test = []
-
 
 # get all the missions
 def get_all_missions():
     # TODO write the get function for missions
     missions_query = Mission.objects.all()
-    missions_query_dictionary = [mission.as_dict() for mission in missions_query]
+    all_missions = []
+    for mission in missions_query:
+        retrieved_waypoints = Waypoint.objects.filter(mission_missionid=mission.missionid)
+        all_waypoints = [waypoint.as_dict() for waypoint in retrieved_waypoints]
+        point_of_interest = Pointofinterest.objects.get(mission_missionid=mission.missionid)
+        complete_mission = {"mission": mission.as_dict()};
+        complete_mission.update({"point_of_interest": point_of_interest.as_dict()})
+        complete_mission.update({"waypoints": all_waypoints})
+
+        all_missions.append(complete_mission)
     return HttpResponse(
-        json.dumps(missions_query_dictionary)
+        json.dumps(all_missions)
     )
 
 
