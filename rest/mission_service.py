@@ -34,13 +34,13 @@ def get_all_missions():
     for mission in missions_query:
         retrieved_waypoints = Waypoint.objects.filter(mission_missionid=mission.missionid)
         all_waypoints = [waypoint.as_dict() for waypoint in retrieved_waypoints]
-        point_of_interest = Pointofinterest.objects.get(mission_missionid=mission.missionid)
-        complete_mission = {"mission": mission.as_dict()};
-        if point_of_interest is not None:
-            complete_mission.update({"point_of_interest": point_of_interest.as_dict()})
-        else:
-            complete_mission.update({"point_of_interest": "could not be found"})
+        complete_mission = {"mission": mission.as_dict()}
         complete_mission.update({"waypoints": all_waypoints})
+        try:
+            point_of_interest = Pointofinterest.objects.get(mission_missionid=mission.missionid)
+            complete_mission.update({"point_of_interest": point_of_interest.as_dict()})
+        except Pointofinterest.DoesNotExist:
+            complete_mission.update({"point_of_interest": {}})
 
         all_missions.append(complete_mission)
     return HttpResponse(
