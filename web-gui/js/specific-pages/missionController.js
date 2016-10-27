@@ -7,7 +7,7 @@
  * https://www.toptal.com/angular-js/a-step-by-step-guide-to-your-first-angularjs-app
  */
 
-angular.module("webServer", [])
+var webServer = angular.module("webServer", [])
 .controller("missionCtrl", function($log, $http, $scope)
 {
     $scope.drones = [];
@@ -15,6 +15,15 @@ angular.module("webServer", [])
     $scope.errorMsg = {
         heading: "ERROR",
         message: []
+    };
+
+    var config = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE',
+        'Access-Control-Max-Age': '3600',
+        'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+        'Content-Type': 'application/text',
+        'Access-Control-Allow-Credentials': false
     };
 
     // Mission variables
@@ -357,7 +366,7 @@ angular.module("webServer", [])
     };
 
     $scope.loadMissionScreen = function () {
-        window.location.href = "mission-control.html";
+        window.location.href = "mission-starter.html";
     };
 
     function showSuccessScreen (){
@@ -395,15 +404,6 @@ angular.module("webServer", [])
 
             // How to bypass CORS on mac
             // open -a Google\ Chrome --args --disable-web-security --user-data-dir
-
-            var config = {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE',
-                'Access-Control-Max-Age': '3600',
-                'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
-                'Content-Type': 'application/text',
-                'Access-Control-Allow-Credentials': false
-            };
 
             showSuccessScreen();
 /*

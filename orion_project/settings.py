@@ -78,7 +78,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'Drone_Surveying_System',
         'USER': 'root',
-        'PASSWORD': 'admin',
+        'PASSWORD': 'default',
         'HOST': 'localhost',
         'PORT': '3306',
     }
