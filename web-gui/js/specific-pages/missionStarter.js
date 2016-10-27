@@ -7,7 +7,7 @@ var webServer = angular.module("webServer", [])
     $scope.missions = [];
     $scope.errorMsg = {
         heading: "ERROR",
-        message: ""
+        message: []
     };
 
     var baseurl = "http://localhost:5001/rest/";
@@ -76,12 +76,13 @@ var webServer = angular.module("webServer", [])
                     $log.debug(data.data[i]);
                 }
                 showMissionListing();
-
             })
             .catch(function(data) {
                 addErrorMessage("Failed to send GET request");
                 addErrorMessage(data);
                 $log.debug(data);
+                toggleLoadingScreen();
+                showErrorScreen();
             });
     }
 });

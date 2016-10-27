@@ -1,0 +1,6 @@
+DroneStatusID,DroneStatusName
+1,IDLE
+2,LANDING
+3,"TAKING OFF"
+4,"IN MANUAL FLIGHT"
+5,"IN AUTO FLIGHT"

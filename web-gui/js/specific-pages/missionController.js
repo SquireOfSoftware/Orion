@@ -405,21 +405,21 @@ var webServer = angular.module("webServer", [])
             // How to bypass CORS on mac
             // open -a Google\ Chrome --args --disable-web-security --user-data-dir
 
-            showSuccessScreen();
-/*
+            //showSuccessScreen();
+
             $http.post(url, currentMission, config).then(function (data) {
                 toggleLoadingScreen();
                 $log.debug(data);
                 $log.debug(typeof(data));
-
+                showSuccessScreen();
             })
             .catch(function (data) {
                 $log.error(data);
                 addErrorMessage("There was an error with your submission.");
-                addErrorMessage(data.message);
+                addErrorMessage(data.data.data);
                 jQuery(".errors").show();
                 showErrorScreen();
-            });*/
+            });
         }
         else {
             addErrorMessage("The following are invalid:");

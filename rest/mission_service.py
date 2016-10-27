@@ -36,7 +36,10 @@ def get_all_missions():
         all_waypoints = [waypoint.as_dict() for waypoint in retrieved_waypoints]
         point_of_interest = Pointofinterest.objects.get(mission_missionid=mission.missionid)
         complete_mission = {"mission": mission.as_dict()};
-        complete_mission.update({"point_of_interest": point_of_interest.as_dict()})
+        if point_of_interest is not None:
+            complete_mission.update({"point_of_interest": point_of_interest.as_dict()})
+        else:
+            complete_mission.update({"point_of_interest": "could not be found"})
         complete_mission.update({"waypoints": all_waypoints})
 
         all_missions.append(complete_mission)
@@ -66,6 +69,8 @@ def add_a_mission(data):
     point_of_interest = data["pointOfInterest"]
     waypoints = data["waypoints"]
     obstacles = data["obstacles"]
+
+    print(altitude, drone_id, point_of_interest, waypoints)
 
     if drones.validate_drone(int(drone_id)):
         print("validating data now")
@@ -227,6 +232,7 @@ def verify_drone_is_available(drone_id):
             dronestatusid=Drone.objects.get(droneid=drone_id).dronestatus_dronestatusid.dronestatusid)
         return drone_status.dronestatusid == DRONE_STATUS["IDLE"]
     except Drone.DoesNotExist:
+        print("Drone does not exist")
         return False
 
 # mission error

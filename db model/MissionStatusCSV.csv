@@ -1,0 +1,5 @@
+MissionStatusID,MissionStatusName
+1,QUEUED
+2,"IN PROGRESS"
+3,ABORTED
+4,COMPLETED
