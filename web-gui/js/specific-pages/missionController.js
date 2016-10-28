@@ -42,6 +42,8 @@ var webServer = angular.module("webServer", [])
     var MINALT = 0;
     var MAXALT = 250;
 
+    var ORANGE = "#ff8900";
+
     // Grids
     var interactionGridContext = null;
     var pointOfInterestGridContext = null;
@@ -189,7 +191,7 @@ var webServer = angular.module("webServer", [])
                 case SCREENS.pointOfInterest:
                     $log.debug(pointOfInterestGridContext);
                     clearGrid(pointOfInterestGridContext);
-                    drawDot(mouseClick, pointOfInterestGridContext, "#ff8900");
+                    drawDot(mouseClick, pointOfInterestGridContext, ORANGE);
                     $scope.currentPointOfInterest = mouseClick;
                     break;
                 default:

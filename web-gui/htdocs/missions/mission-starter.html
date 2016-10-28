@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="webServer">
 <head>
-    <title>Mission Control</title>
+    <title>Mission Starter</title>
     <link rel="stylesheet" type="text/css" href="../../css/bootstrap/bootstrap-theme.css"/>
     <link rel="stylesheet" type="text/css" href="../../css/bootstrap/bootstrap.css"/>
 
@@ -49,15 +49,18 @@
 
 
     <div class="title col-md-12">
-        <h1>Mission Control</h1>
+        <h1>Mission Starter</h1>
     </div>
 
     <div class="col-md-12" id="mission-listing">
         <hr class="col-xs-12"/>
         <div class="col-md-12" ng-model="missions" ng-repeat="mission in missions">
-            <canvas id="mission-{{mission.mission.id}}" class="col-xs-12 col-md-6" height="300" width="300">
-                Please use a browser that supports canvass
-            </canvas>
+            <div class="col-md-4 col-sm-6">
+                <canvas id="mission-{{mission.mission.id}}" class="" height="300" width="300"
+                    on-last-repeat-item>
+                    Please use a browser that supports canvass
+                </canvas>
+            </div>
             <div class="col-md-6">
                 <h2>Mission id: {{mission.mission.id}}</h2>
                 <p>Altitude: {{mission.mission.altitude}}</p>

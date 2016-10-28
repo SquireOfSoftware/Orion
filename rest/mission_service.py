@@ -153,8 +153,8 @@ def start_mission(mission_id):
     mission = Mission.objects.get(missionid=mission_id)
     print(mission)
     no_missions_are_running = verify_no_missions_are_active()
-    drone_is_available = verify_drone_is_available(mission.drone_droneid.droneid)
-    if (mission is not None) and no_missions_are_running and drone_is_available:
+    drone_is_busy = is_drone_busy(mission.drone_droneid.droneid)
+    if (mission is not None) and (no_missions_are_running is True) and (drone_is_busy is not True):
         mission.missionstatus_missionstatusid = Missionstatus.objects.get(missionstatusid=MISSION_STATUS["IN_PROGRESS"])
         mission.save()
 
@@ -220,17 +220,24 @@ def validate_battery():
 
 def verify_no_missions_are_active():
     try:
-        active_mission = Mission.objects.get(missionstatus_missionstatusid=MISSION_STATUS["IN_PROGRESS"])
-        return active_mission is None
+        active_mission = Mission.objects.get(
+            missionstatus_missionstatusid=Missionstatus.objects.get(
+                missionstatusname="IN PROGRESS"))
+        print(active_mission == None)
+        print(active_mission)
+        return active_mission == None
     except Mission.DoesNotExist:
         return True
 
 
-def verify_drone_is_available(drone_id):
+def is_drone_busy(drone_id):
     try:
-        drone_status = DroneStatus.objects.get(
-            dronestatusid=Drone.objects.get(droneid=drone_id).dronestatus_dronestatusid.dronestatusid)
-        return drone_status.dronestatusid == DRONE_STATUS["IDLE"]
+        drone = Drone.objects.get(droneid=drone_id)
+        drone_status = DroneStatus.objects.get(dronestatusname="IDLE")
+        print("Is drone busy? ", drone_status.dronestatusid != drone_status.dronestatusid)
+        print(drone_status.dronestatusid)
+        print(DRONE_STATUS["IDLE"])
+        return drone_status.dronestatusid != drone_status.dronestatusid
     except Drone.DoesNotExist:
         print("Drone does not exist")
         return False
