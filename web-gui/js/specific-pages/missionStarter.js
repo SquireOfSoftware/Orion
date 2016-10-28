@@ -33,9 +33,7 @@ var webServer = angular.module("webServer", [])
     };
 
     $scope.loadMission = function () {
-        // TODO this is to load the started mission
-        $scope.closeSuccessScreen();
-        //toggleLoadingScreen();
+        window.location.href = "mission-executor.html";
     };
 
     function showSuccessScreen (){
@@ -116,16 +114,11 @@ var webServer = angular.module("webServer", [])
         $http.put(baseurl + RESTMISSION + "/" + missionId + "/start", {data: ""}, config)
             .then(function() {
                 showSuccessScreen();
-                loadMission(missionId);
             })
             .catch(function(data) {
                 displayError(data);
             });
     };
-
-    function loadMission(missionId) {
-        window.location.href = "mission-executor.html?id=" + missionId;
-    }
 
     $scope.$on("onLastRepeatItem", function (scope, element, attrs) {
         var i = 0;

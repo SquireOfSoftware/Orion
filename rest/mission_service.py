@@ -155,7 +155,7 @@ def start_mission(mission_id):
     no_missions_are_running = verify_no_missions_are_active()
     drone_is_busy = is_drone_busy(mission.drone_droneid.droneid)
     if (mission is not None) and (no_missions_are_running is True) and (drone_is_busy is not True):
-        mission.missionstatus_missionstatusid = Missionstatus.objects.get(missionstatusid=MISSION_STATUS["IN_PROGRESS"])
+        mission.missionstatus_missionstatusid = Missionstatus.objects.get(missionstatusname="IN PROGRESS")
         mission.save()
 
         drone = Drone.objects.get(droneid=mission.drone_droneid.droneid)
