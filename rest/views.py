@@ -65,6 +65,18 @@ def control_drone(request, id):
     pass
 
 
+def get_drone_status(request, drone_id):
+    if request.method == "GET":
+        return drone_service.get_drone_status(int(drone_id))
+    return respond_with_error("Invalid METHOD " + request.method)
+
+
+def get_drone_current_metadata(request, drone_id):
+    if request.method == "GET":
+        return drone_service.get_drone_metadata(int(drone_id))
+    return respond_with_error("Invalid METHOD " + request.method)
+
+
 # process anything relating to images
 # need to know how many, pull out query
 def get_images(request):

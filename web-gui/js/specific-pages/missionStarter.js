@@ -128,7 +128,7 @@ var webServer = angular.module("webServer", [])
     });
 
     $scope.createAMission = function () {
-        window.href.location = "mission-creator.html"
+        window.location.href = "mission-creator.html"
     };
 
     /*Code from Mission Controller*/

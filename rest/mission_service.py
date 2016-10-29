@@ -72,7 +72,7 @@ def add_a_mission(data):
 
     print(altitude, drone_id, point_of_interest, waypoints)
 
-    if drones.validate_drone(int(drone_id)):
+    if drone_service.validate_drone(int(drone_id)):
         print("validating data now")
         if not validate_altitude(altitude):
             return send_missions_error("Please verify that the altitude is between " +
@@ -153,7 +153,7 @@ def start_mission(mission_id):
     mission = Mission.objects.get(missionid=mission_id)
     print(mission)
     no_missions_are_running = verify_no_missions_are_active()
-    drone_is_busy = is_drone_busy(mission.drone_droneid.droneid)
+    drone_is_busy = drone_service.is_drone_busy(mission.drone_droneid.droneid)
     if (mission is not None) and (no_missions_are_running is True) and (drone_is_busy is not True):
         mission.missionstatus_missionstatusid = Missionstatus.objects.get(missionstatusname="IN PROGRESS")
         mission.save()
@@ -223,24 +223,11 @@ def verify_no_missions_are_active():
         active_mission = Mission.objects.get(
             missionstatus_missionstatusid=Missionstatus.objects.get(
                 missionstatusname="IN PROGRESS"))
-        print(active_mission == None)
+        print(active_mission is None)
         print(active_mission)
-        return active_mission == None
+        return active_mission is None
     except Mission.DoesNotExist:
         return True
-
-
-def is_drone_busy(drone_id):
-    try:
-        drone = Drone.objects.get(droneid=drone_id)
-        drone_status = DroneStatus.objects.get(dronestatusname="IDLE")
-        print("Is drone busy? ", drone_status.dronestatusid != drone.dronestatus_dronestatusid.dronestatusid)
-        print(drone_status.dronestatusid)
-        print(DRONE_STATUS["IDLE"])
-        return drone_status.dronestatusid != drone.dronestatus_dronestatusid.dronestatusid
-    except Drone.DoesNotExist:
-        print("Drone does not exist")
-        return False
 
 
 # mission error
