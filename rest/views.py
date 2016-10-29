@@ -98,8 +98,8 @@ def get_image(request, image_id):
 
 
 # get literally the current image regardless of mission
-def get_current_image(self):
-    pass
+def get_current_image(request):
+    return image_service.get_current_image()
 
 
 def get_mission_images(mission_id):

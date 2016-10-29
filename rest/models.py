@@ -154,6 +154,7 @@ class Mission(models.Model):
 class Metadata(models.Model):
     metadataid = models.IntegerField(db_column='MetadataID',
                                      primary_key=True)  # Field name made lowercase.
+    # TODO fix up models for metadata
     metadatablob = models.TextField(db_column='MetadataBlob',
                                     blank=True,
                                     null=True)  # Field name made lowercase.
@@ -185,11 +186,10 @@ class Image(models.Model):
     imagetimestamp = models.DateTimeField(db_column='ImageTimestamp',
                                           blank=True,
                                           null=True)  # Field name made lowercase.
-    imagefilepath = models.CharField(db_column='ImageFilepath',
-                                     max_length=100,
+    imageblob = models.TextField(db_column='ImageBlob',
                                      blank=True,
                                      null=True)  # Field name made lowercase.
-    mission_missionid = models.ForeignKey('Mission',
+    mission_missionid = models.ForeignKey(Mission,
                                           models.DO_NOTHING,
                                           db_column='Mission_MissionID')  # Field name made lowercase.
 
@@ -203,8 +203,8 @@ class Image(models.Model):
         return {
             "id": self.imageid,
             "timestamp": self.imagetimestamp.__str__(),
-            "filepath": self.imagefilepath,
-            "status": self.mission_missionid.missionid
+            "imageblob": self.imageblob,
+            "mission_id": self.mission_missionid.missionid
         }
 
 

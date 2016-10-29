@@ -14,6 +14,13 @@ var webServer = angular.module("webServer", [])
     $scope.baseurl = "http://localhost:5001/rest/";
     var RESTMISSIONS = "missions";
     var RESTDRONES = "drones";
+    var RESTIMAGES = "images";
+    var RESTCURRENTIMAGE = "images/current";
+
+    var INPROGRESS = "IN_PROGRESS";
+
+    $scope.currentImage = "";
+    $scope.currentMission = "";
 
     $scope.errorMsg = {
         heading: "ERROR",
@@ -140,16 +147,25 @@ var webServer = angular.module("webServer", [])
     /* FINISHED DEFAULT BINDINGS */
 
     $scope.init = function() {
-        getCurrentMission();
+        checkForCurrentMission();
     };
 
-    function getCurrentMission() {
+    var delayedMissionPoll = null;
+
+    function checkForCurrentMission() {
         toggleLoadingScreen();
         $http.get($scope.baseurl + RESTMISSIONS)
             .then(function (data) {
-                $log.debug(data);
+                //$log.debug(data);
                 toggleLoadingScreen();
-                $interval(pollCurrentMission, 5000);
+                if (hasInProgressMission(data.data)) {
+                    $scope.currentMission = getCurrentMission(data.data);
+                    delayedMissionPoll = $interval(pollCurrentMission, 5000);
+                }
+                else {
+                    addErrorMessage("No missions are running.");
+                    showErrorScreen();
+                }
             })
             .catch(function (data) {
                 $log.error(data);
@@ -158,14 +174,53 @@ var webServer = angular.module("webServer", [])
             });
     }
 
-    function pollCurrentMission() {
+    function hasInProgressMission(missions) {
+        for (var i = 0; i < missions.length; i++) {
+            $log.debug(missions[i].mission.status);
+            if(missions[i].mission.status === INPROGRESS) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-        $http.get($scope.baseurl + RESTMISSIONS)
+    function getCurrentMission(missions) {
+        for (var i = 0; i < missions.length; i++) {
+            if(missions[i].mission.status === INPROGRESS)
+                return missions[i];
+        }
+        return null;
+    }
+
+    function pollCurrentMission () {
+
+        $http.get($scope.baseurl + RESTMISSIONS + "/" + $scope.currentMission.mission.id + "/status")
             .then(function (data) {
-                $log.debug(data);
+                $log.debug(data.data);
+                if (data.data.status !== "IN PROGRESS") {
+                    addErrorMessage("Mission is no longer running");
+                    showErrorScreen();
+                    $interval.cancel(delayedMissionPoll);
+                }
             })
             .catch(function(data) {
                 $log.error("failed to poll");
+                addErrorMessage(data);
+                showErrorScreen();
+            });
+    }
+
+    function pollCurrentImage() {
+
+        $http.get($scope.baseurl + RESTCURRENTIMAGE)
+            .then(function (data) {
+                $log.debug(data.data);
+                $scope.currentImage = data.data.imageblob;
+            })
+            .catch(function(data) {
+                $log.error("failed to poll");
+                addErrorMessage(data);
+                showErrorScreen();
             });
     }
 

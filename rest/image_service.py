@@ -1,5 +1,7 @@
 from django.http import HttpResponse
 import json
+from rest.models import Image
+
 
 images_taken = [
     {
@@ -15,5 +17,13 @@ images_taken = [
 ]
 
 
+def get_current_image():
+    return send_response(Image.objects.last().as_dict())
+
+
 def get_images(start_number, end_number):
-    return HttpResponse(json.dumps({"start": start_number, "end": end_number}))
+    pass
+
+
+def send_response(message):
+    return HttpResponse(json.dumps(message))
