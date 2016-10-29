@@ -22,10 +22,13 @@ def test_init():
     print("Initialisation Successful")
     return
 
-def __main__():
+def main():
     locator = resource_locator()
     drone_control(locator)
     drone_media(locator)
     drone_metadata(locator)
     drone_mission(locator)
     locator.getDroneMission().start()
+
+if __name__ == "__main__":
+    main()
