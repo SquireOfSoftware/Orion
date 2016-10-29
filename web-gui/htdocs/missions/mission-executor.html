@@ -62,7 +62,7 @@
 
     <div class="current-mission col-md-12" ng-model="currentMission">
             <div class="col-md-4 col-sm-6">
-                <canvas id="mission-grid" class="" height="300" width="300">
+                <canvas id="mission-grid" class="" height="300" width="300" on-last-repeat-item>
                     Please use a browser that supports canvass
                 </canvas>
             </div>
@@ -72,6 +72,7 @@
                 <p>Creation time: {{currentMission.mission.creation_date}}</p>
                 <p>Current status: {{currentMission.mission.status}}</p>
                 <p>Drone id: {{currentMission.mission.drone_id}}</p>
+                <p>Drone status: {{currentMission.mission.drone_status}}</p>
                 <p>POI: {{currentMission.point_of_interest.x}}, {{currentMission.point_of_interest.y}}</p>
                 <p>
                     Waypoints:

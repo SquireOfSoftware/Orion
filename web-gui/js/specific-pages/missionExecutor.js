@@ -152,7 +152,8 @@ var webServer = angular.module("webServer", [])
     }
 
     function drawUpGrid() {
-        var gridContext = jQuery("#mission-grid").getContext("2d");
+        $log.debug(jQuery("#mission-grid"));
+        var gridContext = jQuery("#mission-grid")[0].getContext("2d");
         $log.debug(gridContext);
         drawHorizontalLines(gridContext);
         drawVerticalLines(gridContext);
@@ -182,6 +183,7 @@ var webServer = angular.module("webServer", [])
                     $scope.currentMission = getCurrentMission(data.data);
                     delayedMissionPoll = $interval(pollCurrentMission, 5000);
                     showCurrentMissionScreen();
+                    setTimeout(function () {drawUpGrid();}, 1);
                 }
                 else {
                     addErrorMessage("No missions are running.");
@@ -219,7 +221,12 @@ var webServer = angular.module("webServer", [])
     }
 
     function pollCurrentMission () {
+        pollCurrentMissionStatus();
+        pollCurrentImage();
+        pollCurrentDroneStatus();
+    }
 
+    function pollCurrentMissionStatus() {
         $http.get($scope.baseurl + RESTMISSIONS + "/" + $scope.currentMission.mission.id + "/status")
             .then(function (data) {
                 $log.debug(data.data);
@@ -239,11 +246,10 @@ var webServer = angular.module("webServer", [])
     }
 
     function pollCurrentImage() {
-
         $http.get($scope.baseurl + RESTCURRENTIMAGE)
             .then(function (data) {
                 $log.debug(data.data);
-                $scope.currentImage = data.data.imageblob;
+                //$scope.currentImage = data.data.imageblob;
             })
             .catch(function(data) {
                 $log.error("failed to poll");
@@ -252,5 +258,15 @@ var webServer = angular.module("webServer", [])
             });
     }
 
-    // Look up interval angular
+    function pollCurrentDroneStatus() {
+        $http.get($scope.baseurl + RESTDRONES + "/" + $scope.currentMission.mission.drone_id + "/status")
+            .then(function (data) {
+                $log.debug(data.data.status);
+                $scope.currentMission.mission.drone_status = data.data.status;
+            })
+            .catch(function (data) {
+                $log.error(data);
+            })
+    }
+
 });
