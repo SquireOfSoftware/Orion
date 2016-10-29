@@ -12,7 +12,7 @@ from std_msgs.msg import Empty
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Vector3
 from geometry_msgs.msg import Point
-from ardone_autonomy.msg import Navdata
+from ardrone_autonomy.msg import Navdata
 from nav_msgs.msg import Odometry
 
 import time;
@@ -66,13 +66,21 @@ class drone_control (object):
                                         data['angular']['z'])))
 
     def rotate_clockwise(self):
-        self.move({'linear':{'x':0,'y':0,'z':0}, 'angular':{'x':0,'y':0,'z': self.ROT_SPEED}})
+        self.move({'linear': {'x': 0, 'y': 0, 'z': 0}, 'angular': {'x': 0, 'y': 0, 'z': self.ROT_SPEED}})
 
     def rotate_anticlockwise(self):
-        self.move({'linear':{'x':0,'y':0,'z':0}, 'angular':{'x':0,'y':0,'z': -self.ROT_SPEED}})
+        self.move({'linear': {'x': 0, 'y': 0, 'z': 0}, 'angular': {'x': 0, 'y': 0, 'z': -self.ROT_SPEED}})
+
+    def move_at_speed(self, speed_ratio):
+        self.move({'linear': {'x': self.LIN_SPEED * speed_ratio, 'y': 0, 'z': 0}, 'angular': {'x': 0, 'y': 0, 'z': 0}})
 
     def rotate_to_face_point(self, drone_location, target_location):
-        # type: (drone_control, Point, Point) -> None
+        """
+        Receives the drone's location and attempts to rotate it towards the given target_location
+        @:type self: drone_control
+        @:type drone_location: Point
+        @:type target_location: Point
+        """
         relative_goal_x = target_location.x - drone_location.x
         relative_goal_y = target_location.y - drone_location.y
 
@@ -100,7 +108,11 @@ class drone_control (object):
 
     # start and end are geometry_msgs Points
     def moveQuantum(self, start, end):
-        # type: (drone_control, Point, Point) -> None
+        """
+        @:type self: drone_control
+        @:type start: Point
+        @:type end: Point
+        """
         self.rotate_to_face_point(self, start, end)
 
         relative_goal_x = end.x - start.x
@@ -116,12 +128,12 @@ class drone_control (object):
             if current_distance <= goal_distance:
                 # Go forward, but slow down as we approach the target, minimum 10% of LIN_SPEED
                 speed_ratio = (current_distance/goal_distance) + self.LIN_SPEED_MIN_PERCENTAGE
-                self.move({'linear': {'x': self.LIN_SPEED * speed_ratio, 'y': 0, 'z': 0}, 'angular': {'x': 0, 'y': 0, 'z': 0}})
+                self.move_at_speed(self, speed_ratio)
                 time.sleep(self.DISTANCE_POLLING_SLEEP)
 
             elif current_distance > goal_distance + self.POSITIONAL_ERROR:
                 # Moved too far, so go backwards at the minimum speed
-                self.move({'linear': {'x': -self.LIN_SPEED * self.LIN_SPEED_MIN_PERCENTAGE, 'y': 0, 'z': 0}, 'angular': {'x': 0, 'y': 0, 'z': 0}})
+                self.move_at_speed(self, -self.LIN_SPEED_MIN_PERCENTAGE)
                 time.sleep(self.DISTANCE_POLLING_SLEEP)
 
             else:
