@@ -274,4 +274,11 @@ def get_mission_status(mission_id):
 
 
 def get_mission_waypoints(mission_id):
-    pass
+    try:
+        mission = Mission.objects.get(missionid=mission_id)
+        waypoints = Waypoint.objects.filter(mission_missionid=mission)
+        all_waypoints = [waypoint.as_dict() for waypoint in waypoints]
+        return send_response(all_waypoints)
+    except Mission.DoesNotExist:
+        print("Mission ", mission_id, " does not exist")
+        return send_missions_error("Mission with id: " + mission_id + " does not exist")
