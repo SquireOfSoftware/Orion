@@ -18,6 +18,7 @@ var webServer = angular.module("webServer", [])
     var RESTCURRENTIMAGE = "images/current";
 
     var INPROGRESS = "IN PROGRESS";
+    var COMPLETED = "COMPLETED"
 
     $scope.currentImage = "";
     $scope.currentMission = "";
@@ -239,21 +240,26 @@ var webServer = angular.module("webServer", [])
         $http.get($scope.baseurl + RESTMISSIONS + "/" + $scope.currentMission.mission.id + "/status")
             .then(function (data) {
                 $log.debug(data.data);
-                if (data.data.status !== INPROGRESS) {
+                var status = data.data.status;
+                if (status !== INPROGRESS) {
                     addErrorMessage("Mission is no longer running");
-                    showErrorScreen();
-                    stopPoll();
-                    $scope.currentMission.mission.status = data.data.status;
+                    if (status === COMPLETED) {
+                        addSuccessMessage("Mission completed");
+                        showSuccessScreen();
+                        stopPoll();
+                    }
+                    else {
+                        showErrorScreen();
+                        stopPoll();
+                    }
+                    $scope.currentMission.mission.status = status;
                     $log.debug($scope.currentMission.mission.status);
                 }
                 timeoutCounter = 0;
             })
             .catch(function(data) {
                 $log.error("failed to poll");
-                //addErrorMessage(data);
-
                 timeoutCounter += 1;
-                //showErrorScreen();
             });
     }
 
@@ -266,9 +272,7 @@ var webServer = angular.module("webServer", [])
             })
             .catch(function(data) {
                 $log.error("failed to poll");
-                //addErrorMessage(data);
                 timeoutCounter += 1;
-                //showErrorScreen();
             });
     }
 
@@ -276,14 +280,13 @@ var webServer = angular.module("webServer", [])
         $http.get($scope.baseurl + RESTDRONES + "/" + $scope.currentMission.mission.drone_id + "/status")
             .then(function (data) {
                 $log.debug(data.data.status);
-                $scope.currentMission.mission.drone_status = data.data.status;
+                var status = data.data.status;
+                $scope.currentMission.mission.drone_status = status;
                 timeoutCounter = 0;
             })
             .catch(function (data) {
                 $log.error(data);
                 timeoutCounter += 1;
-
-                //addErrorMessage(data);
             })
     }
 

@@ -48,8 +48,8 @@
         <div class="col-md-12 message" id="success-message">
             <span class="message-icon glyphicon glyphicon-ok-circle"></span>
             <h2>{{successMsg.heading}}</h2>
-            <p>{{successMsg.message}}</p>
-            <button class="button col-xs-9 col-sm-4" ng-click="loadMission()">
+            <div ng-repeat="message in successMsg.message">{{message}}</div>
+            <button class="button col-xs-9 col-sm-4" ng-click="closeSuccessScreen()">
                 OK
             </button>
         </div>
