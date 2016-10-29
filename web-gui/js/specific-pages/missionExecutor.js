@@ -32,6 +32,11 @@ var webServer = angular.module("webServer", [])
         message: []
     };
 
+    $scope.successMsg = {
+        heading: "Success",
+        message: []
+    };
+
     var config = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE',
@@ -58,7 +63,12 @@ var webServer = angular.module("webServer", [])
     $scope.closeErrorScreen = function () {
         jQuery(".errors").hide();
         $scope.errorMsg.message = [];
+        window.location.href = "../index.html"
     };
+
+    function addErrorMessage(message) {
+        $scope.errorMsg.message.push(message);
+    }
 
     function showSuccessScreen (){
         jQuery(".loading").hide();
@@ -69,8 +79,13 @@ var webServer = angular.module("webServer", [])
         jQuery(".success").hide();
     };
 
-    function addErrorMessage(message) {
-        $scope.errorMsg.message.push(message);
+    function addSuccessMessage(message) {
+        $scope.successMsg.message.push(message);
+    }
+
+    function showWarningScreen (){
+        jQuery(".loading").hide();
+        jQuery(".warning").show();
     }
 
     $scope.closeWarningScreen = function (){
@@ -201,6 +216,8 @@ var webServer = angular.module("webServer", [])
                     addErrorMessage("Mission is no longer running");
                     showErrorScreen();
                     $interval.cancel(delayedMissionPoll);
+                    $scope.currentMission.mission.status = data.data.status;
+                    $log.debug($scope.currentMission.mission.status);
                 }
             })
             .catch(function(data) {
