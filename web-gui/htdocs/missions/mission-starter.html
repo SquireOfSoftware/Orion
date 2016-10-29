@@ -49,13 +49,22 @@
 
 
     <div class="title col-md-12">
-        <h1>Mission Starter</h1>
+        <h1><a href="../index.html">Home</a> / Mission Starter</h1>
     </div>
 
     <div class="col-md-12" id="mission-listing">
+        <div class="col-sm-6" ng-show="missions.length > 0">
+            <label for="showCanvas">Show Canvas</label>
+            <input type="checkbox" title="showCanvas" id="showCanvas" name="showCanvas" ng-model="showCanvas" ng-value="showCanvas"/>
+        </div>
+        <div class="col-sm-6">
+            <button class="button col-xs-12 col-md-6" ng-click="createAMission()">
+                <span class="glyphicon glyphicon-plus"></span> Create a new mission
+            </button>
+        </div>
         <hr class="col-xs-12"/>
         <div class="col-md-12" ng-model="missions" ng-repeat="mission in missions">
-            <div class="col-md-4 col-sm-6">
+            <div class="col-md-4 col-sm-6"  ng-show="showCanvas">
                 <canvas id="mission-{{mission.mission.id}}" class="" height="300" width="300"
                     on-last-repeat-item>
                     Please use a browser that supports canvass

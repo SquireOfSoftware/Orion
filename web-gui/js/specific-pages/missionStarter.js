@@ -10,6 +10,8 @@ var webServer = angular.module("webServer", [])
         message: []
     };
 
+    $scope.showCanvas = true;
+
     var baseurl = "http://localhost:5001/rest/";
     var RESTMISSION = "missions";
 
@@ -127,6 +129,10 @@ var webServer = angular.module("webServer", [])
             drawUpGrid(mission);
         }
     });
+
+    $scope.createAMission = function () {
+        window.href.location = "mission-creator.html"
+    };
 
     /*Code from Mission Controller*/
     function drawDot(mouseClick, canvasGrid, colour) {
