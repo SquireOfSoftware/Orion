@@ -22,6 +22,8 @@ var webServer = angular.module("webServer", [])
     $scope.currentImage = "";
     $scope.currentMission = "";
 
+    var timeoutCounter = 0;
+
     $scope.errorMsg = {
         heading: "ERROR",
         message: [],
@@ -224,6 +226,13 @@ var webServer = angular.module("webServer", [])
         pollCurrentMissionStatus();
         pollCurrentImage();
         pollCurrentDroneStatus();
+        if (timeoutCounter > 5) {
+            $scope.closeErrorScreen();
+            addErrorMessage("Lost connection to server");
+            showErrorScreen();
+            stopPoll();
+            timeoutCounter = 0;
+        }
     }
 
     function pollCurrentMissionStatus() {
@@ -233,15 +242,18 @@ var webServer = angular.module("webServer", [])
                 if (data.data.status !== INPROGRESS) {
                     addErrorMessage("Mission is no longer running");
                     showErrorScreen();
-                    $interval.cancel(delayedMissionPoll);
+                    stopPoll();
                     $scope.currentMission.mission.status = data.data.status;
                     $log.debug($scope.currentMission.mission.status);
                 }
+                timeoutCounter = 0;
             })
             .catch(function(data) {
                 $log.error("failed to poll");
-                addErrorMessage(data);
-                showErrorScreen();
+                //addErrorMessage(data);
+
+                timeoutCounter += 1;
+                //showErrorScreen();
             });
     }
 
@@ -250,11 +262,13 @@ var webServer = angular.module("webServer", [])
             .then(function (data) {
                 $log.debug(data.data);
                 //$scope.currentImage = data.data.imageblob;
+                timeoutCounter = 0;
             })
             .catch(function(data) {
                 $log.error("failed to poll");
-                addErrorMessage(data);
-                showErrorScreen();
+                //addErrorMessage(data);
+                timeoutCounter += 1;
+                //showErrorScreen();
             });
     }
 
@@ -263,10 +277,18 @@ var webServer = angular.module("webServer", [])
             .then(function (data) {
                 $log.debug(data.data.status);
                 $scope.currentMission.mission.drone_status = data.data.status;
+                timeoutCounter = 0;
             })
             .catch(function (data) {
                 $log.error(data);
+                timeoutCounter += 1;
+
+                //addErrorMessage(data);
             })
+    }
+
+    function stopPoll() {
+        $interval.cancel(delayedMissionPoll);
     }
 
 });
