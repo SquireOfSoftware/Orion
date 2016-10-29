@@ -4,7 +4,7 @@ from subprocess import Popen
 
 from django.http import HttpResponse
 
-from drone_service import drones
+import drone_service
 from rest.models import Mission
 from rest.models import Missionstatus
 from rest.models import Drone
@@ -12,9 +12,6 @@ from rest.models import DroneStatus
 from rest.models import Waypoint
 from rest.models import Obstacle
 from rest.models import Pointofinterest
-
-from management_constants import MISSION_STATUS
-from management_constants import DRONE_STATUS
 
 
 MIN_ALTITUDE = 0.0
@@ -72,7 +69,7 @@ def add_a_mission(data):
 
     print(altitude, drone_id, point_of_interest, waypoints)
 
-    if drones.validate_drone(int(drone_id)):
+    if drone_service.is_drone_busy(int(drone_id)) is False:
         print("validating data now")
         if not validate_altitude(altitude):
             return send_missions_error("Please verify that the altitude is between " +
@@ -104,7 +101,7 @@ def create_mission(altitude, drone_id):
     mission = Mission.objects.create(
         missioncreationdate=get_current_time(),
         missionaltitude=float(altitude),
-        missionstatus_missionstatusid=Missionstatus.objects.get(missionstatusid=MISSION_STATUS["QUEUED"]),
+        missionstatus_missionstatusid=Missionstatus.objects.get(missionstatusname="QUEUED"),
         drone_droneid=Drone.objects.get(droneid=drone_id)
     )
     return mission
@@ -153,13 +150,13 @@ def start_mission(mission_id):
     mission = Mission.objects.get(missionid=mission_id)
     print(mission)
     no_missions_are_running = verify_no_missions_are_active()
-    drone_is_busy = is_drone_busy(mission.drone_droneid.droneid)
+    drone_is_busy = drone_service.is_drone_busy(mission.drone_droneid.droneid)
     if (mission is not None) and (no_missions_are_running is True) and (drone_is_busy is not True):
         mission.missionstatus_missionstatusid = Missionstatus.objects.get(missionstatusname="IN PROGRESS")
         mission.save()
 
         drone = Drone.objects.get(droneid=mission.drone_droneid.droneid)
-        drone.dronestatus_dronestatusid = DroneStatus.objects.get(dronestatusid=DRONE_STATUS["TAKING OFF"])
+        drone.dronestatus_dronestatusid = DroneStatus.objects.get(dronestatusname="TAKING OFF")
         drone.save()
 
         Popen("python experiments/process_spawnee.py", shell=True)
@@ -169,7 +166,7 @@ def start_mission(mission_id):
         return send_missions_error("Could not locate mission with id: " + str(mission_id))
     elif no_missions_are_running is not True:
         return send_missions_error("There is already a mission running.")
-    elif drone_is_available is not True:
+    elif drone_is_busy is True:
         return send_missions_error("The drone for this mission is currently unavailable.")
 
     return send_missions_error("An error has occurred.")
@@ -223,24 +220,12 @@ def verify_no_missions_are_active():
         active_mission = Mission.objects.get(
             missionstatus_missionstatusid=Missionstatus.objects.get(
                 missionstatusname="IN PROGRESS"))
-        print(active_mission == None)
+        print(active_mission is None)
         print(active_mission)
-        return active_mission == None
+        return active_mission is None
     except Mission.DoesNotExist:
         return True
 
-
-def is_drone_busy(drone_id):
-    try:
-        drone = Drone.objects.get(droneid=drone_id)
-        drone_status = DroneStatus.objects.get(dronestatusname="IDLE")
-        print("Is drone busy? ", drone_status.dronestatusid != drone_status.dronestatusid)
-        print(drone_status.dronestatusid)
-        print(DRONE_STATUS["IDLE"])
-        return drone_status.dronestatusid != drone_status.dronestatusid
-    except Drone.DoesNotExist:
-        print("Drone does not exist")
-        return False
 
 # mission error
 def send_missions_error(message):
@@ -261,3 +246,24 @@ def send_response(message):
 def get_current_time():
     time = timezone.now().__str__()
     return time
+
+
+def get_mission_status(mission_id):
+    try:
+        mission = Mission.objects.get(missionid=mission_id)
+        mission_status = mission.missionstatus_missionstatusid.missionstatusname
+        return send_response({"status": mission_status})
+    except Mission.DoesNotExist:
+        print("Mission ", mission_id, " does not exist")
+        return send_missions_error("Mission with id: " + str(mission_id) + " does not exist")
+
+
+def get_mission_waypoints(mission_id):
+    try:
+        mission = Mission.objects.get(missionid=mission_id)
+        waypoints = Waypoint.objects.filter(mission_missionid=mission)
+        all_waypoints = [waypoint.as_dict() for waypoint in waypoints]
+        return send_response(all_waypoints)
+    except Mission.DoesNotExist:
+        print("Mission ", mission_id, " does not exist")
+        return send_missions_error("Mission with id: " + str(mission_id) + " does not exist")

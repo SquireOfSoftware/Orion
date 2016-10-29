@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="webServer">
+<head>
+    <meta charset="UTF-8">
+    <title>Run a Mission</title>
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap/bootstrap-theme.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap/bootstrap.css"/>
+
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../js/angular.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="../../css/core.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/specific-pages/mission-executor.css"/>
+</head>
+<body ng-controller="missionExecutionCtrl" ng-init="init()">
+    <div class="errors">
+        <div class="col-md-12 message" id="error-message">
+            <span class=" message-icon glyphicon glyphicon-exclamation-sign"></span>
+            <h2>{{errorMsg.heading}}</h2>
+            <div ng-repeat="message in errorMsg.message">{{message}}</div>
+            <button class="button col-xs-9 col-sm-4" ng-click="closeErrorScreen()">
+                OK
+            </button>
+        </div>
+        <div class="col-md-12 overlay"></div>
+    </div>
+    <div class="loading">
+        <div class="col-md-12 message" id="loading-message">
+            <span id="loading-circle" class="message-icon glyphicon glyphicon glyphicon-repeat"></span>
+            <h2>Loading...</h2>
+            <p>Please wait</p>
+        </div>
+        <div class="col-md-12 overlay"></div>
+    </div>
+    <div class="warning">
+        <div class="col-md-12 message" id="warning-message">
+            <span class="message-icon glyphicon glyphicon-exclamation-sign"></span>
+            <h2>{{warningMsg.heading}}</h2>
+            <div ng-repeat="message in warningMsg.message">{{message}}</div>
+            <button class="button col-xs-9 col-sm-4" ng-click="closeWarningScreen()">
+                OK
+            </button>
+        </div>
+        <div class="col-md-12 overlay"></div>
+    </div>
+    <div class="success">
+        <div class="col-md-12 message" id="success-message">
+            <span class="message-icon glyphicon glyphicon-ok-circle"></span>
+            <h2>Success</h2>
+            <p>Your mission has been created.</p>
+            <button class="button col-xs-9 col-sm-4" ng-click="loadMission()">
+                OK
+            </button>
+        </div>
+        <div class="col-md-12 overlay"></div>
+    </div>
+
+    <div class="title col-md-12">
+        <h1><a href="../index.html">Home</a> / Run a Mission</h1>
+    </div>
+</body>
+<script src="../../js/specific-pages/missionExecutor.js"></script>
+</html>

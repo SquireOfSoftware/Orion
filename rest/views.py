@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from drone_service import drones
+import drone_service
 import mission_service
 import image_service
 import json
@@ -34,23 +34,47 @@ def get_mission(request, mission_id):
     return respond_with_error("Invalid METHOD " + request.method)
 
 
+def get_mission_waypoints(request, mission_id):
+    if request.method == "GET":
+        return mission_service.get_mission_waypoints(int(mission_id))
+    return respond_with_error("Invalid METHOD " + request.method)
+
+
+def get_mission_status(request, mission_id):
+    if request.method == "GET":
+        return mission_service.get_mission_status(int(mission_id))
+    return respond_with_error("Invalid METHOD " + request.method)
+
+
 # pass through anything relating to drones
 def handle_drones(request):
     if request.method == "GET":
-        return drones.get_all_drones()
+        return drone_service.get_all_drones()
     elif (request.method == "POST") and (request.body != ""):
-        return drones.add_a_drone(request.body)
+        return drone_service.add_a_drone(request.body)
     return respond_with_error("Invalid METHOD " + request.method)
 
 
 def get_drone(request, drone_id):
     if request.method == "GET":
-        return drones.get_drone(int(drone_id))
+        return drone_service.get_drone(int(drone_id))
     return respond_with_error("Invalid METHOD " + request.method)
 
 
 def control_drone(request, id):
     pass
+
+
+def get_drone_status(request, drone_id):
+    if request.method == "GET":
+        return drone_service.get_drone_status(int(drone_id))
+    return respond_with_error("Invalid METHOD " + request.method)
+
+
+def get_drone_current_metadata(request, drone_id):
+    if request.method == "GET":
+        return drone_service.get_drone_metadata(int(drone_id))
+    return respond_with_error("Invalid METHOD " + request.method)
 
 
 # process anything relating to images
