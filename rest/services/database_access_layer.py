@@ -38,7 +38,7 @@ class connector(object):
                 logging.debug('Database does not exist')
             else:
                 logging.debug(err)
-        self.cursor = self.connection.cursor()
+        self.cursor = self.connection.cursor(prepared=True)
         return
 
     # close the connection
