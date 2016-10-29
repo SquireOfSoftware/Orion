@@ -6,7 +6,7 @@ body {
 
 button {
 	color: #000;
-	height: 100px;
+	height: auto;
     border: hidden;
     background-color: #fff;
     font-size: larger;
@@ -74,6 +74,10 @@ html {
     background-color: transparent;
 }
 
+.warning {
+    display: none;
+}
+
 /* IDs */
 
 #error-message {
@@ -86,6 +90,10 @@ html {
 
 #success-message {
     background-color: green;
+}
+
+#warning-message {
+    background-color: darkgoldenrod;
 }
 
 /*SPINNING CIRCLE ANIMATION */
