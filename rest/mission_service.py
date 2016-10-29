@@ -4,7 +4,7 @@ from subprocess import Popen
 
 from django.http import HttpResponse
 
-from drone_service import drones
+import drone_service
 from rest.models import Mission
 from rest.models import Missionstatus
 from rest.models import Drone
@@ -169,7 +169,7 @@ def start_mission(mission_id):
         return send_missions_error("Could not locate mission with id: " + str(mission_id))
     elif no_missions_are_running is not True:
         return send_missions_error("There is already a mission running.")
-    elif drone_is_available is not True:
+    elif drone_is_busy is True:
         return send_missions_error("The drone for this mission is currently unavailable.")
 
     return send_missions_error("An error has occurred.")
@@ -234,13 +234,14 @@ def is_drone_busy(drone_id):
     try:
         drone = Drone.objects.get(droneid=drone_id)
         drone_status = DroneStatus.objects.get(dronestatusname="IDLE")
-        print("Is drone busy? ", drone_status.dronestatusid != drone_status.dronestatusid)
+        print("Is drone busy? ", drone_status.dronestatusid != drone.dronestatus_dronestatusid.dronestatusid)
         print(drone_status.dronestatusid)
         print(DRONE_STATUS["IDLE"])
-        return drone_status.dronestatusid != drone_status.dronestatusid
+        return drone_status.dronestatusid != drone.dronestatus_dronestatusid.dronestatusid
     except Drone.DoesNotExist:
         print("Drone does not exist")
         return False
+
 
 # mission error
 def send_missions_error(message):
@@ -270,7 +271,7 @@ def get_mission_status(mission_id):
         return send_response({"status": mission_status})
     except Mission.DoesNotExist:
         print("Mission ", mission_id, " does not exist")
-        return send_missions_error("Mission with id: " + mission_id + " does not exist")
+        return send_missions_error("Mission with id: " + str(mission_id) + " does not exist")
 
 
 def get_mission_waypoints(mission_id):
@@ -281,4 +282,4 @@ def get_mission_waypoints(mission_id):
         return send_response(all_waypoints)
     except Mission.DoesNotExist:
         print("Mission ", mission_id, " does not exist")
-        return send_missions_error("Mission with id: " + mission_id + " does not exist")
+        return send_missions_error("Mission with id: " + str(mission_id) + " does not exist")
