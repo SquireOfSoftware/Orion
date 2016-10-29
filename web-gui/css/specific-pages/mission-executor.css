@@ -1,5 +1,16 @@
 /* Tags */
 
+canvas {
+    background-color: #fff;
+    width: 100%;
+    height: auto;
+    margin-top: 20px;
+}
+
 /* Classes */
+.current-mission {
+    display: none;
+}
+
 
 /* IDs */

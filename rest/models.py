@@ -15,7 +15,7 @@ from management_constants import DRONE_STATUS
 def convert_mission_status(id):
     for key, value in MISSION_STATUS.iteritems():
         if value == id:
-            return key
+            return key.replace("_", " ")
     return None
 
 

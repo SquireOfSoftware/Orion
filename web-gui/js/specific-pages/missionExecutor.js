@@ -17,14 +17,15 @@ var webServer = angular.module("webServer", [])
     var RESTIMAGES = "images";
     var RESTCURRENTIMAGE = "images/current";
 
-    var INPROGRESS = "IN_PROGRESS";
+    var INPROGRESS = "IN PROGRESS";
 
     $scope.currentImage = "";
     $scope.currentMission = "";
 
     $scope.errorMsg = {
         heading: "ERROR",
-        message: []
+        message: [],
+        returnBtn: "OK"
     };
 
     $scope.warningMsg = {
@@ -63,7 +64,9 @@ var webServer = angular.module("webServer", [])
     $scope.closeErrorScreen = function () {
         jQuery(".errors").hide();
         $scope.errorMsg.message = [];
-        window.location.href = "../index.html"
+        if ($scope.errorMsg.returnBtn === "Return Home") {
+            window.location.href = "../index.html";
+        }
     };
 
     function addErrorMessage(message) {
@@ -95,17 +98,6 @@ var webServer = angular.module("webServer", [])
 
     function addWarningMessage(message) {
         $scope.warningMsg.message.push(message);
-    }
-
-    function drawUpGrid(mission) {
-        // TODO get current mission
-        // TODO get canvas grid
-        //var gridContext = jQuery("#mission-" + mission.mission.id)[0].getContext("2d");
-        $log.debug(gridContext);
-        drawHorizontalLines(gridContext);
-        drawVerticalLines(gridContext);
-        drawFlightPath(gridContext, mission.waypoints);
-        drawDot(mission.point_of_interest, gridContext, ORANGE);
     }
 
     function drawDot(mouseClick, canvasGrid, colour) {
@@ -159,7 +151,20 @@ var webServer = angular.module("webServer", [])
             (object !== null);
     }
 
+    function drawUpGrid() {
+        var gridContext = jQuery("#mission-grid").getContext("2d");
+        $log.debug(gridContext);
+        drawHorizontalLines(gridContext);
+        drawVerticalLines(gridContext);
+        drawFlightPath(gridContext, $scope.currentMission.waypoints);
+        drawDot($scope.currentMission.point_of_interest, gridContext, ORANGE);
+    }
+
     /* FINISHED DEFAULT BINDINGS */
+
+    function addErrorReturnButton(message) {
+        $scope.errorMsg.returnBtn = message;
+    }
 
     $scope.init = function() {
         checkForCurrentMission();
@@ -176,9 +181,11 @@ var webServer = angular.module("webServer", [])
                 if (hasInProgressMission(data.data)) {
                     $scope.currentMission = getCurrentMission(data.data);
                     delayedMissionPoll = $interval(pollCurrentMission, 5000);
+                    showCurrentMissionScreen();
                 }
                 else {
                     addErrorMessage("No missions are running.");
+                    addErrorReturnButton("Return Home");
                     showErrorScreen();
                 }
             })
@@ -187,6 +194,10 @@ var webServer = angular.module("webServer", [])
                 addErrorMessage(data);
                 showErrorScreen();
             });
+    }
+
+    function showCurrentMissionScreen() {
+        jQuery(".current-mission").show();
     }
 
     function hasInProgressMission(missions) {
@@ -212,7 +223,7 @@ var webServer = angular.module("webServer", [])
         $http.get($scope.baseurl + RESTMISSIONS + "/" + $scope.currentMission.mission.id + "/status")
             .then(function (data) {
                 $log.debug(data.data);
-                if (data.data.status !== "IN PROGRESS") {
+                if (data.data.status !== INPROGRESS) {
                     addErrorMessage("Mission is no longer running");
                     showErrorScreen();
                     $interval.cancel(delayedMissionPoll);
