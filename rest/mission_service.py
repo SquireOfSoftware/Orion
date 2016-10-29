@@ -13,9 +13,6 @@ from rest.models import Waypoint
 from rest.models import Obstacle
 from rest.models import Pointofinterest
 
-from management_constants import MISSION_STATUS
-from management_constants import DRONE_STATUS
-
 
 MIN_ALTITUDE = 0.0
 MAX_ALTITUDE = 250.0
@@ -72,7 +69,7 @@ def add_a_mission(data):
 
     print(altitude, drone_id, point_of_interest, waypoints)
 
-    if drone_service.validate_drone(int(drone_id)):
+    if drone_service.is_drone_busy(int(drone_id)) is False:
         print("validating data now")
         if not validate_altitude(altitude):
             return send_missions_error("Please verify that the altitude is between " +
@@ -104,7 +101,7 @@ def create_mission(altitude, drone_id):
     mission = Mission.objects.create(
         missioncreationdate=get_current_time(),
         missionaltitude=float(altitude),
-        missionstatus_missionstatusid=Missionstatus.objects.get(missionstatusid=MISSION_STATUS["QUEUED"]),
+        missionstatus_missionstatusid=Missionstatus.objects.get(missionstatusname="QUEUED"),
         drone_droneid=Drone.objects.get(droneid=drone_id)
     )
     return mission
@@ -159,7 +156,7 @@ def start_mission(mission_id):
         mission.save()
 
         drone = Drone.objects.get(droneid=mission.drone_droneid.droneid)
-        drone.dronestatus_dronestatusid = DroneStatus.objects.get(dronestatusid=DRONE_STATUS["TAKING OFF"])
+        drone.dronestatus_dronestatusid = DroneStatus.objects.get(dronestatusname="TAKING OFF")
         drone.save()
 
         Popen("python experiments/process_spawnee.py", shell=True)

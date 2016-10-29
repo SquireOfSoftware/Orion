@@ -1,5 +1,4 @@
 from django.http import HttpResponse
-from management_constants import DRONE_STATUS
 import json
 
 from rest.models import Drone
@@ -16,7 +15,7 @@ def get_drone(drone_id):
     requested_drone = Drone.objects.get(droneid=drone_id)
 
     if requested_drone is None:
-        return get_drone_error("Could not locate drone with id: " + str(drone_id))
+        return send_drone_error("Could not locate drone with id: " + str(drone_id))
 
     return send_response(requested_drone.as_dict())
 
@@ -35,33 +34,8 @@ def add_a_drone(drone_object):
     return send_response(drone_entry.as_dict())
 
 
-def verify_drone(drone_id):
-    # drone can be found
-    # drone id is IDLE
-    for available_drone in registered_drones:
-        if available_drone["drone"]["id"] == drone_id:
-            return available_drone["drone"]["status"] == DRONE_STATUS["IDLE"]
-
-    return False
-
-
-# make sure that the drone with the drone id exists
-def validate_drone(drone_id):
-    for available_drone in registered_drones:
-        if available_drone["drone"]["id"] == drone_id:
-            return True
-    return False
-
-
-def update_drone(drone_object):
-    requested_drone = json.loads(drone_object);
-    for drone in registered_drones:
-        if drone["drone"]["id"] == requested_drone["drone"]["id"]:
-            registered_drones['count'] = change_details(drone, drone_object)
-
-
 # mission error
-def get_drone_error(message):
+def send_drone_error(message):
     return HttpResponse(json.dumps(
                         {"status": "error",
                          "data": message
@@ -76,9 +50,21 @@ def send_response(message):
 def is_drone_busy(drone_id):
     try:
         drone = Drone.objects.get(droneid=drone_id)
-        drone_status = DroneStatus.objects.get(dronestatusname="IDLE")
-        print("Is drone busy? ", drone_status.dronestatusid != drone.dronestatus_dronestatusid.dronestatusid)
-        return drone_status.dronestatusid != drone.dronestatus_dronestatusid.dronestatusid
+        print("Is drone busy? ", drone.dronestatus_dronestatusid.dronestatusname != "IDLE")
+        print(drone.dronestatus_dronestatusid.dronestatusname)
+        return drone.dronestatus_dronestatusid.dronestatusname != "IDLE"
     except Drone.DoesNotExist:
         print("Drone does not exist")
         return False
+
+
+def get_drone_status(drone_id):
+    try:
+        drone = Drone.objects.get(droneid=drone_id)
+        return send_response({"status": drone.dronestatus_dronestatusid.dronestatusname})
+    except Drone.DoesNotExist:
+        return send_drone_error("Drone does not exist")
+
+
+def get_drone_metadata(drone_id):
+    pass
