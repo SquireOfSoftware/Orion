@@ -34,6 +34,18 @@ def get_mission(request, mission_id):
     return respond_with_error("Invalid METHOD " + request.method)
 
 
+def get_mission_waypoints(request, mission_id):
+    if request.method == "GET":
+        return mission_service.get_mission_waypoints(int(mission_id))
+    return respond_with_error("Invalid METHOD " + request.method)
+
+
+def get_mission_status(request, mission_id):
+    if request.method == "GET":
+        return mission_service.get_mission_status(int(mission_id))
+    return respond_with_error("Invalid METHOD " + request.method)
+
+
 # pass through anything relating to drones
 def handle_drones(request):
     if request.method == "GET":

@@ -261,3 +261,17 @@ def send_response(message):
 def get_current_time():
     time = timezone.now().__str__()
     return time
+
+
+def get_mission_status(mission_id):
+    try:
+        mission = Mission.objects.get(missionid=mission_id)
+        mission_status = mission.missionstatus_missionstatusid.missionstatusname
+        return send_response({"status": mission_status})
+    except Mission.DoesNotExist:
+        print("Mission ", mission_id, " does not exist")
+        return send_missions_error("Mission with id: " + mission_id + " does not exist")
+
+
+def get_mission_waypoints(mission_id):
+    pass
