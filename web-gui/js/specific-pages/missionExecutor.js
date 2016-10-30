@@ -232,7 +232,7 @@ var webServer = angular.module("webServer", [])
         pollCurrentImage();
         pollCurrentDroneStatus();
         pollCurrentDroneMetadata();
-        if (timeoutCounter > 6) {
+        if (timeoutCounter > 1) {
             $scope.closeErrorScreen();
             addErrorMessage("Lost connection to server");
             showErrorScreen();

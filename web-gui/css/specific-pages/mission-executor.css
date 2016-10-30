@@ -7,10 +7,24 @@ canvas {
     margin-top: 20px;
 }
 
+img {
+    margin-top: 20px;
+    width: 100%;
+    height: auto;
+}
+
 /* Classes */
 .current-mission {
     display: none;
 }
 
+.title {
+    position: fixed;
+    background-color: #000;
+    z-index: 1;
+}
 
 /* IDs */
+#mission-bar {
+    margin-top: 70px;
+}

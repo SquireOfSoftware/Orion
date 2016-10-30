@@ -56,12 +56,11 @@
         <div class="col-md-12 overlay"></div>
     </div>
 
-    <div class="title col-md-12">
-        <h1><a href="../index.html">Home</a> / Run a Mission</h1>
+    <div class="title col-xs-12">
+        <h1><a href="../index.html">Home</a> / Run a Mission </h1>
     </div>
 
-    <div class="current-mission col-md-12" ng-model="currentMission">
-        <div class="col-xs-12" id="mission-bar">
+    <div class="col-xs-12" id="mission-bar">
             <div id="show-canvas">
                 <label for="showCanvas">Show Canvas</label>
                 <input type="checkbox" title="showCanvas" id="showCanvas" name="showCanvas" ng-model="showCanvas" ng-value="showCanvas"/>
@@ -75,19 +74,16 @@
                 <input type="checkbox" title="showDrone" id="showDrone" name="showDrone" ng-model="showDrone" ng-value="showDrone"/>
             </div>
             <div id="show-image">
-                <label for="showImage">Show current image</label>
+                <label for="showImage">Show Current image</label>
                 <input type="checkbox" title="showImage" id="showImage" name="showImage" ng-model="showImage" ng-value="showImage"/>
             </div>
         </div>
 
+    <div class="current-mission col-xs-12" ng-model="currentMission">
         <div class="col-md-4 col-sm-6" ng-show="showCanvas">
             <canvas id="mission-grid" class="" height="300" width="300" on-last-repeat-item>
                 Please use a browser that supports canvass
             </canvas>
-        </div>
-
-        <div class="col-xs-6 mission-screen" id="mission-image" ng-show="showImage">
-            <img ng-model="currentImage" src="{{currentImage}}" />
         </div>
 
         <div class="col-xs-12 col-sm-6 col-md-4 mission-screen" id="mission-info" ng-show="showMission">
@@ -104,6 +100,10 @@
                     <br>({{waypoint.x}}, {{waypoint.y}})
                 </span>
             </p>
+        </div>
+
+        <div class="col-xs-12 col-sm-6 mission-screen" id="mission-image" ng-show="showImage">
+            <img ng-model="currentImage" src="{{currentImage}}" />
         </div>
 
         <div class="col-xs-12 col-sm-6 col-md-4 mission-screen" id="mission-log" ng-show="showDrone">
