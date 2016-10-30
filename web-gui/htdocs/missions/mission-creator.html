@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
 
-    <title>Select a Drone</title>
+    <title>Create a mission</title>
     <link rel="stylesheet" type="text/css" href="../../css/bootstrap/bootstrap-theme.css"/>
     <link rel="stylesheet" type="text/css" href="../../css/bootstrap/bootstrap.css"/>
 
@@ -21,7 +21,7 @@
             <h2>{{errorMsg.heading}}</h2>
             <div ng-repeat="message in errorMsg.message">{{message}}</div>
             <button class="button col-xs-9 col-sm-4" ng-click="closeErrorScreen()">
-                OK
+                {{errorMsg.buttonMsg}}
             </button>
         </div>
         <div class="col-md-12 overlay"></div>
@@ -55,7 +55,7 @@
     -->
     <div id="configure-mission-page" class="mission-page">
         <div class="title col-md-12">
-            <h1><a href="../index.html">Home</a> / Configure the mission</h1>
+            <h1><a href="../index.html">Home</a> / Create a mission</h1>
         </div>
         <div class="col-sm-12">
             <div id="selection-grid" class="col-sm-8">

@@ -67,7 +67,7 @@ var webServer = angular.module("webServer", [])
     $scope.closeErrorScreen = function () {
         jQuery(".errors").hide();
         $scope.errorMsg.message = [];
-        if ($scope.errorMsg.returnBtn === "Return Home") {
+        if ($scope.errorMsg.returnBtn !== "OK") {
             window.location.href = "../index.html";
         }
     };
@@ -155,7 +155,6 @@ var webServer = angular.module("webServer", [])
     }
 
     function drawUpGrid() {
-        $log.debug(jQuery("#mission-grid"));
         var gridContext = jQuery("#mission-grid")[0].getContext("2d");
         $log.debug(gridContext);
         drawHorizontalLines(gridContext);
@@ -200,6 +199,7 @@ var webServer = angular.module("webServer", [])
             })
             .catch(function (data) {
                 $log.error(data);
+                addErrorReturnButton("Return Home");
                 addErrorMessage(data);
                 showErrorScreen();
             });

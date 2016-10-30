@@ -7,7 +7,8 @@ var webServer = angular.module("webServer", [])
     $scope.missions = [];
     $scope.errorMsg = {
         heading: "ERROR",
-        message: []
+        message: [],
+        buttonMsg: "OK"
     };
 
     $scope.showCanvas = true;
@@ -32,6 +33,9 @@ var webServer = angular.module("webServer", [])
     $scope.closeErrorScreen = function () {
         jQuery(".errors").hide();
         $scope.errorMsg.message = [];
+        if ($scope.errorMsg.buttonMsg !== "OK") {
+            window.location.href = "../index.html";
+        }
     };
 
     $scope.loadMission = function () {
@@ -82,6 +86,7 @@ var webServer = angular.module("webServer", [])
                 showMissionListing();
             })
             .catch(function(data) {
+                $scope.errorMsg.buttonMsg = "Return Home";
                 displayError(data);
             });
     }

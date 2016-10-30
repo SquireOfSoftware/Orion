@@ -11,10 +11,13 @@ var webServer = angular.module("webServer", [])
 .controller("missionCtrl", function($log, $http, $scope)
 {
     $scope.drones = [];
-    $scope.baseurl = "http://localhost:5001/rest/missions";
+    $scope.baseurl = "http://localhost:5001/rest/";
+    var RESTMISSIONS = "missions";
+    var RESTDRONES = "drones";
     $scope.errorMsg = {
         heading: "ERROR",
-        message: []
+        message: [],
+        buttonMsg: "OK"
     };
 
     var config = {
@@ -57,7 +60,7 @@ var webServer = angular.module("webServer", [])
     var currentScreenState = -1;
 
     $scope.init = function() {
-        initialiseDummyDrones();
+        initialiseDrones();
         initialiseGrids();
     };
 
@@ -65,22 +68,23 @@ var webServer = angular.module("webServer", [])
     * This is for the first screen
     * */
 
-    function initialiseDummyDrones() {
-        addDrone(setupDrone("2", "Voyager", "../../images/Drone1.png"));
-        addDrone(setupDrone("1", "Sputnik", "../../images/Drone2.png"));
-        $scope.selectedDrone = $scope.drones[0];
-    }
-
-    function setupDrone(id, name, imagePath) {
-        return {
-            id: id,
-            name: name,
-            image: imagePath
-        };
-    }
-
-    function addDrone(drone) {
-        $scope.drones.push(drone);
+    function initialiseDrones() {
+        $http.get($scope.baseurl + RESTDRONES)
+            .then(function(data) {
+                $log.debug(data.data);
+                $scope.drones = data.data;
+                if (data.data.length > 0) {
+                    $scope.selectedDrone = data.data[0];
+                }
+            })
+            .catch(function(data) {
+                $scope.errorMsg.buttonMsg = "Return Home";
+                addErrorMessage("Cannot load drones");
+                addErrorMessage(data);
+                showErrorScreen();
+                $log.error("Cannot load drones");
+                $log.error(data);
+            })
     }
 
     /*
@@ -365,6 +369,9 @@ var webServer = angular.module("webServer", [])
     $scope.closeErrorScreen = function () {
         jQuery(".errors").hide();
         $scope.errorMsg.message = [];
+        if ($scope.errorMsg.buttonMsg !== "OK") {
+            window.location.href = "../index.html";
+        }
     };
 
     $scope.loadMissionScreen = function () {
@@ -401,7 +408,7 @@ var webServer = angular.module("webServer", [])
 
     function sendMission(currentMission) {
         if (isValidMission(currentMission)) {
-            var url = $scope.baseurl;
+            var url = $scope.baseurl + RESTMISSIONS;
             $log.debug("trying to send mission");
 
             // How to bypass CORS on mac
