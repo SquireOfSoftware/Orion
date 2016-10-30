@@ -69,6 +69,7 @@ var webServer = angular.module("webServer", [])
     * */
 
     function initialiseDrones() {
+        toggleLoadingScreen();
         $http.get($scope.baseurl + RESTDRONES)
             .then(function(data) {
                 $log.debug(data.data);
@@ -76,8 +77,10 @@ var webServer = angular.module("webServer", [])
                 if (data.data.length > 0) {
                     $scope.selectedDrone = data.data[0];
                 }
+                toggleLoadingScreen();
             })
             .catch(function(data) {
+                toggleLoadingScreen();
                 $scope.errorMsg.buttonMsg = "Return Home";
                 addErrorMessage("Cannot load drones");
                 addErrorMessage(data);

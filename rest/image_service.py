@@ -15,7 +15,12 @@ def get_current_image():
 
 
 def get_images(start_number, end_number):
-    pass
+    if (start_number < end_number):
+        image_results = Image.objects.all()[start_number:end_number]
+    else:
+        image_results = Image.objects.all()[:10]
+    images = [image.as_dict() for image in image_results]
+    return send_response(images);
 
 
 def post_images(image_object, mission_id):

@@ -28,7 +28,7 @@ var webServer = angular.module("webServer", [])
     $scope.errorMsg = {
         heading: "ERROR",
         message: [],
-        returnBtn: "OK"
+        buttonMsg: "OK"
     };
 
     $scope.warningMsg = {
@@ -67,7 +67,7 @@ var webServer = angular.module("webServer", [])
     $scope.closeErrorScreen = function () {
         jQuery(".errors").hide();
         $scope.errorMsg.message = [];
-        if ($scope.errorMsg.returnBtn !== "OK") {
+        if ($scope.errorMsg.buttonMsg !== "OK") {
             window.location.href = "../index.html";
         }
     };
@@ -166,7 +166,7 @@ var webServer = angular.module("webServer", [])
     /* FINISHED DEFAULT BINDINGS */
 
     function addErrorReturnButton(message) {
-        $scope.errorMsg.returnBtn = message;
+        $scope.errorMsg.buttonMsg = message;
     }
 
     $scope.init = function() {
