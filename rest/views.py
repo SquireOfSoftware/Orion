@@ -112,3 +112,8 @@ def respond_with_error(message):
          "data": message
          }),
         status=403)
+
+def post_test_image(request, mission_id):
+    if request.method == "POST":
+        return image_service.post_images(request.body, int(mission_id))
+    return respond_with_error("Invalid METHOD " + request.method)

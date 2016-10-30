@@ -3,6 +3,9 @@ import json
 
 from rest.models import Drone
 from rest.models import DroneStatus
+from rest.models import Metadata
+
+import mission_service
 
 
 def get_all_drones():
@@ -67,4 +70,40 @@ def get_drone_status(drone_id):
 
 
 def get_drone_metadata(drone_id):
-    pass
+    '''
+    Metadata.objects.create(
+        metadatabattery=70,
+        metadatastate=4,
+        metadatamagx=10.1,
+        metadatamagy=10.1,
+        metadatamagz=10.1,
+        metadatapressure=43,
+        metadatatemp=34,
+        metadatawindspeed=3,
+        metadatawindangle=3,
+        metadatawindcompangle=87,
+        metadatarotx=4.3,
+        metadataroty=4.3,
+        metadatarotz=0,
+        metadataaltitude=23,
+        metadatavx=23,
+        metadatavy=23,
+        metadatavz=23,
+        metadataax=23,
+        metadataay=23,
+        metadataaz=23,
+        metadatamotor1=3,
+        metadatamotor2=3,
+        metadatamotor3=3,
+        metadatamotor4=3,
+        metadatatm=3,
+        metadatatimestamp=mission_service.get_current_time(),
+        drone_droneid=Drone.objects.get(droneid=1)
+    )'''
+
+    try:
+        metadata = Metadata.objects.filter(drone_droneid=Drone.objects.get(droneid=drone_id))\
+            .latest(field_name="metadatatimestamp")
+        return send_response(metadata.as_dict())
+    except Drone.DoesNotExist:
+        return send_drone_error("Drone does not exist")

@@ -14,14 +14,14 @@ var webServer = angular.module("webServer", [])
     $scope.baseurl = "http://localhost:5001/rest/";
     var RESTMISSIONS = "missions";
     var RESTDRONES = "drones";
-    var RESTIMAGES = "images";
     var RESTCURRENTIMAGE = "images/current";
 
     var INPROGRESS = "IN PROGRESS";
-    var COMPLETED = "COMPLETED"
+    var COMPLETED = "COMPLETED";
 
     $scope.currentImage = "";
     $scope.currentMission = "";
+    $scope.currentMetadataDump = {};
 
     var timeoutCounter = 0;
 
@@ -175,6 +175,10 @@ var webServer = angular.module("webServer", [])
     };
 
     var delayedMissionPoll = null;
+    $scope.showCanvas = true;
+    $scope.showMission = true;
+    $scope.showImage = true;
+    $scope.showDrone = false;
 
     function checkForCurrentMission() {
         toggleLoadingScreen();
@@ -227,7 +231,8 @@ var webServer = angular.module("webServer", [])
         pollCurrentMissionStatus();
         pollCurrentImage();
         pollCurrentDroneStatus();
-        if (timeoutCounter > 5) {
+        pollCurrentDroneMetadata();
+        if (timeoutCounter > 6) {
             $scope.closeErrorScreen();
             addErrorMessage("Lost connection to server");
             showErrorScreen();
@@ -246,12 +251,11 @@ var webServer = angular.module("webServer", [])
                     if (status === COMPLETED) {
                         addSuccessMessage("Mission completed");
                         showSuccessScreen();
-                        stopPoll();
                     }
                     else {
                         showErrorScreen();
-                        stopPoll();
                     }
+                    stopPoll();
                     $scope.currentMission.mission.status = status;
                     $log.debug($scope.currentMission.mission.status);
                 }
@@ -263,11 +267,13 @@ var webServer = angular.module("webServer", [])
             });
     }
 
+    var IMAGEHEADER = "data:image/png;base64,";
+
     function pollCurrentImage() {
         $http.get($scope.baseurl + RESTCURRENTIMAGE)
             .then(function (data) {
                 $log.debug(data.data);
-                //$scope.currentImage = data.data.imageblob;
+                $scope.currentImage = IMAGEHEADER + data.data.imageblob;
                 timeoutCounter = 0;
             })
             .catch(function(data) {
@@ -283,6 +289,18 @@ var webServer = angular.module("webServer", [])
                 var status = data.data.status;
                 $scope.currentMission.mission.drone_status = status;
                 timeoutCounter = 0;
+            })
+            .catch(function (data) {
+                $log.error(data);
+                timeoutCounter += 1;
+            })
+    }
+
+    function pollCurrentDroneMetadata() {
+        $http.get($scope.baseurl + RESTDRONES + "/" + $scope.currentMission.mission.drone_id + "/metadata/current")
+            .then(function (data) {
+                $log.debug(data.data);
+                $scope.currentMetadataDump = data.data;
             })
             .catch(function (data) {
                 $log.error(data);

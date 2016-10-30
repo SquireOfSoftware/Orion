@@ -154,10 +154,81 @@ class Mission(models.Model):
 class Metadata(models.Model):
     metadataid = models.IntegerField(db_column='MetadataID',
                                      primary_key=True)  # Field name made lowercase.
-    # TODO fix up models for metadata
-    metadatablob = models.TextField(db_column='MetadataBlob',
-                                    blank=True,
-                                    null=True)  # Field name made lowercase.
+    metadatabattery = models.FloatField(db_column="MetadataBattery",
+                                        blank=True,
+                                        null=True)
+    metadatastate = models.IntegerField(db_column="MetadataState",
+                                        blank=True,
+                                        null=True)
+    metadatamagx = models.FloatField(db_column="MetadataMagX",
+                                     blank=True,
+                                     null=True)
+    metadatamagy = models.FloatField(db_column="MetadataMagY",
+                                     blank=True,
+                                     null=True)
+    metadatamagz = models.FloatField(db_column="MetadataMagZ",
+                                     blank=True,
+                                     null=True)
+    metadatapressure = models.IntegerField(db_column="MetadataPressure",
+                                           blank=True,
+                                           null=True)
+    metadatatemp = models.IntegerField(db_column="MetadataTemp",
+                                       blank=True,
+                                       null=True)
+    metadatawindspeed = models.IntegerField(db_column="MetadataWindSpeed",
+                                            blank=True,
+                                            null=True)
+    metadatawindangle = models.IntegerField(db_column="MetadataWindAngle",
+                                            blank=True,
+                                            null=True)
+    metadatawindcompangle = models.IntegerField(db_column="MetadataWindCompAngle",
+                                            blank=True,
+                                            null=True)
+    metadatarotx = models.FloatField(db_column="MetadataRotX",
+                                     blank=True,
+                                     null=True)
+    metadataroty = models.FloatField(db_column="MetadataRotY",
+                                     blank=True,
+                                     null=True)
+    metadatarotz = models.FloatField(db_column="MetadataRotZ",
+                                     blank=True,
+                                     null=True)
+    metadataaltitude = models.IntegerField(db_column="MetadataAltd",
+                                           blank=True,
+                                           null=True)
+    metadatavx = models.FloatField(db_column="MetadataVX",
+                                   blank=True,
+                                   null=True)
+    metadatavy = models.FloatField(db_column="MetadataVY",
+                                   blank=True,
+                                   null=True)
+    metadatavz = models.FloatField(db_column="MetadataVZ",
+                                   blank=True,
+                                   null=True)
+    metadataax = models.FloatField(db_column="MetadataAX",
+                                   blank=True,
+                                   null=True)
+    metadataay = models.FloatField(db_column="MetadataAY",
+                                   blank=True,
+                                   null=True)
+    metadataaz = models.FloatField(db_column="MetadataAZ",
+                                   blank=True,
+                                   null=True)
+    metadatamotor1 = models.IntegerField(db_column="MetadataMotor1",
+                                         blank=True,
+                                         null=True)
+    metadatamotor2 = models.IntegerField(db_column="MetadataMotor2",
+                                         blank=True,
+                                         null=True)
+    metadatamotor3 = models.IntegerField(db_column="MetadataMotor3",
+                                         blank=True,
+                                         null=True)
+    metadatamotor4 = models.IntegerField(db_column="MetadataMotor4",
+                                         blank=True,
+                                         null=True)
+    metadatatm = models.FloatField(db_column="MetadataTM",
+                                   blank=True,
+                                   null=True)
     metadatatimestamp = models.DateTimeField(db_column='MetadataTimestamp',
                                              blank=True,
                                              null=True)  # Field name made lowercase.
@@ -174,7 +245,43 @@ class Metadata(models.Model):
     def as_dict(self):
         return {
             "id": self.metadataid,
-            "data": self.metadatablob,
+            "battery": self.metadatabattery,
+            "state": self.metadatastate,
+            "mag": {
+                "x": self.metadatamagx,
+                "y": self.metadatamagy,
+                "z": self.metadatamagz
+            },
+            "pressure": self.metadatapressure,
+            "temp": self.metadatatemp,
+            "wind": {
+                "speed": self.metadatawindspeed,
+                "angle": self.metadatawindangle,
+                "comp_angle": self.metadatawindcompangle
+            },
+            "rot": {
+                "x": self.metadatarotx,
+                "y": self.metadataroty,
+                "z": self.metadatarotz
+            },
+            "altitude": self.metadataaltitude,
+            "v": {
+                "x": self.metadatavx,
+                "y": self.metadatavy,
+                "z": self.metadatavz
+            },
+            "a": {
+                "x": self.metadataax,
+                "y": self.metadatavy,
+                "z": self.metadatavz
+            },
+            "motors": {
+                "1": self.metadatamotor1,
+                "2": self.metadatamotor2,
+                "3": self.metadatamotor3,
+                "4": self.metadatamotor4
+            },
+            "tm": self.metadatatm,
             "timestamp": self.metadatatimestamp.__str__(),
             "drone_id": self.drone_droneid.droneid
         }

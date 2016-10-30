@@ -64,13 +64,13 @@
         </div>
         <hr class="col-xs-12"/>
         <div class="col-md-12" ng-model="missions" ng-repeat="mission in missions">
-            <div class="col-md-4 col-sm-6"  ng-show="showCanvas">
+            <div class="col-xs-12 col-md-4 col-sm-6"  ng-show="showCanvas">
                 <canvas id="mission-{{mission.mission.id}}" class="" height="300" width="300"
                     on-last-repeat-item>
                     Please use a browser that supports canvass
                 </canvas>
             </div>
-            <div class="col-md-8 col-sm-6">
+            <div class="col-xs-12 col-md-8 col-sm-6">
                 <h2>Mission id: {{mission.mission.id}}</h2>
                 <p>Altitude: {{mission.mission.altitude}}</p>
                 <p>Creation time: {{mission.mission.creation_date}}</p>
