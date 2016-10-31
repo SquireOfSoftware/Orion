@@ -1,5 +1,7 @@
 from django.http import HttpResponse
 from django.utils import timezone
+import datetime
+from dateutil.parser import parse
 import json
 from rest.models import Image
 from rest.models import Mission
@@ -11,16 +13,44 @@ def get_current_time():
 
 
 def get_current_image():
-    return send_response(Image.objects.last().as_dict())
+    return send_response(Image.objects.last().order_by("-imagetimestamp").as_dict())
 
 
 def get_images(start_number, end_number):
-    if (start_number < end_number):
-        image_results = Image.objects.all()[start_number:end_number]
+    if start_number < end_number:
+        image_results = Image.objects.all().order_by("-imagetimestamp")[start_number:end_number]
     else:
         image_results = Image.objects.all()[:10]
     images = [image.as_dict() for image in image_results]
-    return send_response(images);
+    return send_response(images)
+
+
+def get_mission_images(mission_id, start_number, end_number):
+    try:
+        requested_images = Image.objects.filter(
+                mission_missionid=Mission.objects.get(missionid=mission_id)).order_by("-imagetimestamp")[start_number: end_number]
+        mission_images = [image.as_dict() for image in requested_images]
+        return send_response(mission_images)
+    except Mission.DoesNotExist:
+        return send_image_error("Mission does not exist")
+
+
+def get_next_mission_images(mission_id, requested_datetime):
+    print(requested_datetime)
+    requested_datetime_object = parse(requested_datetime)
+    print(requested_datetime_object)
+    try:
+        requested_images = Image.objects.filter(
+                mission_missionid=Mission.objects.get(missionid=mission_id),
+                imagetimestamp=(requested_datetime_object + datetime.timedelta(hours=12))
+                    #requested_datetime_object,
+                             #requested_datetime_object - datetime.timedelta(hours=12)
+                ).order_by("-imagetimestamp")
+        print(requested_images)
+        mission_images = [image.as_dict() for image in requested_images]
+        return send_response(mission_images)
+    except Mission.DoesNotExist:
+        return send_image_error("Mission does not exist")
 
 
 def post_images(image_object, mission_id):

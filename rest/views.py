@@ -102,8 +102,33 @@ def get_current_image(request):
     return image_service.get_current_image()
 
 
-def get_mission_images(mission_id):
-    pass
+def get_mission_images(request, mission_id):
+    if request.method == "GET":
+        start_number = request.GET.get("start_number")
+        end_number = request.GET.get("end_number")
+        if (start_number is not None) and (end_number is not None):
+            return image_service.get_mission_images(int(mission_id), int(start_number), int(end_number))
+        elif start_number is not None:
+            print(start_number)
+            return image_service.get_mission_images(int(mission_id), int(start_number), int(start_number) + 10)
+        elif end_number is not None:
+            if int(end_number) <= 10:
+                return image_service.get_mission_images(int(mission_id), 0, int(end_number))
+            elif int(end_number) > 10:
+                return image_service.get_mission_images(int(mission_id), int(end_number) - 10, int(end_number))
+        else:
+            # default to first 10 images
+            return image_service.get_mission_images(int(mission_id), 0, 10)
+    return respond_with_error("Invalid METHOD " + request.method)
+
+
+def get_next_set_of_mission_images(request, mission_id):
+    if request.method == "GET":
+        datetime = request.GET.get("datetime")
+        if datetime is not None:
+            return image_service.get_next_mission_images(int(mission_id), datetime)
+        return respond_with_error("Not date was found")
+    return respond_with_error("Invalid METHOD " + request.method)
 
 
 def respond_with_error(message):
@@ -112,6 +137,7 @@ def respond_with_error(message):
          "data": message
          }),
         status=403)
+
 
 def post_test_image(request, mission_id):
     if request.method == "POST":

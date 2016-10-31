@@ -63,7 +63,7 @@ var webServer = angular.module("webServer", [])
         toggleLoadingScreen();
         var url = $scope.baseurl + RESTIMAGES +
             "?start_number=" + start_number +
-            "&end_number" + end_number;
+            "&end_number=" + end_number;
         $http.get(url)
             .then(function(data) {
                 toggleLoadingScreen();
