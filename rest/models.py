@@ -57,7 +57,7 @@ class Drone(models.Model):
                                blank=True,
                                null=True)  # Field name made lowercase.
     dronestatus_dronestatusid = models.ForeignKey(DroneStatus,
-                                                  models.DO_NOTHING,
+                                                  on_delete=models.DO_NOTHING,
                                                   db_column='DroneStatus_DroneStatusID',
                                                   null=False) # Field name made lowercase.
 
@@ -112,12 +112,12 @@ class Mission(models.Model):
                                         blank=True,
                                         null=True)  # Field name made lowercase.
     missionstatus_missionstatusid = models.ForeignKey(Missionstatus,
-                                                       models.DO_NOTHING,
+                                                       on_delete=models.DO_NOTHING,
                                                        db_column='MissionStatus_MissionStatusID',
                                                        blank=True,
                                                        null=True)  # Field name made lowercase.
     drone_droneid = models.ForeignKey(Drone,
-                                      models.DO_NOTHING,
+                                      on_delete=models.DO_NOTHING,
                                       db_column='Drone_DroneID',
                                       blank=True,
                                       null=True)  # Field name made lowercase.
@@ -233,7 +233,7 @@ class Metadata(models.Model):
                                              blank=True,
                                              null=True)  # Field name made lowercase.
     drone_droneid = models.ForeignKey(Drone,
-                                      models.DO_NOTHING,
+                                      on_delete=models.DO_NOTHING,
                                       db_column='Drone_DroneID')  # Field name made lowercase.
 
     class Meta:
@@ -297,7 +297,7 @@ class Image(models.Model):
                                      blank=True,
                                      null=True)  # Field name made lowercase.
     mission_missionid = models.ForeignKey(Mission,
-                                          models.DO_NOTHING,
+                                          on_delete=models.DO_NOTHING,
                                           db_column='Mission_MissionID')  # Field name made lowercase.
 
     class Meta:
@@ -325,7 +325,7 @@ class Obstacle(models.Model):
                                             blank=True,
                                             null=True)  # Field name made lowercase.
     mission_missionid = models.ForeignKey(Mission,
-                                          models.DO_NOTHING,
+                                          on_delete=models.DO_NOTHING,
                                           db_column='Mission_MissionID')  # Field name made lowercase.
 
     class Meta:
@@ -353,7 +353,7 @@ class Pointofinterest(models.Model):
                                          blank=True,
                                          null=True)  # Field name made lowercase.
     mission_missionid = models.ForeignKey(Mission,
-                                          models.DO_NOTHING,
+                                          on_delete=models.DO_NOTHING,
                                           db_column='Mission_MissionID')  # Field name made lowercase.
 
     class Meta:
@@ -384,7 +384,7 @@ class Waypoint(models.Model):
                                                blank=True,
                                                null=True)  # Field name made lowercase.
     mission_missionid = models.ForeignKey(Mission,
-                                          models.DO_NOTHING,
+                                          on_delete=models.DO_NOTHING,
                                           db_column='Mission_MissionID')  # Field name made lowercase.
 
     class Meta:
@@ -416,8 +416,8 @@ class AuthGroup(models.Model):
 
 
 class AuthGroupPermissions(models.Model):
-    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
-    permission = models.ForeignKey('AuthPermission', models.DO_NOTHING)
+    group = models.ForeignKey(AuthGroup, on_delete=models.DO_NOTHING)
+    permission = models.ForeignKey('AuthPermission', on_delete=models.DO_NOTHING)
 
     class Meta:
         managed = False
@@ -428,7 +428,7 @@ class AuthGroupPermissions(models.Model):
 
 class AuthPermission(models.Model):
     name = models.CharField(max_length=255)
-    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING)
+    content_type = models.ForeignKey('DjangoContentType', on_delete=models.DO_NOTHING)
     codename = models.CharField(max_length=100)
 
     class Meta:
@@ -457,8 +457,8 @@ class AuthUser(models.Model):
 
 
 class AuthUserGroups(models.Model):
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
-    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
+    user = models.ForeignKey(AuthUser, on_delete=models.DO_NOTHING)
+    group = models.ForeignKey(AuthGroup, on_delete=models.DO_NOTHING)
 
     class Meta:
         managed = False
@@ -468,8 +468,8 @@ class AuthUserGroups(models.Model):
 
 
 class AuthUserUserPermissions(models.Model):
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
-    permission = models.ForeignKey(AuthPermission, models.DO_NOTHING)
+    user = models.ForeignKey(AuthUser, on_delete=models.DO_NOTHING)
+    permission = models.ForeignKey(AuthPermission, on_delete=models.DO_NOTHING)
 
     class Meta:
         managed = False
@@ -484,8 +484,8 @@ class DjangoAdminLog(models.Model):
     object_repr = models.CharField(max_length=200)
     action_flag = models.SmallIntegerField()
     change_message = models.TextField()
-    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING, blank=True, null=True)
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+    content_type = models.ForeignKey('DjangoContentType', on_delete=models.DO_NOTHING, blank=True, null=True)
+    user = models.ForeignKey(AuthUser, on_delete=models.DO_NOTHING)
 
     class Meta:
         managed = False
