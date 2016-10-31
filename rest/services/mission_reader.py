@@ -17,7 +17,7 @@ class mission_reader(connector, resource):
 
         testQuery = "select MissionID, Drone_DroneID " \
                     "from Mission " \
-                    "where MissionStatus_MissionStatustID = " \
+                    "where MissionStatus_MissionStatusID = " \
                     "(select MissionStatusID " \
                     "from MissionStatus " \
                     "where MissionStatusName = 'IN PROGRESS');"
