@@ -13,7 +13,7 @@ def get_current_time():
 
 
 def get_current_image():
-    return send_response(Image.objects.last().order_by("-imagetimestamp").as_dict())
+    return send_response(Image.objects.last().as_dict())
 
 
 def get_images(start_number, end_number):
@@ -64,6 +64,19 @@ def get_next_mission_images_via_image_id(mission_id, image_id, length):
         return send_response(mission_images)
     except Mission.DoesNotExist:
         return send_image_error("Mission does not exist")
+
+
+def get_next_image_via_image_id(image_id, length):
+    if length is None:
+        requested_images = Image.objects.filter(
+            imageid__lt=image_id
+        ).order_by("-imagetimestamp")
+    else:
+        requested_images = Image.objects.filter(
+            imageid__lt=image_id
+        ).order_by("-imagetimestamp")[:length]
+    images = [image.as_dict() for image in requested_images]
+    return send_response(images)
 
 
 def post_images(image_object, mission_id):

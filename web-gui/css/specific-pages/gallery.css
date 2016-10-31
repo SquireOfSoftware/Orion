@@ -1,15 +1,25 @@
 /* Tags */
 
 button {
-
 }
 
 img {
-
     height: auto;
 }
 
-/* Classes */
+select {
+    color: #fff;
+    background-color: grey;
+}
 
+/* Classes */
+.title {
+    /*position: fixed;*/
+}
+
+.image {
+    height: 20em;
+    width: auto;
+}
 
 /* IDs */
