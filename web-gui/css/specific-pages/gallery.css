@@ -1,12 +1,15 @@
 /* Tags */
 
 button {
-
 }
 
 img {
-
     height: auto;
+}
+
+select {
+    color: #fff;
+    background-color: grey;
 }
 
 /* Classes */

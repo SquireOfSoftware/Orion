@@ -16,6 +16,9 @@ var webServer = angular.module("webServer", [])
         buttonMsg: "OK"
     };
 
+    $scope.missions = {};
+    $scope.selectedMission = null;
+
     $scope.currentImage = "";
 
     $scope.images = [];
@@ -55,6 +58,7 @@ var webServer = angular.module("webServer", [])
     /* FINISHED DEFAULT BINDINGS */
 
     $scope.init = function() {
+        loadAllMissions();
         loadImages(0, 5);
     };
 
@@ -76,4 +80,26 @@ var webServer = angular.module("webServer", [])
                 showErrorScreen();
             })
     }
+
+    function loadAllMissions() {
+        toggleLoadingScreen();
+        var url = $scope.baseurl + RESTMISSIONS;
+        $http.get(url)
+            .then(function(data) {
+                toggleLoadingScreen();
+                $log.debug(data.data);
+                $scope.missions = data.data;
+                if ($scope.missions.length > 0) {
+                    $log.debug("setting the mission");
+                    $scope.selectedMission = $scope.missions[0];
+                }
+            })
+            .catch(function(data) {
+                $log.error(data);
+                addErrorMessage(data);
+                showErrorScreen();
+            })
+    }
+
+
 });

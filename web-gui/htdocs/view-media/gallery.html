@@ -36,6 +36,20 @@
     <div class="title col-xs-12">
         <h1><a href="../index.html">Home</a> / Gallery</h1>
     </div>
+
+    <div class="col-xs-12" id="mission-dropdown">
+        <label for="mission-dronedown">Filter for a mission: </label>
+        <select name="mission-dropdown"
+                id="mission-dronedown"
+                ng-model="selectedMission"
+                ng-options="mission.mission.id for mission in missions"
+                required>
+        </select>
+        <p>
+            Mission selected: {{selectedMission.mission.id}}
+        </p>
+    </div>
+
     <div id="image-gallery" class="col-xs-12">
         <div class="image" class="col-sm-4" ng-repeat="image in images">
             <img src="data:image/png;base64,{{image.imageblob}}" />
