@@ -89,6 +89,8 @@ var webServer = angular.module("webServer", [])
                 toggleLoadingScreen();
                 $log.debug(data.data);
                 $scope.missions = data.data;
+                $scope.missions.unshift({"mission": {"id": "ALL"}});
+                $log.debug($scope.missions);
                 if ($scope.missions.length > 0) {
                     $log.debug("setting the mission");
                     $scope.selectedMission = $scope.missions[0];
@@ -101,5 +103,8 @@ var webServer = angular.module("webServer", [])
             })
     }
 
-
+    $scope.showFilter = function(missionID) {
+        return (missionID === $scope.selectedMission.mission.id) ||
+            ($scope.selectedMission.mission.id === "ALL");
+    };
 });
