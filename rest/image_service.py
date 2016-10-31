@@ -36,17 +36,30 @@ def get_mission_images(mission_id, start_number, end_number):
 
 
 def get_next_mission_images(mission_id, requested_datetime):
-    print(requested_datetime)
     requested_datetime_object = parse(requested_datetime)
-    print(requested_datetime_object)
     try:
         requested_images = Image.objects.filter(
                 mission_missionid=Mission.objects.get(missionid=mission_id),
-                imagetimestamp=(requested_datetime_object + datetime.timedelta(hours=12))
-                    #requested_datetime_object,
-                             #requested_datetime_object - datetime.timedelta(hours=12)
+                imagetimestamp__gt=requested_datetime_object
                 ).order_by("-imagetimestamp")
-        print(requested_images)
+        mission_images = [image.as_dict() for image in requested_images]
+        return send_response(mission_images)
+    except Mission.DoesNotExist:
+        return send_image_error("Mission does not exist")
+    
+
+def get_next_mission_images_via_image_id(mission_id, image_id, length):
+    try:
+        if length is None:
+            requested_images = Image.objects.filter(
+                mission_missionid=Mission.objects.get(missionid=mission_id),
+                imageid__lt=image_id
+                ).order_by("-imagetimestamp")
+        else:
+            requested_images = Image.objects.filter(
+                mission_missionid=Mission.objects.get(missionid=mission_id),
+                imageid__lt=image_id
+            ).order_by("-imagetimestamp")[:length]
         mission_images = [image.as_dict() for image in requested_images]
         return send_response(mission_images)
     except Mission.DoesNotExist:

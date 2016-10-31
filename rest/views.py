@@ -131,6 +131,15 @@ def get_next_set_of_mission_images(request, mission_id):
     return respond_with_error("Invalid METHOD " + request.method)
 
 
+def get_next_set_of_mission_images_via_image_id(request, mission_id, image_id):
+    if request.method == "GET":
+        length = request.GET.get("length")
+        if length is None:
+            return image_service.get_next_mission_images_via_image_id(int(mission_id), int(image_id), length=None)
+        return image_service.get_next_mission_images_via_image_id(int(mission_id), int(image_id), int(length))
+    return respond_with_error("Invalid METHOD " + request.method)
+
+
 def respond_with_error(message):
     return HttpResponse(json.dumps(
         {"status": "error",
