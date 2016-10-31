@@ -61,26 +61,6 @@ var webServer = angular.module("webServer", [])
         loadCurrentImage();
     };
 
-    /* always assume start and end are always numbers and are legit*/
-    function loadImages(start_number, end_number) {
-        toggleLoadingScreen();
-        var url = $scope.baseurl + RESTIMAGES +
-            "?start_number=" + start_number +
-            "&end_number=" + end_number;
-        $http.get(url)
-            .then(function(data) {
-                toggleLoadingScreen();
-                $log.debug(data.data);
-                $scope.images = data.data;
-                loadUpMissions(data.data);
-            })
-            .catch(function(data) {
-                $log.error(data);
-                addErrorMessage(data);
-                showErrorScreen();
-            })
-    }
-
     function loadCurrentImage() {
         toggleLoadingScreen();
         var url = $scope.baseurl + RESTIMAGES + "/current";
@@ -88,8 +68,9 @@ var webServer = angular.module("webServer", [])
             .then(function (data) {
                 toggleLoadingScreen();
                 $log.debug(data.data);
-                addImage(data.data);
+                addPreviousImage(data.data);
                 $scope.currentImage = data.data;
+                jQuery(".onload").show();
             })
             .catch(function (data) {
                 $log.error(data);
@@ -104,23 +85,6 @@ var webServer = angular.module("webServer", [])
             loadImagesById(lastImageID);
         else
             $log.error("There is an undefined id");
-    };
-
-    $scope.loadCurrent = function() {
-        toggleLoadingScreen();
-        var url = $scope.baseurl + RESTIMAGES + "/current";
-        $http.get(url)
-            .then(function (data) {
-                toggleLoadingScreen();
-                $log.debug(data.data);
-                addImage(data.data);
-                $scope.currentImage = data.data;
-            })
-            .catch(function (data) {
-                $log.error(data);
-                addErrorMessage(data);
-                showErrorScreen();
-            });
     };
 
     function loadImagesById(lastImageID) {
@@ -143,16 +107,15 @@ var webServer = angular.module("webServer", [])
             });
     }
 
-    function loadUpMissions(array){
-        for(var i = 0; i < array.length; i++){
-            if (doesNotMatchEntries(array[i].mission_id))
-                $scope.missions.push(array[i].mission_id);
-            $log.debug($scope.missions);
+    function addImage(image) {
+        $scope.images.push(image);
+        if (doesNotMatchEntries(image.mission_id)) {
+            $scope.missions.push(image.mission_id);
         }
     }
 
-    function addImage(image) {
-        $scope.images.push(image);
+    function addPreviousImage(image) {
+        $scope.images.unshift(image);
         if (doesNotMatchEntries(image.mission_id)) {
             $scope.missions.push(image.mission_id);
         }
@@ -167,11 +130,9 @@ var webServer = angular.module("webServer", [])
     }
 
     $scope.showFilter = function(missionID) {
-        $log.debug(missionID);
         var show = ($scope.selectedMission === null) ||
             (missionID === $scope.selectedMission) ||
             ($scope.selectedMission === "ALL");
-        //$log.debug(show);
         return show;
     };
 

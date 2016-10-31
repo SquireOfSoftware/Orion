@@ -44,16 +44,12 @@
                     required>
             </select>
         </div>
-        <button class="button col-xs-6 col-sm-6" ng-click="loadCurrent()">
+        <button class="button col-xs-5 col-sm-5" ng-click="init()">
             Refresh current
         </button>
-        <button class="button col-xs-6 col-sm-6" ng-click="loadMore()">
+        <button class="button col-xs-offset-2 col-xs-5 col-sm-offset-2 col-sm-5" ng-click="loadMore()">
             Load more historical
         </button>
-    </div>
-
-    <div id="big-image-holder" class="col-xs-12">
-        <img id="big-image" ng-show="currentImage.imageblob !== undefined" src="data:image/png;base64,{{currentImage.imageblob}}" />
     </div>
 
     <div id="image-gallery-holder" class="col-xs-12">
@@ -64,6 +60,11 @@
         </ul>
     </div>
 
+    <div id="big-image-holder" class="col-xs-12">
+        <p class="onload">Belongs to Mission: {{currentImage.mission_id}}</p>
+        <p class="onload">Timestamp: {{currentImage.timestamp}}</p>
+        <img id="big-image" ng-show="currentImage.imageblob !== undefined" src="data:image/png;base64,{{currentImage.imageblob}}" />
+    </div>
 
 </body>
 <script src="../../js/specific-pages/gallery.js"></script>

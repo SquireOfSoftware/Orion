@@ -21,6 +21,10 @@ ul {
 .big-image {
 }
 
+.onload {
+    display: none;
+}
+
 .title {
     /*position: fixed;*/
 }
@@ -29,6 +33,7 @@ ul {
 #big-image {
     height: auto;
     max-height: 30em;
+    max-width: 100%;
 }
 
 #big-image-holder {
