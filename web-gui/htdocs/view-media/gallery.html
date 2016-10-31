@@ -44,13 +44,18 @@
                     required>
             </select>
         </div>
+        <button class="button col-xs-9 col-sm-4" ng-click="loadMore()">
+            Load more
+        </button>
     </div>
 
     <div id="image-gallery" class="">
-        <div class="image" ng-repeat="image in images" ng-show="showFilter(image.mission_id)">
-            <img class="" src="data:image/png;base64,{{image.imageblob}}" />
+        <div class="" ng-repeat="image in images" ng-show="showFilter(image.mission_id)">
+            <img id="{{image.id}}-{{image.mission_id}}" class="image" src="data:image/png;base64,{{image.imageblob}}" />
         </div>
     </div>
+
+
 </body>
 <script src="../../js/specific-pages/gallery.js"></script>
 </html>

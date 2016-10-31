@@ -17,8 +17,9 @@ select {
     /*position: fixed;*/
 }
 
-/* IDs */
-#image-gallery {
-    overflow-x: scroll;
+.image {
+    height: 20em;
     width: auto;
 }
+
+/* IDs */
