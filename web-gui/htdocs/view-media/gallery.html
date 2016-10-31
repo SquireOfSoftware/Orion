@@ -35,21 +35,20 @@
     </div>
     <div class="title col-xs-12">
         <h1><a href="../index.html">Home</a> / Gallery</h1>
+        <div class="" id="mission-dropdown">
+            <label for="mission-dronedown">Filter for a mission: </label>
+            <select name="mission-dropdown"
+                    id="mission-dronedown"
+                    ng-model="selectedMission"
+                    ng-options="missionid for missionid in missions"
+                    required>
+            </select>
+        </div>
     </div>
 
-    <div class="col-xs-12" id="mission-dropdown">
-        <label for="mission-dronedown">Filter for a mission: </label>
-        <select name="mission-dropdown"
-                id="mission-dronedown"
-                ng-model="selectedMission"
-                ng-options="mission.mission.id for mission in missions"
-                required>
-        </select>
-    </div>
-
-    <div id="image-gallery" class="col-xs-12">
-        <div class="image" class="col-sm-4" ng-repeat="image in images" ng-show="showFilter(image.mission_id)">
-            <img src="data:image/png;base64,{{image.imageblob}}" />
+    <div id="image-gallery" class="">
+        <div class="image" ng-repeat="image in images" ng-show="showFilter(image.mission_id)">
+            <img class="" src="data:image/png;base64,{{image.imageblob}}" />
         </div>
     </div>
 </body>

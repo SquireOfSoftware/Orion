@@ -13,6 +13,12 @@ select {
 }
 
 /* Classes */
-
+.title {
+    /*position: fixed;*/
+}
 
 /* IDs */
+#image-gallery {
+    overflow-x: scroll;
+    width: auto;
+}

@@ -16,8 +16,8 @@ var webServer = angular.module("webServer", [])
         buttonMsg: "OK"
     };
 
-    $scope.missions = {};
-    $scope.selectedMission = null;
+    $scope.missions = ["ALL"];
+    $scope.selectedMission = "ALL";
 
     $scope.currentImage = "";
 
@@ -58,7 +58,7 @@ var webServer = angular.module("webServer", [])
     /* FINISHED DEFAULT BINDINGS */
 
     $scope.init = function() {
-        loadAllMissions();
+        //loadAllMissions();
         loadImages(0, 5);
     };
 
@@ -73,12 +73,29 @@ var webServer = angular.module("webServer", [])
                 toggleLoadingScreen();
                 $log.debug(data.data);
                 $scope.images = data.data;
+                loadUpMissions(data.data);
             })
             .catch(function(data) {
                 $log.error(data);
                 addErrorMessage(data);
                 showErrorScreen();
             })
+    }
+
+    function loadUpMissions(array){
+        for(var i = 0; i < array.length; i++){
+            $log.debug(array[i]);
+            if (doesNotMatchEntries(array[i].mission_id))
+                $scope.missions.push(array[i].mission_id);
+        }
+    }
+
+    function doesNotMatchEntries(entry) {
+        for(var i = 0; i < $scope.missions.length; i++) {
+            if($scope.missions[i] === entry)
+                return false;
+        }
+        return true;
     }
 
     function loadAllMissions() {
@@ -104,7 +121,8 @@ var webServer = angular.module("webServer", [])
     }
 
     $scope.showFilter = function(missionID) {
-        return (missionID === $scope.selectedMission.mission.id) ||
+        return ($scope.selectedMission.mission.id === null) ||
+            (missionID === $scope.selectedMission.mission.id) ||
             ($scope.selectedMission.mission.id === "ALL");
     };
 });
