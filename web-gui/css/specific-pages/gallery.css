@@ -4,7 +4,8 @@ button {
 }
 
 img {
-    height: auto;
+    height: 10em;
+    width: auto;
 }
 
 select {
@@ -12,14 +13,38 @@ select {
     background-color: grey;
 }
 
+ul {
+    list-style-type: none;
+}
+
 /* Classes */
+.big-image {
+}
+
 .title {
     /*position: fixed;*/
 }
 
-.image {
-    height: 20em;
-    width: auto;
+/* IDs */
+#big-image {
+    height: auto;
+    max-height: 30em;
 }
 
-/* IDs */
+#big-image-holder {
+    /*background-color: grey;*/
+    text-align: center;
+    max-height: 30em;
+}
+
+#image-gallery {
+    /*position: fixed;
+    bottom: 0;
+    height: 20em;*/
+    overflow-x: scroll;
+    display: inline-flex;
+}
+
+#image-gallery-holder {
+    overflow-x: scroll;
+}

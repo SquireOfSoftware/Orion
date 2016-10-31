@@ -58,11 +58,6 @@ var webServer = angular.module("webServer", [])
     /* FINISHED DEFAULT BINDINGS */
 
     $scope.init = function() {
-        //loadAllMissions();
-        //loadImages(0, 5);
-
-        //var lastImageID = $scope.images[images.length - 1].id;
-        //loadImagesById(lastImageID);
         loadCurrentImage();
     };
 
@@ -94,6 +89,7 @@ var webServer = angular.module("webServer", [])
                 toggleLoadingScreen();
                 $log.debug(data.data);
                 addImage(data.data);
+                $scope.currentImage = data.data;
             })
             .catch(function (data) {
                 $log.error(data);
@@ -108,6 +104,23 @@ var webServer = angular.module("webServer", [])
             loadImagesById(lastImageID);
         else
             $log.error("There is an undefined id");
+    };
+
+    $scope.loadCurrent = function() {
+        toggleLoadingScreen();
+        var url = $scope.baseurl + RESTIMAGES + "/current";
+        $http.get(url)
+            .then(function (data) {
+                toggleLoadingScreen();
+                $log.debug(data.data);
+                addImage(data.data);
+                $scope.currentImage = data.data;
+            })
+            .catch(function (data) {
+                $log.error(data);
+                addErrorMessage(data);
+                showErrorScreen();
+            });
     };
 
     function loadImagesById(lastImageID) {
@@ -161,4 +174,8 @@ var webServer = angular.module("webServer", [])
         //$log.debug(show);
         return show;
     };
+
+    $scope.selectImage = function(image) {
+        $scope.currentImage = image;
+    }
 });

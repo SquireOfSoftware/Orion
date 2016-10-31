@@ -44,15 +44,24 @@
                     required>
             </select>
         </div>
-        <button class="button col-xs-9 col-sm-4" ng-click="loadMore()">
-            Load more
+        <button class="button col-xs-6 col-sm-6" ng-click="loadCurrent()">
+            Refresh current
+        </button>
+        <button class="button col-xs-6 col-sm-6" ng-click="loadMore()">
+            Load more historical
         </button>
     </div>
 
-    <div id="image-gallery" class="">
-        <div class="" ng-repeat="image in images" ng-show="showFilter(image.mission_id)">
-            <img id="{{image.id}}-{{image.mission_id}}" class="image" src="data:image/png;base64,{{image.imageblob}}" />
-        </div>
+    <div id="big-image-holder" class="col-xs-12">
+        <img id="big-image" ng-show="currentImage.imageblob !== undefined" src="data:image/png;base64,{{currentImage.imageblob}}" />
+    </div>
+
+    <div id="image-gallery-holder" class="col-xs-12">
+        <ul id="image-gallery" class="col-md-12">
+            <li class="image" ng-repeat="image in images" ng-show="showFilter(image.mission_id)" >
+                <img id="{{image.id}}-{{image.mission_id}}" src="data:image/png;base64,{{image.imageblob}}" ng-click="selectImage(image)"/>
+            </li>
+        </ul>
     </div>
 
 
