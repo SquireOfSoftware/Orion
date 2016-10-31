@@ -6,7 +6,7 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from __future__ import unicode_literals
-
+import base64 as b64
 from django.db import models
 from management_constants import MISSION_STATUS
 from management_constants import DRONE_STATUS
@@ -307,6 +307,7 @@ class Image(models.Model):
         app_label = "Image"
 
     def as_dict(self):
+	print(type(self.imageblob))
         return {
             "id": self.imageid,
             "timestamp": self.imagetimestamp.__str__(),
