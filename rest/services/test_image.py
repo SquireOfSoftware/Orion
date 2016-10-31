@@ -18,7 +18,8 @@ class image_writer:
         except CvBridgeError, e:
             print(e)
         else:
-            self.img_str = cv2.imencode('.jpg', self.cv2_img)
+            self.img_str = cv2.imencode('.png', self.cv2_img)
+            
 
     def capture(self):
         cv2.imwrite('test.png', self.cv2_img)
