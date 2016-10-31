@@ -1,15 +1,55 @@
 /* Tags */
 
 button {
-
 }
 
 img {
+    height: 10em;
+    width: auto;
+}
 
-    height: auto;
+select {
+    color: #fff;
+    background-color: grey;
+}
+
+ul {
+    list-style-type: none;
 }
 
 /* Classes */
+.big-image {
+}
 
+.onload {
+    display: none;
+}
+
+.title {
+    /*position: fixed;*/
+}
 
 /* IDs */
+#big-image {
+    height: auto;
+    max-height: 30em;
+    max-width: 100%;
+}
+
+#big-image-holder {
+    /*background-color: grey;*/
+    text-align: center;
+    max-height: 30em;
+}
+
+#image-gallery {
+    /*position: fixed;
+    bottom: 0;
+    height: 20em;*/
+    overflow-x: scroll;
+    display: inline-flex;
+}
+
+#image-gallery-holder {
+    overflow-x: scroll;
+}

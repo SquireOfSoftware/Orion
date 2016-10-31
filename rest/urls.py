@@ -20,6 +20,7 @@ urlpatterns = [
     url(r'^drones/(?P<drone_id>[0-9]{1,5})/control/?$', views.control_drone),
     url(r'^images/?$', views.get_images),
     url(r'^images/(?P<image_id>[0-9]{1,5})/?$', views.get_image),
+    url(r'^images/(?P<image_id>[0-9]{1,5})/filter?$', views.get_next_image_set),
     url(r'^images/current/?$', views.get_current_image),
     url(r'^images/missions/?$', views.get_mission_images),
     url(r'^missions/(?P<mission_id>[0-9]{1,5})/post/?$', views.post_test_image),
