@@ -1,3 +1,5 @@
+from PIL import Image
+from StringIO import StringIO
 import mysql.connector
 import cv2
 import base64
@@ -43,16 +45,20 @@ def open_image():
     cursor.execute(sql)
     for row in cursor:
         str_img = row[0];
-    print(type(str_img))
-    print str_img
-    img = str_img.decode("utf-8")
-#    print(str_img.decode("utf-8"))
-    #print(img)
-# Use matt's stuff
-    arr = np.fromstring(img, np.uint8)
-    fin_img = cv2.imdecode(arr, cv2.IMREAD_COLOR)
-    print tuple(fin_img.shape[1::-1])
-    cv2.imwrite('outertest.png', fin_img)
+
+    fh = open("hopeful.png", "wb")
+    fh.write(str_img.decode('base64'))
+    fh.close()
+#    print(type(str_img))
+#    print str_img
+#    sbuf = StringIO()
+#    sbuf.write((str_img.decode('base64')))
+#    pimg = Image.open(sbuf)
+#    newimg = cv2.cvtColor(np.array(pimg), cv2.COLOR_RGB2BGR)
+
+
+#    cv2.imshow("img",newimg)
+#    cv2.waitKey()
     cursor.close()
     cnx.close()
 

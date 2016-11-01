@@ -308,10 +308,12 @@ class Image(models.Model):
 
     def as_dict(self):
 	print(type(self.imageblob))
+	print(b64.b64encode(self.imageblob.encode('utf-8'))[:10])
         return {
             "id": self.imageid,
             "timestamp": self.imagetimestamp.__str__(),
-            "imageblob": self.imageblob,
+            #"imageblob": b64.b64encode(self.imageblob.encode('utf-8')),
+	    "imageblob": self.imageblob,
             "mission_id": self.mission_missionid.missionid
         }
 
