@@ -1,3 +1,4 @@
+from database_access_layer import *
 
 class resource_locator(object):
 
@@ -23,9 +24,11 @@ class resource_locator(object):
         return self.get('drone_mission')
 
 
-class resource(object):
+class resource(connector):
     def __init__(self, resource_locator):
         # Add class instance to name
+        super(resource, self).__init__()
+        super(resource, self).connect()
         resource_locator.add(self.__class__.__name__, self)
         self.locator = resource_locator
         self.count = 1
