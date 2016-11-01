@@ -23,6 +23,7 @@ class connector(object):
     def __init__(self):
         self.connection = None
         logging.basicConfig(filename='dbmsql.log', level=logging.DEBUG)
+        print "Connector out"
         self.cursor = None
         return
 
@@ -47,3 +48,8 @@ class connector(object):
         self.connection.close()
         return
 
+    def cursor(self):
+        return self.cursor
+
+    def connection(self):
+        return self.connection

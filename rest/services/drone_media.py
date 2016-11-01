@@ -3,6 +3,7 @@ import rospy
 import cv2
 import logging
 import base64
+import numpy as np
 from datetime import datetime, date, time
 from sensor_msgs.msg import Image
 from database_access_layer import *
@@ -15,24 +16,29 @@ class drone_media(resource):
     def __init__(self, resource_locator):
         super(drone_media, self).__init__(resource_locator)
         rospy.init_node('orion_image_reader', anonymous=True)
-        self.image_sub = rospy.Subscriber("adrone/image_raw", Image, self.image_callback)
+        self.image_sub = rospy.Subscriber("ardrone/image_raw", Image, self.image_callback)
         self.bridge = CvBridge()
-        print "Test"
+        self.cv2_img = None
+        self.img_str = ""
+        print "Drone Media Set"
         return
 
-    def image_callback(data):
+    def image_callback(self, data):
+        print "Calling back line 1"
         try:
-            cv2_img = bridge.imgmsg_to_cv2(msg, "bgr8")
-        except CvBridgeError, e:
+            self.cv2_img = self.bridge.imgmsg_to_cv2(data, "bgr8")
+        except CvBridgeError as e:
             print(e)
-        
-        img = cv2.imencode('.png', cv2_img)[1:]
-        img_str = base64.b64encode(img)
-        #Write to DB
-        now = dateime.now()
-        print img_str
-        data = (now.strftime("%Y-%m-%d %H:%M:%S"), img_str) 
-        super(resource, self).connection.start_transaction(isolation_level='READ COMMITED')
-        sql = "INSERT INTO Image (ImageTimestamp, ImageBlob, Mission_MissionID) VALUES (%s, %s, (SELECT MissionID from Mission WHERE MissionStatus_MissionStatusID = 2 LIMIT 1) );"
-        super(resource, self).cursor.execute(sql, data)
-        super(resource, self).connection.commit()
+        else:
+            img = cv2.imencode('.png', self.cv2_img)[1:]
+            print(type(img))
+            print(img)
+            self.img_str = base64.b64encode(img[0])
+            #Write to DB
+            now = datetime.now()
+            print "Callback"
+            values = (now.strftime("%Y-%m-%d %H:%M:%S"), self.img_str) 
+            super(drone_media, self).connection().start_transaction(isolation_level='READ COMMITTED')
+            sql = "INSERT INTO Image (ImageTimestamp, ImageBlob, Mission_MissionID) VALUES (%s, %s, (SELECT MissionID from Mission WHERE MissionStatus_MissionStatusID = 2 LIMIT 1) );"
+            super(drone_media, self).cursor().execute(sql, values)
+            super(drone_media, self).connection().commit()

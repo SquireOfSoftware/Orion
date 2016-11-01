@@ -29,6 +29,7 @@ class resource(connector):
         # Add class instance to name
         super(resource, self).__init__()
         super(resource, self).connect()
+        print "Resource Init"
         resource_locator.add(self.__class__.__name__, self)
         self.locator = resource_locator
         self.count = 1
@@ -42,3 +43,14 @@ class resource(connector):
     def release(self):
         self.count += 1
 
+    def connect(self):
+        super(resource, self).connect()
+
+    def disconnect(self):
+        super(resource, self).disconnect()
+
+    def cursor(self):
+        return super(resource, self).cursor()
+
+    def connection(self):
+        return super(resource, self).connection()
