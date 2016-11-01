@@ -2,9 +2,11 @@ import roslib
 import rospy
 import json
 import time
+from copy import deepcopy
 
 from database_access_layer import connector
-from drone_control import *
+from drone_control import drone_control
+from geometry_msgs.msg import Point
 from resource_locator import resource
 
 class drone_mission(connector, resource):
@@ -13,24 +15,50 @@ class drone_mission(connector, resource):
         resource.__init__(self)
 
     def start(self):
-        #Check if mission is running
         self.connect()
-        #Execute check if any mission running for safety.
-        sql = ""
+        # Execute check if any mission is in progress
+        sql = 'SELECT MissionID FROM Mission WHERE MissionStatus_MissionStatusID = 2;'
         for result in self.cursor.execute(sql):
-            if result.rowcount is 0
-                return false
-        #Query to get mission. Get all waypoints
-        #
-        sql = ""
+            #  If nothing is running quit.
+            if result.rowcount is 0:
+                return False
+
+        # Query to get mission. Get all waypoints
+        sql = """SELECT
+                        Waypoint.*, Mission.MissionAltitude
+                    FROM
+                        Waypoint
+                            INNER JOIN
+                        Mission ON Waypoint.Mission_MissionID = Mission.MissionID
+                    WHERE
+                        Mission.MissionStatus_MissionStatusID = 2
+                    ORDER BY WaypointID ASC;"""
         way_first = None
-        for result in self.cursor.execute(sql):
+        result_set = deepcopy(self.cursor.execute(sql))
+        for result in result_set:
             if way_first is None:
-                way_first = result['x'], result['y']
+                way_first = Point()
+                way_first.x = result['WaypointX']
+                way_first.y = result['WaypointY']
+                way_first.z = result['MissionAltitude']
+
+                # Update the waypoint element with the current time
+                arrived_at_waypoint_sql = 'UPDATE Waypoint SET WaypointTimeArrived = NOW() WHERE WaypointID = ' + result['WaypointID']
+                self.cursor.execute(arrived_at_waypoint_sql)
                 continue
             else:
-                way_second = result['x'], result['y']
-                #way point execute method
+                way_second = Point()
+                way_second.x = result['WaypointX']
+                way_second.y = result['WaypointY']
+                way_second.z = result['MissionAltitude']
+
+                # Since we have two waypoints, initiate a move
+                drone_control.moveQuantum(self, way_first, way_second)
+
+                # Update the waypoint element with the current time
+                arrived_at_waypoint_sql = 'UPDATE Waypoint SET WaypointTimeArrived = NOW() WHERE WaypointID = ' + result['WaypointID']
+                self.cursor.execute(arrived_at_waypoint_sql)
+
+                # We have moved to the second waypoint, so iterate to the next point
                 way_first = way_second
-            
 

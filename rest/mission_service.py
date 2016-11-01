@@ -159,6 +159,7 @@ def start_mission(mission_id):
         drone.dronestatus_dronestatusid = DroneStatus.objects.get(dronestatusname="TAKING OFF")
         drone.save()
 
+        # FIXME Point to the mission launcher (rest/services/main.py currently)
         Popen("python experiments/process_spawnee.py", shell=True)
 
         return send_response(mission.as_dict())
