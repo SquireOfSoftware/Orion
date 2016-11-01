@@ -113,7 +113,7 @@ class drone_control (object):
         @:type start: Point
         @:type end: Point
         """
-        self.rotate_to_face_point(self, start, end)
+        self.rotate_to_face_point(start, end)
 
         relative_goal_x = end.x - start.x
         relative_goal_y = end.y - start.y
@@ -128,16 +128,17 @@ class drone_control (object):
             if current_distance <= goal_distance:
                 # Go forward, but slow down as we approach the target, minimum 10% of LIN_SPEED
                 speed_ratio = (current_distance/goal_distance) + self.LIN_SPEED_MIN_PERCENTAGE
-                self.move_at_speed(self, speed_ratio)
+                self.move_at_speed(speed_ratio)
                 time.sleep(self.DISTANCE_POLLING_SLEEP)
 
             elif current_distance > goal_distance + self.POSITIONAL_ERROR:
                 # Moved too far, so go backwards at the minimum speed
-                self.move_at_speed(self, -self.LIN_SPEED_MIN_PERCENTAGE)
+                self.move_at_speed(-self.LIN_SPEED_MIN_PERCENTAGE)
                 time.sleep(self.DISTANCE_POLLING_SLEEP)
 
             else:
                 # We arrived!
+                self.stop()
                 break
 
         self.stop()
