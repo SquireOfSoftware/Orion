@@ -37,9 +37,10 @@ class drone_mission(connector, resource):
         result_set = deepcopy(self.cursor.execute(sql))
         for result in result_set:
             if way_first is None:
+                # Grab waypoints (which are in cm) and convert into meters
                 way_first = Point()
-                way_first.x = result['WaypointX']
-                way_first.y = result['WaypointY']
+                way_first.x = result['WaypointX']/100
+                way_first.y = result['WaypointY']/100
                 way_first.z = result['MissionAltitude']
 
                 # Update the waypoint element with the current time
@@ -47,10 +48,11 @@ class drone_mission(connector, resource):
                 self.cursor.execute(arrived_at_waypoint_sql)
                 continue
             else:
+                # Grab waypoints (which are in cm) and convert into meters
                 way_second = Point()
-                way_second.x = result['WaypointX']
-                way_second.y = result['WaypointY']
-                way_second.z = result['MissionAltitude']
+                way_second.x = result['WaypointX']/100
+                way_second.y = result['WaypointY']/100
+                way_second.z = result['MissionAltitude']/100
 
                 # Since we have two waypoints, initiate a move
                 drone_control.moveQuantum(self, way_first, way_second)
