@@ -198,3 +198,7 @@ webServer.directive("onLastRepeatItem", function () {
         }
     }
 });
+
+webServer.config(function ($logProvider) {
+    $logProvider.debugEnabled(false);
+});

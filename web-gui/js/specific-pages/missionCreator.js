@@ -46,6 +46,7 @@ var webServer = angular.module("webServer", [])
     var MAXALT = 250;
 
     var ORANGE = "#ff8900";
+    var GREY = "#E0E0E0";
 
     // Grids
     var interactionGridContext = null;
@@ -131,6 +132,7 @@ var webServer = angular.module("webServer", [])
         for (var x = MINGRID; x <= MAXGRID; x += INCREMENT) {
             canvasGrid.moveTo(x, MINGRID);
             canvasGrid.lineTo(x, MAXGRID);
+            canvasGrid.fillStyle = GREY;
             canvasGrid.stroke();
         }
     }
@@ -139,6 +141,7 @@ var webServer = angular.module("webServer", [])
         for (var y = MINGRID; y <= MAXGRID; y += INCREMENT) {
             canvasGrid.moveTo(MINGRID, y);
             canvasGrid.lineTo(MAXGRID, y);
+            canvasGrid.fillStyle = GREY;
             canvasGrid.stroke();
         }
     }
@@ -250,8 +253,6 @@ var webServer = angular.module("webServer", [])
     function matchesPreviousWaypoint(mouseClick) {
         if ($scope.currentWaypoints.length > 1) {
             var lastWaypoint = $scope.currentWaypoints[$scope.currentWaypoints.length - 1];
-            //var matchesLastWaypoint = (lastWaypoint.x === mouseClick.x) && (lastWaypoint.y === mouseClick.y);
-            //$log.debug("Does this click match last waypoint: " + matchesLastWaypoint);
             return (lastWaypoint.x === mouseClick.x) && (lastWaypoint.y === mouseClick.y);
         }
         return false;
@@ -447,4 +448,8 @@ var webServer = angular.module("webServer", [])
             showErrorScreen();
         }
     }
+});
+
+webServer.config(function ($logProvider) {
+    $logProvider.debugEnabled(false);
 });

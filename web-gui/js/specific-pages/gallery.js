@@ -5,8 +5,6 @@
 var webServer = angular.module("webServer", [])
 .controller("galleryCtrl", function($log, $http, $scope) {
     $scope.baseurl = "http://localhost:5001/rest/";
-    var RESTMISSIONS = "missions";
-    var RESTDRONES = "drones";
     var RESTIMAGES = "images";
     var RESTCURRENTIMAGE = "images/current";
 
@@ -46,10 +44,6 @@ var webServer = angular.module("webServer", [])
         $scope.errorMsg.message.push(message);
     }
 
-    function addErrorButtonMessage(message) {
-        $scope.errorMsg.buttonMsg = message;
-    }
-
     function exists(object) {
         return (object !== undefined) &&
             (object !== null);
@@ -63,7 +57,7 @@ var webServer = angular.module("webServer", [])
 
     function loadCurrentImage() {
         toggleLoadingScreen();
-        var url = $scope.baseurl + RESTIMAGES + "/current";
+        var url = $scope.baseurl + RESTCURRENTIMAGE;
         $http.get(url)
             .then(function (data) {
                 toggleLoadingScreen();
@@ -141,4 +135,8 @@ var webServer = angular.module("webServer", [])
     $scope.selectImage = function(image) {
         $scope.currentImage = image;
     }
+});
+
+webServer.config(function ($logProvider) {
+    $logProvider.debugEnabled(false);
 });

@@ -70,15 +70,15 @@
             </div>
             <div class="col-xs-12 col-md-8 col-sm-6">
                 <h2>Mission id: {{mission.mission.id}}</h2>
-                <p>Altitude: {{mission.mission.altitude}}</p>
+                <p>Altitude: {{mission.mission.altitude}}cm</p>
                 <p>Creation time: {{mission.mission.creation_date}}</p>
                 <p>Current status: {{mission.mission.status}}</p>
                 <p>Drone id: {{mission.mission.drone_id}}</p>
-                <p>POI: {{mission.point_of_interest.x}}, {{mission.point_of_interest.y}}</p>
+                <p>POI: {{mission.point_of_interest.x}}cm, {{mission.point_of_interest.y}}cm</p>
                 <p>
                     Waypoints:
                     <span ng-repeat="waypoint in mission.waypoints">
-                        <br>({{waypoint.x}}, {{waypoint.y}})
+                        <br>({{waypoint.x}}cm, {{waypoint.y}}cm)
                     </span>
                 </p>
                 <button class="button col-xs-12 col-md-6" ng-click="startMission(mission.mission.id)">
