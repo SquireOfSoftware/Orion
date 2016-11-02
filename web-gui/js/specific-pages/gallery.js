@@ -89,14 +89,16 @@ var webServer = angular.module("webServer", [])
 
     function loadImagesById(lastImageID) {
         toggleLoadingScreen();
-        var imageNumber = 1;
+        var imageNumber = 5;
         var url = $scope.baseurl + RESTIMAGES + "/" + lastImageID + "/filter?length=" + imageNumber;
+        $log.debug(url);
         $http.get(url)
             .then(function (data) {
-                //$log.debug(data.data[0]);
+                $log.debug(data.data);
                 if (exists(data.data))
                     for (var i = 0; i < data.data.length; i++) {
                         addImage(data.data[i]);
+                        $log.debug("image id: " + data.data[i].id);
                     }
                 toggleLoadingScreen();
             })
