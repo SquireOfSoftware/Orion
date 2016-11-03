@@ -1,0 +1,10 @@
+Channel 8 - 2.447 GHz
+save this somewhere:
+xmit power: 56mW
+channel 7
+54 mW
+
+IP 192.168.1.1
+Mask 255.255.255.0
+lemee just tweak the signal band and see
+signal band is ~7,8,9
