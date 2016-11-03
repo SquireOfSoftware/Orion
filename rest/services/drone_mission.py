@@ -10,19 +10,19 @@ from drone_control import drone_control
 from geometry_msgs.msg import Point
 from resource_locator import resource
 
-class drone_mission(connector, resource):
+class drone_mission(resource):
     def __init__(self, resource_locator):
-        connector.__init__(self)
-        resource.__init__(self)
+        super(drone_mission, self).__init__(self)
 
     def start(self):
         self.connect()
-        drone_control_object = drone_control()
+        drone_control_object = super(drone_mission, self).locator().getDroneControl()
 
         # Check to see if there is a mission IN PROGRESS, and try to get its ID
         get_mission_sql = 'SELECT MissionID FROM Mission WHERE MissionStatus_MissionStatusID = 2;'
-        self.cursor.execute(get_mission_sql)
-        data = self.cursor.fetchone()
+        cursor = super(drone_media, self).cursor()
+        cursor.execute(get_mission_sql)
+        data = cursor.fetchone()
         if data is None:
             print "Cannot find mission in the IN PROGRESS status"
             raise Exception('Cannot find mission in the IN PROGRESS status')
@@ -42,7 +42,7 @@ class drone_mission(connector, resource):
                     ORDER BY WaypointID ASC;"""
         way_first = None
         try:
-            self.cursor.execute(sql)
+            cursor.execute(sql)
             result_set = deepcopy(self.cursor.fetchall())
             for result in result_set:
                 if way_first is None:
