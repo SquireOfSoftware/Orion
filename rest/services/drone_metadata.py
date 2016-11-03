@@ -14,15 +14,14 @@ next_data = ("INSERT INTO Metadata"
              "VALUES (%(MetadataBlob)s, %(MetadataTimestamp)s, %(Drone_DroneID)s)") 
 
 
-class drone_metadata(connector, resource):
+class drone_metadata(resource):
     def __init__(self, resource_locator):
-        connector.__init__()
-        resource.__init__()
+        super(drone_metadata, self).__init__(resource_locator)
         self.jstring = None
         #Extract from ardrone/navdata
         self.subNavdata = rospy.subscribe('/ardrone/navdata', Navdata, self.ReceiveNavdata)
         self.current = None
-        self.connect()
+        
 
     #Call back for Navdata Extraction
     def ReceiveNavdata(self, navdata):

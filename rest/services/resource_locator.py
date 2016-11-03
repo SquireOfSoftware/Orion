@@ -54,3 +54,6 @@ class resource(connector):
 
     def connection(self):
         return super(resource, self).connection()
+
+    def locator(self):
+        return self.locator

@@ -16,7 +16,7 @@ from ardrone_autonomy.msg import Navdata
 from nav_msgs.msg import Odometry
 
 import time;
-class drone_control (object):
+class drone_control (resource):
     # Note, max recommended speed is 0.8
     ROT_SPEED = 0.5
     ROTATION_ERROR = 5
@@ -26,7 +26,8 @@ class drone_control (object):
     POSITIONAL_ERROR = 1
     DISTANCE_POLLING_SLEEP = 0.1
 
-    def __init__(self):
+    def __init__(self, resource_locator):
+        super(drone_control, self).__init__(resource_locator)
         self._move = rospy.Publisher('/cmd_vel', Twist, queue_size = 40)
         self._land = rospy.Publisher('/ardrone/land', Empty, queue_size = 5)
         self._emergency = rospy.Publisher('/ardrone/emergency', Empty, queue_size = 5)
@@ -34,7 +35,7 @@ class drone_control (object):
         rospy.init_node('orion_controller', anonymous=True)
         rate = rospy.Rate(60)
 
-        #Wait until publisher has starded up.
+        #Wait until publisher has started up.
         rospy.sleep(2)
 
 
