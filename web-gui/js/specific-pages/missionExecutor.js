@@ -41,15 +41,6 @@ var webServer = angular.module("webServer", [])
         message: []
     };
 
-    var config = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE',
-        'Access-Control-Max-Age': '3600',
-        'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
-        'Content-Type': 'application/text',
-        'Access-Control-Allow-Credentials': false
-    };
-
     var MINGRID = 0;
     var MAXGRID = 300;
     var INCREMENT = 50;
@@ -87,20 +78,6 @@ var webServer = angular.module("webServer", [])
 
     function addSuccessMessage(message) {
         $scope.successMsg.message.push(message);
-    }
-
-    function showWarningScreen (){
-        jQuery(".loading").hide();
-        jQuery(".warning").show();
-    }
-
-    $scope.closeWarningScreen = function (){
-        jQuery(".warning").hide();
-        $scope.warningMsg.message = [];
-    };
-
-    function addWarningMessage(message) {
-        $scope.warningMsg.message.push(message);
     }
 
     function drawDot(mouseClick, canvasGrid, colour) {
@@ -174,10 +151,10 @@ var webServer = angular.module("webServer", [])
     };
 
     var delayedMissionPoll = null;
-    $scope.showCanvas = true;
+    $scope.showCanvas = false;
     $scope.showMission = true;
     $scope.showImage = true;
-    $scope.showDrone = false;
+    $scope.showDrone = true;
 
     function checkForCurrentMission() {
         toggleLoadingScreen();
@@ -312,4 +289,8 @@ var webServer = angular.module("webServer", [])
         $interval.cancel(delayedMissionPoll);
     }
 
+});
+
+webServer.config(function ($logProvider) {
+    //$logProvider.debugEnabled(false);
 });

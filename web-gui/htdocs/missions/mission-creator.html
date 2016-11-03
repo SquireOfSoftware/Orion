@@ -77,6 +77,8 @@
 
             </div>
             <div class="col-sm-4">
+                <p><strong>Please note that the top left corner is 0cm, 0cm and bottom right corner is 300cm, 300cm.
+                    <br>The north border is the wall.</strong></p>
                 <div id="drone-selection-bar" class="col-sm-12" >
                     <label for="drone-dronedown">Select a drone: </label>
                     <select name="drone-dropdown"
@@ -92,7 +94,11 @@
                 <div id="input-bar" class="col-sm-12">
                     <div>
                         Enter in the altitude (in centimeters):
-                        <input id="altitude-box" name="altitude" ng-model="altitude" type="number" placeholder="Enter the altitude in meters"/>
+                        <input id="altitude-box"
+                               name="altitude"
+                               ng-model="altitude"
+                               type="number"
+                               placeholder="Enter the altitude in meters"/> cm
                     </div>
 
                     <button class="button col-xs-12" ng-click="switchToFlightPath()">

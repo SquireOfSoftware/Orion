@@ -84,32 +84,36 @@
             <canvas id="mission-grid" class="" height="300" width="300" on-last-repeat-item>
                 Please use a browser that supports canvass
             </canvas>
-        </div>
-
-        <div class="col-xs-12 col-sm-6 col-md-4 mission-screen" id="mission-info" ng-show="showMission">
-            <h2>Mission id: {{currentMission.mission.id}}</h2>
-            <p>Altitude: {{currentMission.mission.altitude}}</p>
-            <p>Creation time: {{currentMission.mission.creation_date}}</p>
-            <p>Current status: {{currentMission.mission.status}}</p>
-            <p>Drone id: {{currentMission.mission.drone_id}}</p>
-            <p>Drone status: {{currentMission.mission.drone_status}}</p>
-            <p>POI: {{currentMission.point_of_interest.x}}, {{currentMission.point_of_interest.y}}</p>
-            <p>
-                Waypoints:
-                <span ng-repeat="waypoint in currentMission.waypoints">
-                    <br>({{waypoint.x}}, {{waypoint.y}})
-                </span>
-            </p>
+            <p><strong>Please note that the top left corner is 0cm, 0cm and bottom right corner is 300cm, 300cm.
+                <br>The north border is the wall.</strong></p>
         </div>
 
         <div class="col-xs-12 col-sm-6 mission-screen" id="mission-image" ng-show="showImage">
             <img ng-model="currentImage" src="{{currentImage}}" />
         </div>
 
-        <div class="col-xs-12 col-sm-6 col-md-4 mission-screen" id="mission-log" ng-show="showDrone">
+        <div class="col-xs-12 col-sm-6 col-md-3 mission-screen" id="mission-info" ng-show="showMission">
+            <h2>Mission id: {{currentMission.mission.id}}</h2>
+            <p>Altitude: {{currentMission.mission.altitude}}cm</p>
+            <p>Creation time: {{currentMission.mission.creation_date}}</p>
+            <p>Current status: {{currentMission.mission.status}}</p>
+            <p>Drone id: {{currentMission.mission.drone_id}}</p>
+            <p>Drone status: {{currentMission.mission.drone_status}}</p>
+            <p>POI: {{currentMission.point_of_interest.x}}cm, {{currentMission.point_of_interest.y}}cm</p>
+            <p>
+                Waypoints:
+                <span ng-repeat="waypoint in currentMission.waypoints">
+                    <br>({{waypoint.x}}cm, {{waypoint.y}}cm)
+                </span>
+            </p>
+        </div>
+
+
+
+        <div class="col-xs-12 col-sm-6 col-md-3 mission-screen" id="mission-log" ng-show="showDrone">
             <h2>Drone id: {{currentMetadataDump.drone_id}}</h2>
             <p>Timestamp: {{currentMetadataDump.timestamp}}</p>
-            <p>Alitude: {{currentMetadataDump.alitutde}}</p>
+            <p>Alitude: {{currentMetadataDump.altitude}}cm</p>
             <p>Velocity:
                 {{currentMetadataDump.v.x}},
                 {{currentMetadataDump.v.y}},

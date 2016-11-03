@@ -54,12 +54,12 @@ def get_next_mission_images_via_image_id(mission_id, image_id, length):
             requested_images = Image.objects.filter(
                 mission_missionid=Mission.objects.get(missionid=mission_id),
                 imageid__lt=image_id
-                ).order_by("-imagetimestamp")
+                ).order_by("-imageid")
         else:
             requested_images = Image.objects.filter(
                 mission_missionid=Mission.objects.get(missionid=mission_id),
                 imageid__lt=image_id
-            ).order_by("-imagetimestamp")[:length]
+            ).order_by("-imageid")[:length]
         mission_images = [image.as_dict() for image in requested_images]
         return send_response(mission_images)
     except Mission.DoesNotExist:
@@ -70,11 +70,11 @@ def get_next_image_via_image_id(image_id, length):
     if length is None:
         requested_images = Image.objects.filter(
             imageid__lt=image_id
-        ).order_by("-imagetimestamp")
+        ).order_by("-imageid")
     else:
         requested_images = Image.objects.filter(
             imageid__lt=image_id
-        ).order_by("-imagetimestamp")[:length]
+        ).order_by("-imageid")[:length]
     images = [image.as_dict() for image in requested_images]
     return send_response(images)
 
