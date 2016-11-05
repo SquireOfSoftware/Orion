@@ -400,15 +400,33 @@ var webServer = angular.module("webServer", [])
 
             var currentMission = {
                 selectedDrone: selectedDrone,
-                waypoints: $scope.currentWaypoints,
+                waypoints: sanitizeWaypoints($scope.currentWaypoints),
                 altitude: $scope.altitude,
                 obstacles: [],
-                pointOfInterest: $scope.currentPointOfInterest
+                pointOfInterest: sanitizePoint($scope.currentPointOfInterest)
             };
 
             sendMission(currentMission);
         }
     };
+
+    function sanitizeWaypoints(array) {
+        var sanitizedArray = [];
+        for(var i = 0; i < array.length; i++) {
+            sanitizedArray.push(sanitizePoint(array[i]));
+        }
+        return sanitizedArray;
+    }
+
+    function sanitizePoint(point) {
+        $log.debug(point);
+        var sanitizedPoint = {
+            x: point.x - 150,
+            y: (point.y * -1) + 150
+        };
+        $log.debug(sanitizedPoint);
+        return sanitizedPoint;
+    }
 
     function sendMission(currentMission) {
         if (isValidMission(currentMission)) {

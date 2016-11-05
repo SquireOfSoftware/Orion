@@ -198,8 +198,11 @@ var webServer = angular.module("webServer", [])
 
     function getCurrentMission(missions) {
         for (var i = 0; i < missions.length; i++) {
-            if(missions[i].mission.status === INPROGRESS)
+            if(missions[i].mission.status === INPROGRESS) {
+                missions[i].waypoints = sanitizeWaypoints(missions[i].waypoints);
+                missions[i].point_of_interest = sanitizePoint(missions[i].point_of_interest);
                 return missions[i];
+            }
         }
         return null;
     }
@@ -289,8 +292,24 @@ var webServer = angular.module("webServer", [])
         $interval.cancel(delayedMissionPoll);
     }
 
+
+    function sanitizeWaypoints(array) {
+        var sanitizedArray = [];
+        for(var i = 0; i < array.length; i++) {
+            sanitizedArray.push(sanitizePoint(array[i]));
+        }
+        return sanitizedArray;
+    }
+
+    function sanitizePoint(point) {
+        $log.debug(point);
+        point.x = point.x + 150;
+        point.y = (point.y * -1) + 150;
+        $log.debug(point);
+        return point;
+    }
 });
 
 webServer.config(function ($logProvider) {
-    //$logProvider.debugEnabled(false);
+    $logProvider.debugEnabled(false);
 });

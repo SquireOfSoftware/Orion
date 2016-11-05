@@ -1,10 +1,11 @@
 from database_access_layer import connector
-from mission_reader import mission_reader
+#from mission_reader import mission_reader
 import time	
+
 class watchdog:
 	def __init__(self):
-	
-		
+		pass
+
 	def watchDogProcess(self, seq):
 		if compareSeq(self.seq):
 			self.killROS()
