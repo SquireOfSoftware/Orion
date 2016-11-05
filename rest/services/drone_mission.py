@@ -9,6 +9,7 @@ from database_access_layer import connector
 from drone_control import drone_control
 from geometry_msgs.msg import Point
 from resource_locator import resource
+from sensor_msgs.msg import LaserScan
 
 class drone_mission(resource):
     def __init__(self, resource_locator):
@@ -20,7 +21,7 @@ class drone_mission(resource):
 
         # Check to see if there is a mission IN PROGRESS, and try to get its ID
         get_mission_sql = 'SELECT MissionID FROM Mission WHERE MissionStatus_MissionStatusID = 2;'
-        cursor = super(drone_media, self).cursor()
+        cursor = super(drone_mission, self).cursor()
         cursor.execute(get_mission_sql)
         data = cursor.fetchone()
         if data is None:
