@@ -100,6 +100,9 @@ var webServer = angular.module("webServer", [])
     }
 
     function loadUpMission(mission) {
+        mission.waypoints = sanitizeWaypoints(mission.waypoints);
+        mission.point_of_interest = sanitizePoint(mission.point_of_interest);
+        $log.debug(mission.waypoints);
         $scope.missions.push(mission);
         $log.debug(mission.mission.id);
     }
@@ -186,6 +189,22 @@ var webServer = angular.module("webServer", [])
     function exists(object) {
         return (object !== undefined) &&
             (object !== null);
+    }
+
+    function sanitizeWaypoints(array) {
+        var sanitizedArray = [];
+        for(var i = 0; i < array.length; i++) {
+            sanitizedArray.push(sanitizePoint(array[i]));
+        }
+        return sanitizedArray;
+    }
+
+    function sanitizePoint(point) {
+        $log.debug(point);
+        point.x = point.x + 150;
+        point.y = (point.y * -1) + 150;
+        $log.debug(point);
+        return point;
     }
 });
 

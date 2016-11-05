@@ -17,10 +17,10 @@ from rest.models import Pointofinterest
 MIN_ALTITUDE = 0.0
 MAX_ALTITUDE = 250.0
 
-MIN_X = 0.0
-MAX_X = 300.0
-MIN_Y = 0.0
-MAX_Y = 300.0
+MIN_X = -150.0
+MAX_X = 150.0
+MIN_Y = -150.0
+MAX_Y = 150.0
 
 
 # get all the missions
@@ -197,11 +197,18 @@ def validate_point_of_interest(point):
     # verify that it is within the boundaries of 3m by 3m
     x = int(point["x"])
     y = int(point["y"])
+    print("point of interest: ", point)
+    print("(x >= MIN_X)", (x >= MIN_X))
+    print("(x <= MAX_X)", (x <= MAX_X))
+    print("(y >= MIN_Y)", (y >= MIN_Y))
+    print("(y <= MAX_Y)", (y <= MAX_Y))
+    isValid = (x >= MIN_X) and \
+           (x <= MAX_X) and \
+           (y >= MIN_Y) and \
+           (y <= MAX_Y)
 
-    return (x > MIN_X) and \
-           (x < MAX_X) and \
-           (y > MIN_Y) and \
-           (y < MAX_Y)
+    print(isValid)
+    return isValid
 
 
 def validate_flight_path(waypoints, obstacles):
