@@ -11,9 +11,22 @@ from geometry_msgs.msg import Point
 from resource_locator import resource
 from sensor_msgs.msg import LaserScan
 
+
 class drone_mission(resource):
     def __init__(self, resource_locator):
         super(drone_mission, self).__init__(resource_locator)
+
+    def start_test(self):
+        self.connect()
+        drone_control_object = super(drone_mission, self).locator().getDroneControl()
+
+        drone_control_object.takeoff()
+        time.sleep(4)
+        drone_control_object.stop()
+        drone_control_object.stop()
+        time.sleep(5)
+        drone_control_object.land()
+        exit()
 
     def start(self):
         self.connect()
@@ -54,6 +67,9 @@ class drone_mission(resource):
                     way_first.y = result[2]/100
                     way_first.z = result[3]/100
 
+                    print "DEBUG: Waypoint 1"
+                    print str(way_first)
+
                     # Update the waypoint element with the current time
                     arrived_at_waypoint_sql = 'UPDATE Waypoint SET WaypointTimeArrived = NOW() WHERE WaypointID = ' + str(result[0]) + ';'
                     cursor.execute(arrived_at_waypoint_sql)
@@ -70,6 +86,9 @@ class drone_mission(resource):
                     way_second.y = result[2]/100
                     way_second.z = result[3]/100
 
+                    print "DEBUG: Waypoint 2"
+                    print str(way_second)
+
                     # Since we have two waypoints, initiate a move
                     drone_control_object.moveQuantum(way_first, way_second)
 
@@ -80,6 +99,7 @@ class drone_mission(resource):
                     # We have moved to the second waypoint, so iterate to the next point
                     way_first = way_second
             # Mission is finished
+            print "DEBUG: Mission is finished"
             drone_control_object.land()
             complete_mission_sql = 'UPDATE Mission SET MissionStatus_MissionStatusID = 4 WHERE MissionID = ' + str(mission_id) + ';'
             cursor.execute(complete_mission_sql)

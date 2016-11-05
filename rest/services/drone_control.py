@@ -14,7 +14,9 @@ from geometry_msgs.msg import Vector3
 from geometry_msgs.msg import Point
 from ardrone_autonomy.msg import Navdata
 from nav_msgs.msg import Odometry
+from sensor_msgs.msg import LaserScan
 from resource_locator import resource_locator, resource
+
 
 import time
 class drone_control (resource):
@@ -33,6 +35,7 @@ class drone_control (resource):
         self._land = rospy.Publisher('/ardrone/land', Empty, queue_size = 5)
         self._emergency = rospy.Publisher('/ardrone/emergency', Empty, queue_size = 5)
         self._takeoff = rospy.Publisher('/ardrone/takeoff', Empty, queue_size = 5)
+        self._odometry = rospy.Subscriber('/ardrone/odometry', Odometry, self.odom_callback)
         rospy.init_node('orion_controller', anonymous=True)
         rate = rospy.Rate(60)
 
@@ -83,14 +86,20 @@ class drone_control (resource):
         @:type drone_location: Point
         @:type target_location: Point
         """
+        print "DEBUG: entering rotate_to_face_point"
         relative_goal_x = target_location.x - drone_location.x
         relative_goal_y = target_location.y - drone_location.y
 
         target_angle = degrees(atan2(relative_goal_x, relative_goal_y))
+        print "DEBUG travel x: " + str(relative_goal_x) + " y: " + str(relative_goal_y) + " ang: " + str(target_angle)
 
+        count = 0
+        drone_meta = super(drone_control, self).locator().getDroneMetadata()
         # Rotate until we are facing the right direction
         while True:
-            current_direction = Navdata().rotZ  # Float degrees
+            navdata = drone_meta.navdata()
+
+            current_direction = navdata.rotZ  # Float degrees
             rotational_difference = target_angle - current_direction
 
             if rotational_difference < -180:
@@ -102,11 +111,26 @@ class drone_control (resource):
                 self.rotate_anticlockwise()
             else:
                 break
-
+            count += 1
             time.sleep(self.NAVIGATIONAL_POLLING_SLEEP)
+
+            if ((count % 10) == 0) or (count == 1):
+                print "DEBUG: count " + str(count)
+                print "DEBUG: current direction " + str(current_direction)
+                print "DEBUG: difference  " + str(rotational_difference)
+                print "DEBUG: NAVDATA " + str(navdata.rotZ)
+
+            if count > 30:
+                print "DEBUG: rotated 100 times"
+                break
 
         # Stop rotating
         self.stop()
+        time.sleep(2)
+        print "DEBUG: finished rotation"
+        print "DEBUG: current direction " + str(current_direction)
+        self.stop()
+        time.sleep(5)
 
     # start and end are geometry_msgs Points
     def moveQuantum(self, start, end):
@@ -115,14 +139,30 @@ class drone_control (resource):
         @:type start: Point
         @:type end: Point
         """
+        print "DEBUG: entering moveQuantam"
+
         self.rotate_to_face_point(start, end)
 
+        print "DEBUG: starting move"
         relative_goal_x = end.x - start.x
         relative_goal_y = end.y - start.y
         total_distance = hypot(relative_goal_x, relative_goal_y)
 
-        starting_distance_moved = deepcopy(Odometry().pose.pose.position.x)
+        print "DEBUG: total_distance " + str(total_distance)
+        print "DEBUG: odom object " + str(self.odometry)
+
+        starting_distance_moved = deepcopy(self.odometry.pose.pose.position.x)
         goal_distance = starting_distance_moved + total_distance
+
+        print "DEBUG: starting_distance_moved " + str(starting_distance_moved)
+        print "DEBUG: goal_distance " + str(goal_distance)
+
+        print "DEBUG: stopping"
+        self.stop()
+        time.sleep(5)
+        self.land()
+        time.sleep(5)
+        exit()
 
         while True:
             current_distance = Odometry().pose.pose.position.x
@@ -206,3 +246,6 @@ class drone_control (resource):
         self.stop()
         time.sleep(2)
         self.land()
+
+    def odom_callback(self, data):
+        self.odometry = data
