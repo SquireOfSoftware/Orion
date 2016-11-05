@@ -1,0 +1,62 @@
+/* Tags */
+
+button {
+    height: auto;
+    text-align: left;
+}
+
+canvas {
+    width: 100%;
+    height: auto;
+}
+
+select {
+    color: #fff;
+    background-color: grey;
+}
+
+/* Classes */
+
+.drawable-canvas-grids {
+    background-color: transparent;
+    position: absolute;
+    padding-right: 30px;
+}
+
+.drone {
+    height: auto;
+}
+
+.drone-name {
+    color: #000000;
+}
+
+/* IDs */
+
+#altitude-box {
+    color: #000;
+}
+
+#canvas-interaction {
+    z-index: 5;
+}
+
+#canvas-grid {
+    width: 100%;
+    height: auto;
+    background-color: #fff;
+}
+
+#configure-mission-page {
+}
+
+#drone-selection-bar {
+    overflow-y: hidden;
+    white-space: nowrap;
+}
+
+#selected-drone-message {
+    text-align: center;
+    background-color: #265a88;
+    display: none;
+}

@@ -1,0 +1,20 @@
+/* Tags */
+
+button {
+    text-align: left;
+}
+
+canvas {
+    background-color: #fff;
+    width: 100%;
+    height: auto;
+    margin-top: 20px;
+}
+
+/* Classes */
+
+/* IDs */
+
+#mission-listing {
+    display: none;
+}

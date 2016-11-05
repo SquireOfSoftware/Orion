@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="webServer">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Create a mission</title>
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap/bootstrap-theme.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap/bootstrap.css"/>
+
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../js/angular.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="../../css/core.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/specific-pages/mission-composer.css"/>
+</head>
+<body ng-controller="missionCtrl" ng-init="init()">
+    <div class="errors">
+        <div class="col-md-12 message" id="error-message">
+            <span class=" message-icon glyphicon glyphicon-exclamation-sign"></span>
+            <h2>{{errorMsg.heading}}</h2>
+            <div ng-repeat="message in errorMsg.message">{{message}}</div>
+            <button class="button col-xs-9 col-sm-4" ng-click="closeErrorScreen()">
+                {{errorMsg.buttonMsg}}
+            </button>
+        </div>
+        <div class="col-md-12 overlay"></div>
+    </div>
+    <div class="loading">
+        <div class="col-md-12 message" id="loading-message">
+            <span id="loading-circle" class="message-icon glyphicon glyphicon glyphicon-repeat"></span>
+            <h2>Loading...</h2>
+            <p>Please wait</p>
+        </div>
+        <div class="col-md-12 overlay"></div>
+    </div>
+    <div class="success">
+        <div class="col-md-12 message" id="success-message">
+            <span class="message-icon glyphicon glyphicon-ok-sign"></span>
+            <h2>Success</h2>
+            <p>Your mission has been created.</p>
+            <button class="button col-xs-9 col-sm-4" ng-click="loadMissionScreen()">
+                OK
+            </button>
+        </div>
+        <div class="col-md-12 overlay"></div>
+    </div>
+
+    <!--
+    Drone id
+    List of Way-points
+    Altitude
+    List of obstacles
+    Point of interest
+    -->
+    <div id="configure-mission-page" class="mission-page">
+        <div class="title col-md-12">
+            <h1><a href="../index.html">Home</a> / Create a mission</h1>
+        </div>
+        <div class="col-sm-12">
+            <div id="selection-grid" class="col-sm-8">
+                <canvas id="canvas-interaction" class="drawable-canvas-grids" width="300" height="300">
+                    Sorry, your browser doesn't support the &lt;canvas&gt; element.
+                </canvas>
+
+                <canvas id="canvas-point-of-interest" class="drawable-canvas-grids" width="300" height="300">
+                    Sorry, your browser doesn't support the &lt;canvas&gt; element.
+                </canvas>
+
+                <canvas id="canvas-flight-path" class="drawable-canvas-grids" width="300" height="300">
+                    Sorry, your browser doesn't support the &lt;canvas&gt; element.
+                </canvas>
+
+                <canvas id="canvas-grid" width="300" height="300">
+                    Sorry, your browser doesn't support the &lt;canvas&gt; element.
+                </canvas>
+
+            </div>
+            <div class="col-sm-4">
+                <p><strong>Please note that the top left corner is 0cm, 0cm and bottom right corner is 300cm, 300cm.
+                    <br>The north border is the wall.</strong></p>
+                <div id="drone-selection-bar" class="col-sm-12" >
+                    <label for="drone-dronedown">Select a drone: </label>
+                    <select name="drone-dropdown"
+                            id="drone-dronedown"
+                            ng-model="selectedDrone"
+                            ng-options="drone.name for drone in drones"
+                            required>
+                    </select>
+                    <p ng-cloak="selectedDrone != null">
+                        Drone selected: {{selectedDrone.name}} {{selectedDrone.id}}
+                    </p>
+                </div>
+                <div id="input-bar" class="col-sm-12">
+                    <div>
+                        Enter in the altitude (in centimeters):
+                        <input id="altitude-box"
+                               name="altitude"
+                               ng-model="altitude"
+                               type="number"
+                               placeholder="Enter the altitude in meters"/> cm
+                    </div>
+
+                    <button class="button col-xs-12" ng-click="switchToFlightPath()">
+                        <span class="glyphicon glyphicon-map-marker"></span> Select the flight path
+                    </button>
+
+                    <button class="button col-xs-12" ng-click="clearFlightPath()">
+                        <span class="glyphicon glyphicon-erase"></span> Clear the flight path
+                    </button>
+
+                    <button class="button col-xs-12" ng-click="switchToPointOfInterest()">
+                        <span class="glyphicon glyphicon-eye-open"></span> Select the point of interest
+                    </button>
+
+                    <button class="button col-xs-12" ng-click="clearPointOfInterest()">
+                        <span class="glyphicon glyphicon-erase"></span> Clear the point of interest
+                    </button>
+
+                    <button input="button" class="button col-xs-12" ng-disabled="canSubmitMission" ng-click="submitMission()">
+                        <span class="glyphicon glyphicon-play"></span> Start the mission >
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script src="../../js/specific-pages/missionCreator.js"></script>
+</html>
