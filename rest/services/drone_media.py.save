@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-:qimport rospy
+import rospy
 import cv2
 import logging
 from sensor_msgs.msg import Image

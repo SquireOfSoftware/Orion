@@ -14,8 +14,9 @@ from geometry_msgs.msg import Vector3
 from geometry_msgs.msg import Point
 from ardrone_autonomy.msg import Navdata
 from nav_msgs.msg import Odometry
+from resource_locator import resource_locator, resource
 
-import time;
+import time
 class drone_control (resource):
     # Note, max recommended speed is 0.8
     ROT_SPEED = 0.5

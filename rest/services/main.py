@@ -5,6 +5,7 @@ from drone_mission import drone_mission
 from drone_media import drone_media
 from database_access_layer import connector
 from mission_reader import mission_reader
+import rospy
 import time
 def tester():
     test = drone_control()
@@ -29,6 +30,10 @@ def main():
     drone_media(locator)
     drone_metadata(locator)
     drone_mission(locator)
+
+    # rospy.init_node('orion_everything', anonymous=True)
+    time.sleep(1)
+    print("Initialisation Successful, calling drone mission")
     locator.getDroneMission().start()
 
 if __name__ == "__main__":

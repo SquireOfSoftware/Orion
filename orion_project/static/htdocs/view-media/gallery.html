@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="webServer">
+<head>
+    <meta charset="UTF-8">
+    <title>Gallery</title>
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap/bootstrap-theme.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap/bootstrap.css"/>
+
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../js/angular.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="../../css/core.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/specific-pages/gallery.css"/>
+</head>
+<body ng-controller="galleryCtrl" ng-init="init()">
+    <div class="errors">
+        <div class="col-md-12 message" id="error-message">
+            <span class=" message-icon glyphicon glyphicon-exclamation-sign"></span>
+            <h2>{{errorMsg.heading}}</h2>
+            <div ng-repeat="message in errorMsg.message">{{message}}</div>
+            <button class="button col-xs-9 col-sm-4" ng-click="closeErrorScreen()">
+                {{errorMsg.buttonMsg}}
+            </button>
+        </div>
+        <div class="col-md-12 overlay"></div>
+    </div>
+    <div class="loading">
+        <div class="col-md-12 message" id="loading-message">
+            <span id="loading-circle" class="message-icon glyphicon glyphicon-repeat"></span>
+            <h2>Loading...</h2>
+            <p>Please wait</p>
+        </div>
+        <div class="col-md-12 overlay"></div>
+    </div>
+    <div class="title col-xs-12">
+        <h1><a href="../index.html">Home</a> / Gallery</h1>
+        <div class="" id="mission-dropdown">
+            <label for="mission-dronedown">Filter for a mission: </label>
+            <select name="mission-dropdown"
+                    id="mission-dronedown"
+                    ng-model="selectedMission"
+                    ng-options="missionid for missionid in missions"
+                    required>
+            </select>
+        </div>
+        <button class="button col-xs-5 col-sm-5" ng-click="init()">
+            <span class="glyphicon glyphicon-refresh"></span> Refresh current
+        </button>
+        <button class="button col-xs-offset-2 col-xs-5 col-sm-offset-2 col-sm-5" ng-click="loadMore()">
+            <span class="glyphicon glyphicon-folder-open"></span> Load more historical
+        </button>
+    </div>
+
+    <div id="image-gallery-holder" class="col-xs-12">
+        <ul id="image-gallery" class="col-md-12">
+            <li class="image" ng-repeat="image in images" ng-show="showFilter(image.mission_id)" >
+                <img id="{{image.id}}-{{image.mission_id}}" src="data:image/png;base64,{{image.imageblob}}" ng-click="selectImage(image)"/>
+            </li>
+        </ul>
+    </div>
+
+    <div id="big-image-holder" class="col-xs-12">
+        <p class="onload">Belongs to Mission: {{currentImage.mission_id}}</p>
+        <p class="onload">Timestamp: {{currentImage.timestamp}}</p>
+        <img id="big-image" ng-show="currentImage.imageblob !== undefined" src="data:image/png;base64,{{currentImage.imageblob}}" />
+    </div>
+
+</body>
+<script src="../../js/specific-pages/gallery.js"></script>
+</html>
