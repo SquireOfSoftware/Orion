@@ -3,7 +3,7 @@
  */
 
 angular.module("webServer")
-.controller("missionStarterCtrl", function($log, $http, $scope) {
+.controller("missionStarterCtrl", function($log, $scope, restService) {
     $scope.missions = [];
     $scope.errorMsg = {
         heading: "ERROR",
@@ -13,7 +13,6 @@ angular.module("webServer")
 
     $scope.showCanvas = true;
 
-    var baseurl = "http://localhost:5001/rest/";
     var RESTMISSION = "missions";
 
     var MINGRID = 0;
@@ -74,7 +73,7 @@ angular.module("webServer")
 
     function getAllMission() {
         toggleLoadingScreen();
-        $http.get(baseurl + RESTMISSION)
+        restService.get(RESTMISSION)
             .then(function(data) {
                 $log.debug(data.data);
                 toggleLoadingScreen();
@@ -118,7 +117,7 @@ angular.module("webServer")
 
     $scope.startMission = function(missionId) {
         $log.debug("Trying to start missiong with id: " + missionId);
-        $http.put(baseurl + RESTMISSION + "/" + missionId + "/start", {data: ""}, config)
+        restService.put(RESTMISSION + "/" + missionId + "/start")
             .then(function() {
                 showSuccessScreen();
             })

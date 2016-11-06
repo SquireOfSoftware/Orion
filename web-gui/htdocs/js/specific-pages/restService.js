@@ -17,11 +17,15 @@ angular.module("webServer")
 
     $log.debug(window.location.host);
 
-    this.post = function (url) {
-        return $http.post(baseurl + url);
+    this.post = function (url, data) {
+        return $http.post(baseurl + url, data, config);
     };
 
     this.get = function (url) {
         return $http.get(baseurl + url);
     };
+
+    this.put = function (url) {
+        return $http.put(url, {data: ""}, config);
+    }
 });

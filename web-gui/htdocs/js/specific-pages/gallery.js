@@ -3,8 +3,7 @@
  */
 
 angular.module("webServer")
-.controller("galleryCtrl", function($log, $http, $scope, restService) {
-
+.controller("galleryCtrl", function($log, $scope, restService) {
     var RESTIMAGES = "images";
     var RESTCURRENTIMAGE = "images/current";
 
@@ -57,8 +56,7 @@ angular.module("webServer")
 
     function loadCurrentImage() {
         toggleLoadingScreen();
-        var url = RESTCURRENTIMAGE;
-        restService.get(url)
+        restService.get(RESTCURRENTIMAGE)
             .then(function (data) {
                 toggleLoadingScreen();
                 $log.debug(data.data);
@@ -84,8 +82,7 @@ angular.module("webServer")
     function loadImagesById(lastImageID) {
         toggleLoadingScreen();
         var imageNumber = 10;
-        var url = RESTIMAGES + "/" + lastImageID + "/filter?length=" + imageNumber;
-        $log.debug(url);
+        $log.debug(RESTIMAGES + "/" + lastImageID + "/filter?length=" + imageNumber);
         restService.get(url)
             .then(function (data) {
                 $log.debug(data.data);

@@ -8,10 +8,9 @@
  */
 
 angular.module("webServer")
-.controller("missionCtrl", function($log, $http, $scope)
+.controller("missionCtrl", function($log, $scope, restService)
 {
     $scope.drones = [];
-    $scope.baseurl = "http://localhost:5001/rest/";
     var RESTMISSIONS = "missions";
     var RESTDRONES = "drones";
     $scope.errorMsg = {
@@ -19,8 +18,6 @@ angular.module("webServer")
         message: [],
         buttonMsg: "OK"
     };
-
-
 
     // Mission variables
 
@@ -64,7 +61,7 @@ angular.module("webServer")
 
     function initialiseDrones() {
         toggleLoadingScreen();
-        $http.get($scope.baseurl + RESTDRONES)
+        restService.get(RESTDRONES)
             .then(function(data) {
                 $log.debug(data.data);
                 $scope.drones = data.data;
@@ -423,15 +420,9 @@ angular.module("webServer")
 
     function sendMission(currentMission) {
         if (isValidMission(currentMission)) {
-            var url = $scope.baseurl + RESTMISSIONS;
-            $log.debug("trying to send mission");
-
             // How to bypass CORS on mac
             // open -a Google\ Chrome --args --disable-web-security --user-data-dir
-
-            //showSuccessScreen();
-
-            $http.post(url, currentMission, config).then(function (data) {
+            restService.post(RESTMISSIONS, currentMission).then(function (data) {
                 toggleLoadingScreen();
                 $log.debug(data);
                 $log.debug(typeof(data));
