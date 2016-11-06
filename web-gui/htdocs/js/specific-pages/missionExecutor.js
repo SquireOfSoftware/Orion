@@ -7,7 +7,7 @@
  * https://www.toptal.com/angular-js/a-step-by-step-guide-to-your-first-angularjs-app
  */
 
-var webServer = angular.module("webServer", [])
+angular.module("webServer")
 .controller("missionExecutionCtrl", function($log, $http, $interval, $scope)
 {
     /* DEFAULT scope bindings */

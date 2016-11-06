@@ -7,7 +7,7 @@
  * https://www.toptal.com/angular-js/a-step-by-step-guide-to-your-first-angularjs-app
  */
 
-var webServer = angular.module("webServer", [])
+angular.module("webServer")
 .controller("missionCtrl", function($log, $http, $scope)
 {
     $scope.drones = [];
@@ -20,14 +20,7 @@ var webServer = angular.module("webServer", [])
         buttonMsg: "OK"
     };
 
-    var config = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE',
-        'Access-Control-Max-Age': '3600',
-        'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
-        'Content-Type': 'application/text',
-        'Access-Control-Allow-Credentials': false
-    };
+
 
     // Mission variables
 

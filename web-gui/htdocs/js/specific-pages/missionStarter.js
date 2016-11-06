@@ -2,7 +2,7 @@
  * Created by Joseph Tran on 27/10/2016.
  */
 
-var webServer = angular.module("webServer", [])
+angular.module("webServer")
 .controller("missionStarterCtrl", function($log, $http, $scope) {
     $scope.missions = [];
     $scope.errorMsg = {

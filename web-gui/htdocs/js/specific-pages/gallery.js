@@ -2,10 +2,9 @@
  * Created by Joseph Tran on 30/10/2016.
  */
 
-var webServer = angular.module("webServer", [])
-.controller("galleryCtrl", function($log, $http, $scope) {
-    $log.debug(window.location.host);
-    $scope.baseurl = "http://localhost:5001" + window.location.host + "/rest/";
+angular.module("webServer")
+.controller("galleryCtrl", function($log, $http, $scope, restService) {
+
     var RESTIMAGES = "images";
     var RESTCURRENTIMAGE = "images/current";
 
@@ -58,8 +57,8 @@ var webServer = angular.module("webServer", [])
 
     function loadCurrentImage() {
         toggleLoadingScreen();
-        var url = $scope.baseurl + RESTCURRENTIMAGE;
-        $http.get(url)
+        var url = RESTCURRENTIMAGE;
+        restService.get(url)
             .then(function (data) {
                 toggleLoadingScreen();
                 $log.debug(data.data);
@@ -85,9 +84,9 @@ var webServer = angular.module("webServer", [])
     function loadImagesById(lastImageID) {
         toggleLoadingScreen();
         var imageNumber = 10;
-        var url = $scope.baseurl + RESTIMAGES + "/" + lastImageID + "/filter?length=" + imageNumber;
+        var url = RESTIMAGES + "/" + lastImageID + "/filter?length=" + imageNumber;
         $log.debug(url);
-        $http.get(url)
+        restService.get(url)
             .then(function (data) {
                 $log.debug(data.data);
                 if (exists(data.data))
