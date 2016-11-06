@@ -24,11 +24,9 @@ class drone_metadata(resource):
 
     #Call back for Navdata Extraction
     def ReceiveNavdata(self, navdata):
-        navdata = navdata  # type: Navdata
+        self.current = navdata  # type: Navdata
 
-        #super(drone_metadata, self).connection().start_transaction()
-        
-        #Write jstring to database
+        # Write jstring to database
         self.timenow = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         # FIXME: we need to get the proper droneID here -- MattHa 2016-10-05
         data_navdata = (
@@ -61,19 +59,9 @@ class drone_metadata(resource):
             navdata.tm
         )
 
-        sql = "INSERT INTO Image (ImageTimestamp, ImageBlob, Mission_MissionID) VALUES" \
-              " (%s, %s, %s);"
-        dictionary = {
-            'imageTimestamp': self.timenow,
-            'imageBlob': " ",
-            'mission_MissionID': 3,
-        }
-        #super(drone_metadata, self).cursor().execute()
-        #super(drone_metadata, self).cursor().execute(sql, (self.timenow, " ", 3))
-
-        #select_stmt = "SELECT * FROM Mission WHERE MissionId = %s"
-        #super(drone_metadata, self).cursor().execute(select_stmt, (3,))
-        #super(drone_metadata, self).connection().paramstyle = 'pyformat'
         super(drone_metadata, self).cursor().execute(next_data, data_navdata)
 
         super(drone_metadata, self).connection().commit()
+
+    def navdata(self):
+        return self.current
