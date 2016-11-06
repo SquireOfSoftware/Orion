@@ -4,11 +4,11 @@ canvas {
     background-color: #fff;
     width: 100%;
     height: auto;
-    margin-top: 20px;
+    /*margin-top: 20px;*/
 }
 
 img {
-    margin-top: 20px;
+    /*margin-top: 20px;*/
     width: 100%;
     height: auto;
 }
@@ -19,12 +19,12 @@ img {
 }
 
 .title {
-    position: fixed;
-    background-color: #000;
+    /*position: fixed;*/
+    /*background-color: #000;*/
     z-index: 1;
 }
 
 /* IDs */
 #mission-bar {
-    margin-top: 70px;
+    /*margin-top: 70px;*/
 }

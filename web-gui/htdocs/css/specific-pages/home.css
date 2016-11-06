@@ -5,7 +5,31 @@ button {
     height: 100px;
 }
 
-/* Classes */
+img {
+	height: 245px;
+	width: 350px;
+}
 
+body {
+  background: transparent;
+}
+
+a {
+	color: white;
+}
+
+section {
+    padding-bottom: 20px;
+}
+
+/* Classes */
+.main-footer{
+	background-color: #fff;
+}
+
+.logo{
+	height: 50px;
+	width: 85px;
+}
 
 /* IDs */
