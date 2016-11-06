@@ -54,15 +54,6 @@ angular.module("webServer")
         $scope.errorMsg.message.push(message);
     }
 
-    var config = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE',
-        'Access-Control-Max-Age': '3600',
-        'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
-        'Content-Type': 'application/text',
-        'Access-Control-Allow-Credentials': false
-    };
-
     function showMissionListing() {
         jQuery("#mission-listing").show();
     }

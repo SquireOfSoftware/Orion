@@ -123,10 +123,9 @@ angular.module("webServer")
     }
 
     $scope.showFilter = function(missionID) {
-        var show = ($scope.selectedMission === null) ||
+        return ($scope.selectedMission === null) ||
             (missionID === $scope.selectedMission) ||
             ($scope.selectedMission === "ALL");
-        return show;
     };
 
     $scope.selectImage = function(image) {
