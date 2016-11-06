@@ -4,7 +4,8 @@
 
 var webServer = angular.module("webServer", [])
 .controller("galleryCtrl", function($log, $http, $scope) {
-    $scope.baseurl = "http://localhost:5001/rest/";
+    $log.debug(window.location.host);
+    $scope.baseurl = "http://localhost:5001" + window.location.host + "/rest/";
     var RESTIMAGES = "images";
     var RESTCURRENTIMAGE = "images/current";
 
@@ -83,7 +84,7 @@ var webServer = angular.module("webServer", [])
 
     function loadImagesById(lastImageID) {
         toggleLoadingScreen();
-        var imageNumber = 5;
+        var imageNumber = 10;
         var url = $scope.baseurl + RESTIMAGES + "/" + lastImageID + "/filter?length=" + imageNumber;
         $log.debug(url);
         $http.get(url)
@@ -138,5 +139,5 @@ var webServer = angular.module("webServer", [])
 });
 
 webServer.config(function ($logProvider) {
-    $logProvider.debugEnabled(false);
+    //$logProvider.debugEnabled(false);
 });
