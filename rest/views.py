@@ -4,11 +4,14 @@ import mission_service
 import image_service
 import json
 
+from django.views.decorators.csrf import csrf_exempt
+
 
 def index(request):
     pass
 
 
+@csrf_exempt
 def handle_missions(request):
     # https://docs.djangoproject.com/en/1.10/topics/http/urls/#how-django-processes-a-request
     if request.method == "GET":
@@ -18,6 +21,7 @@ def handle_missions(request):
     return respond_with_error("Invalid METHOD " + request.method)
 
 
+@csrf_exempt
 def start_mission(request, mission_id):
     # check if mission with id exists
     # check if mission status is not in progress
@@ -47,6 +51,7 @@ def get_mission_status(request, mission_id):
 
 
 # pass through anything relating to drones
+@csrf_exempt
 def handle_drones(request):
     if request.method == "GET":
         return drone_service.get_all_drones()
