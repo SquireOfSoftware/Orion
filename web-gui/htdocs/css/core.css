@@ -33,7 +33,7 @@ div {
 html {
     background-repeat: no-repeat;
     background-position: center;
-    background-image: url(../../images/Blur-Backgrounds.jpg);
+    background-image: url(../images/Blur-Backgrounds.jpg);
     background-size: cover;
     background-attachment: fixed;
 }
