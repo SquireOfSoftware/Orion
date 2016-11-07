@@ -162,7 +162,7 @@ angular.module("webServer")
                 toggleLoadingScreen();
                 if (hasInProgressMission(data.data)) {
                     $scope.currentMission = getCurrentMission(data.data);
-                    delayedMissionPoll = $interval(pollCurrentMission, 5000);
+                    delayedMissionPoll = $interval(pollCurrentMission, 2500);
                     showCurrentMissionScreen();
                     setTimeout(function () {drawUpGrid();}, 1);
                 }

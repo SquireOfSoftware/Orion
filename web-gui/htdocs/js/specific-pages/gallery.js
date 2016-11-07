@@ -83,7 +83,7 @@ angular.module("webServer")
         toggleLoadingScreen();
         var imageNumber = 10;
         $log.debug(RESTIMAGES + "/" + lastImageID + "/filter?length=" + imageNumber);
-        restService.get(url)
+        restService.get(RESTIMAGES + "/" + lastImageID + "/filter?length=" + imageNumber)
             .then(function (data) {
                 $log.debug(data.data);
                 if (exists(data.data))
