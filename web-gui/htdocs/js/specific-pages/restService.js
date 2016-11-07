@@ -4,7 +4,13 @@
 
 angular.module("webServer")
 .service('restService', function($http, $log) {
-    var baseurl = "http://localhost:5001/rest/";
+    var baseurl = "http://localhost:5001";
+
+    if (window.location.hostname !== "") {
+        baseurl = window.location.hostname;
+    }
+
+    baseurl += "/rest/";
 
     var config = {
         'Access-Control-Allow-Origin': '*',
