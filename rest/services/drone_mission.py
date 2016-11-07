@@ -67,8 +67,7 @@ class drone_mission(resource):
                     way_first.y = result[2]/100
                     way_first.z = result[3]/100
 
-                    print "DEBUG: Waypoint 1"
-                    print str(way_first)
+                    print "DEBUG: Waypoint 1: x: " + str(way_first.x) + " y: " + str(way_first.y) + " z: " + str(way_first.z)
 
                     # Update the waypoint element with the current time
                     arrived_at_waypoint_sql = 'UPDATE Waypoint SET WaypointTimeArrived = NOW() WHERE WaypointID = ' + str(result[0]) + ';'
@@ -76,8 +75,10 @@ class drone_mission(resource):
 
                     # Take off and wait 5 sec.
                     drone_control_object.takeoff()
-                    time.sleep(5)
+                    time.sleep(4)
                     drone_control_object.stop()
+                    drone_control_object.stop()
+                    time.sleep(3)
                     continue
                 else:
                     # Grab waypoints (which are in cm) and convert into meters
@@ -86,8 +87,7 @@ class drone_mission(resource):
                     way_second.y = result[2]/100
                     way_second.z = result[3]/100
 
-                    print "DEBUG: Waypoint 2"
-                    print str(way_second)
+                    print "DEBUG: Waypoint 2: x: " + str(way_second.x) + " y: " + str(way_second.y) + " z: " + str(way_second.z)
 
                     # Since we have two waypoints, initiate a move
                     drone_control_object.moveQuantum(way_first, way_second)
@@ -99,10 +99,13 @@ class drone_mission(resource):
                     # We have moved to the second waypoint, so iterate to the next point
                     way_first = way_second
             # Mission is finished
-            print "DEBUG: Mission is finished"
+            print "DEBUG: Mission is finished *********************"
+            time.sleep(2)
             drone_control_object.land()
-            complete_mission_sql = 'UPDATE Mission SET MissionStatus_MissionStatusID = 4 WHERE MissionID = ' + str(mission_id) + ';'
-            cursor.execute(complete_mission_sql)
+
+            # FIXME Database transaction problems if we try this
+            # complete_mission_sql = 'UPDATE Mission SET MissionStatus_MissionStatusID = 4 WHERE MissionID = ' + str(mission_id) + ';'
+            # cursor.execute(complete_mission_sql)
 
         except (KeyboardInterrupt, SystemExit):
 
