@@ -34,7 +34,7 @@ def main():
     # rospy.init_node('orion_everything', anonymous=True)
     time.sleep(2)
     print("Initialisation Successful, calling drone mission")
-    locator.getDroneMission().start_test()  # NOTE this will call exit when done, just takes off, hovers and lands
+    # locator.getDroneMission().start_test()  # NOTE this will call exit when done, just takes off, hovers and lands
 
     locator.getDroneMission().start()
 
