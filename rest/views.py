@@ -27,7 +27,7 @@ def start_mission(request, mission_id):
     # check if mission status is not in progress
     # change the mission status
     # spawn process
-    if request.method == "PUT":
+    if request.method == "GET":
         return mission_service.start_mission(mission_id)
     return respond_with_error("Invalid METHOD " + request.method)
 

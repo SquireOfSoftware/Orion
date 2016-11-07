@@ -108,7 +108,7 @@ angular.module("webServer")
 
     $scope.startMission = function(missionId) {
         $log.debug("Trying to start missiong with id: " + missionId);
-        restService.put(RESTMISSION + "/" + missionId + "/start")
+        restService.get(RESTMISSION + "/" + missionId + "/start")
             .then(function() {
                 showSuccessScreen();
             })
