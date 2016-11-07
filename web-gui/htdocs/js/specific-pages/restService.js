@@ -7,7 +7,7 @@ angular.module("webServer")
     var baseurl = "http://localhost:5001";
 
     if (window.location.hostname !== "") {
-        baseurl = window.location.protocol + window.location.hostname;
+        baseurl = window.location.protocol + "//" + window.location.hostname;
     }
 
     baseurl += "/rest/";
