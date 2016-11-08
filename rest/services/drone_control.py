@@ -20,7 +20,7 @@ from resource_locator import resource
 class drone_control(resource):
     # Note, max recommended speed is 0.8
     ROT_SPEED = 0.5
-    ROTATION_ERROR = 1
+    ROTATION_ERROR = 2
     NAVIGATIONAL_POLLING_SLEEP = 0.1
     LIN_SPEED = 0.08
     LIN_SPEED_MIN_PERCENTAGE = 0.1
@@ -29,7 +29,7 @@ class drone_control(resource):
 
     def __init__(self, resource_locator):
         super(drone_control, self).__init__(resource_locator)
-        self._move = rospy.Publisher('/cmd_vel', Twist, queue_size=40)
+        self._move = rospy.Publisher('/cmd_vel', Twist, queue_size=5)
         self._land = rospy.Publisher('/ardrone/land', Empty, queue_size=5)
         self._emergency = rospy.Publisher('/ardrone/emergency', Empty, queue_size=5)
         self._takeoff = rospy.Publisher('/ardrone/takeoff', Empty, queue_size=5)
@@ -42,6 +42,7 @@ class drone_control(resource):
 
     def land(self):
         self._land.publish(Empty())
+        #super(resource, self).cursor
         return
 
     def emergency(self):
@@ -120,7 +121,7 @@ class drone_control(resource):
                 print "DEBUG: difference  " + str(rotational_difference)
                 print "DEBUG: ~~~"
 
-            if count > 30:
+            if count > 150:
                 # FIXME make sure to remove this
                 print "DEBUG: rotated " + str(count) + " times"
                 break
@@ -203,9 +204,9 @@ class drone_control(resource):
                 print "DEBUG: current distance " + str(current_distance)
                 print "DEBUG: goal_distance  " + str(goal_distance)
 
-            if count > 20:
+            if count > 30:
                 # FIXME make sure to remove this
-                print "DEBUG: tried to move 20 times"
+                print "DEBUG: tried to move " + str(count) + " times"
                 break
 
         self.stop()

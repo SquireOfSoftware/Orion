@@ -13,6 +13,7 @@ from rest.models import Waypoint
 from rest.models import Obstacle
 from rest.models import Pointofinterest
 
+import logging
 
 MIN_ALTITUDE = 0.0
 MAX_ALTITUDE = 250.0
@@ -22,6 +23,8 @@ MAX_X = 150.0
 MIN_Y = -150.0
 MAX_Y = 150.0
 
+logging.basicConfig(filename="/home/orion/orion-project/orion_project/mission_service.log", level=logging.DEBUG)
+logger = logging.getLogger('mission_service')
 
 # get all the missions
 def get_all_missions():
@@ -152,17 +155,18 @@ def start_mission(mission_id):
     no_missions_are_running = verify_no_missions_are_active()
     drone_is_busy = drone_service.is_drone_busy(mission.drone_droneid.droneid)
     if (mission is not None) and (no_missions_are_running is True) and (drone_is_busy is not True):
+        print "If passed"
         mission.missionstatus_missionstatusid = Missionstatus.objects.get(missionstatusname="IN PROGRESS")
         mission.save()
-
-        drone = Drone.objects.get(droneid=mission.drone_droneid.droneid)
-        drone.dronestatus_dronestatusid = DroneStatus.objects.get(dronestatusname="TAKING OFF")
-        drone.save()
-
+        print "Saved Mission"
+        #drone = Drone.objects.get(droneid=mission.drone_droneid.droneid)
+        #drone.dronestatus_dronestatusid = DroneStatus.objects.get(dronestatusname="TAKING OFF")
+        #drone.save()
+        print "Saved Drone"
         # FIXME Point to the mission launcher (rest/services/main.py currently)
-        Popen("python experiments/process_spawnee.py", shell=True)
-
-        return send_response(mission.as_dict())
+        Popen("python /home/orion/orion-project/orion_project/rest/services/main.py", shell=True)
+        logger.debug("Mission has started.")
+        return send_response({"msg":"wooo"})
     elif mission is None:
         return send_missions_error("Could not locate mission with id: " + str(mission_id))
     elif no_missions_are_running is not True:

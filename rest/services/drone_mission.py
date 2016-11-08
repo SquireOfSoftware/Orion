@@ -104,8 +104,8 @@ class drone_mission(resource):
             drone_control_object.land()
 
             # FIXME Database transaction problems if we try this
-            # complete_mission_sql = 'UPDATE Mission SET MissionStatus_MissionStatusID = 4 WHERE MissionID = ' + str(mission_id) + ';'
-            # cursor.execute(complete_mission_sql)
+            complete_mission_sql = 'UPDATE Mission SET MissionStatus_MissionStatusID = 4 WHERE MissionID = ' + str(mission_id) + ';'
+            cursor.execute(complete_mission_sql)
 
         except (KeyboardInterrupt, SystemExit):
 
