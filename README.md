@@ -82,6 +82,19 @@ Dependencies
       rostopic pub ardrone/takeoff Std_msgs/Empty
         This will issue the land command
         All drone commands, dumps and other pieces are all “callbacks” to the rostopic publishers
+      rostopic list
+        Lists all the rostopics that you can subscribe or publish to
+      rostopic echo /us
+        This is the custom ultrasonics package that data was dumped into
+      source devel/setup.bash
+        Followed by:
+        env | grep ROS
+            This is to check if the master address is 192.168.1.148
+            Otherwise:
+        export ROS_MASTER_URI=http://192.168.1.148:11311
+            Then:
+        rosrun us main
+            Sensors 0 to 3 should start being dumped into ROS
 
 # Videos
   https://www.youtube.com/playlist?list=PLFE1soEirSeYSN21s1mMcTJl_1ayu5DAi
