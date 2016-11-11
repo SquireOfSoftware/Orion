@@ -1,0 +1,23 @@
+#!/bin/bash
+
+roscore
+
+rosrun ardrone_autonomy ardrone_driver -ip 192.168.1.10
+
+rostopic echo /ardrone/navdata
+
+
+google-chrome --disable-web-security --user-data-dir
+
+
+python manage.py runserver localhost:5001
+
+
+
+
+
+
+rostopic pub ardrone/land std_msgs/Empty
+
+
+
